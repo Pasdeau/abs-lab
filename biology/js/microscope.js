@@ -123,6 +123,9 @@
     var clarityBarEl = document.getElementById("mic-clarity-bar");
     var lightEl = document.getElementById("mic-light");
     var lightSubEl = document.getElementById("mic-light-sub");
+    var mobMagEl = document.getElementById("micMobMag");
+    var mobClarityEl = document.getElementById("micMobClarity");
+    var mobLightEl = document.getElementById("micMobLight");
     var wdEl = document.getElementById("mic-wd");
     var stagePosEl = document.getElementById("mic-stage-pos");
     var warnEl = document.getElementById("micWarn");
@@ -399,6 +402,13 @@
         lightEl.textContent = "亮度适宜";
         lightEl.style.color = "#12956b";
       }
+
+      if (mobMagEl) mobMagEl.textContent = opt.totalMag + "× (" + state.objective + "×物镜)";
+      if (mobClarityEl) {
+        mobClarityEl.textContent = "清晰度 " + opt.clarity + "%";
+        mobClarityEl.style.color = opt.clarity >= 92 ? "#12956b" : opt.clarity >= 60 ? "#b45309" : "#b91c1c";
+      }
+      if (mobLightEl) mobLightEl.textContent = opt.brightness < 0.72 ? "偏暗" : opt.brightness > 1.32 ? "过亮" : "亮度适宜";
 
       coarseVal.textContent = state.coarse.toFixed(1);
       fineVal.textContent = state.fine.toFixed(1);

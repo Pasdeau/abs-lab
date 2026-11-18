@@ -6,6 +6,14 @@
   <title>高中双语化学：酸碱中和滴定与微观离子反应 · ABS Lab</title>
   <link rel="stylesheet" href="../shared/theme.css" />
   <script src="../shared/auth.js"></script>
+  <style>
+    .chem-sub-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+    @media (max-width: 960px) {
+      .chem-sub-block { margin-top: 0; padding-top: 0; border-top: 0; }
+      .chem-stage-card[data-mview="bench"] .chem-curve-pane { display: none; }
+      .chem-stage-card[data-mview="curve"] .chem-bench-pane { display: none; }
+    }
+  </style>
 </head>
 <body class="lang-bilingual">
   <script src="../shared/topbar.js" data-root=".." data-page="neutralization" data-bilingual="true"></script>
@@ -46,7 +54,7 @@
 
     <div class="lab-grid">
       <div class="canvas-column">
-        <div class="card">
+        <div class="card sticky-stage chem-stage-card" id="chemStageCard" data-mview="bench">
           <div class="card-header">
             <h3>滴定实验台 &amp; 微观离子视野 <span class="en-inline">Titration Bench &amp; Ionic View</span></h3>
             <div class="legend-row">
@@ -57,21 +65,34 @@
               <span class="legend-item"><i class="swatch swatch-cyan"></i> H₂O</span>
             </div>
           </div>
-          <div class="canvas-wrap">
-            <canvas id="chemLabCanvas" width="760" height="320"></canvas>
-          </div>
-          <div class="micro-caption" id="chemCaption">
-            初始锥形瓶中只有 H⁺ 和 Cl⁻（盐酸完全电离），呈强酸性（pH = 1.00）。点击右侧按钮开始滴加 NaOH。
-          </div>
-        </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3>实时 pH 滴定曲线 <span class="en-inline">Live pH Titration Curve</span></h3>
-            <span class="en-inline">横轴: V(NaOH) / mL · 纵轴: pH</span>
+          <div class="mobile-view-switch" id="chemMobileSwitch">
+            <button type="button" class="active" data-v="bench">滴定台与微观离子</button>
+            <button type="button" data-v="curve">pH 滴定突跃曲线</button>
           </div>
-          <div class="canvas-wrap">
-            <canvas id="chemCurveCanvas" width="760" height="220"></canvas>
+          <div class="mobile-live-pills">
+            <span id="chemMobVol">V = 0.0 mL</span>
+            <span id="chemMobPH">pH = 1.00</span>
+            <span id="chemMobColor">无色</span>
+          </div>
+
+          <div class="chem-bench-pane" style="margin-top:6px">
+            <div class="canvas-wrap">
+              <canvas id="chemLabCanvas" width="760" height="320"></canvas>
+            </div>
+            <div class="micro-caption" id="chemCaption">
+              初始锥形瓶中只有 H⁺ 和 Cl⁻（盐酸完全电离），呈强酸性（pH = 1.00）。点击按钮开始滴加 NaOH。
+            </div>
+          </div>
+
+          <div class="chem-sub-block chem-curve-pane">
+            <div class="card-header" style="margin-bottom:6px">
+              <h3>实时 pH 滴定曲线 <span class="en-inline">Live pH Titration Curve</span></h3>
+              <span class="en-inline">横轴: V(NaOH) / mL · 纵轴: pH</span>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="chemCurveCanvas" width="760" height="220"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -175,6 +196,7 @@
   </main>
 
   <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="../shared/mobile-stage.js"></script>
   <script src="js/neutralization.js"></script>
 </body>
 </html>

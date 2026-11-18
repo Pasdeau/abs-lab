@@ -60,7 +60,7 @@
       ".abs-shell-badge{font-size:11.5px;padding:2px 8px;border-radius:999px;font-weight:600}",
       ".abs-shell-badge.cloud{background:#dcfce7;color:#15803d}",
       ".abs-shell-badge.local{background:#eef2ff;color:#3b5bdb}",
-      "@media (max-width:720px){.abs-shell-nav{display:none}}"
+      "@media (max-width:720px){.abs-shell-in{padding:6px 10px;gap:6px}.abs-shell-nav{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px}.abs-shell-link{white-space:nowrap;font-size:12.5px;padding:3px 8px}}"
     ].join("\n");
     var style = document.createElement("style");
     style.id = "abs-shell-styles";

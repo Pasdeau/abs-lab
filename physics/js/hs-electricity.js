@@ -30,6 +30,18 @@
     var electronDirEl = document.getElementById("phy-electron-dir");
     var microCaptionEl = document.getElementById("phyMicroCaption");
     var taskListEl = document.getElementById("phyTaskList");
+    var mobStateEl = document.getElementById("phyMobState");
+    var mobCurrentEl = document.getElementById("phyMobCurrent");
+    var mobPowerEl = document.getElementById("phyMobPower");
+    var phyStageCard = document.getElementById("phyStageCard");
+    var phyMobBtns = document.querySelectorAll("#phyMobileSwitch button");
+    for (var mb = 0; mb < phyMobBtns.length; mb++) {
+      phyMobBtns[mb].addEventListener("click", function () {
+        var v = this.getAttribute("data-v");
+        if (phyStageCard) phyStageCard.setAttribute("data-mview", v);
+        for (var j = 0; j < phyMobBtns.length; j++) phyMobBtns[j].classList.toggle("active", phyMobBtns[j] === this);
+      });
+    }
 
     function loadSavedTasks() {
       var def = { close: false, open: false, ohm: false, flip: false };
@@ -163,6 +175,10 @@
           ? "电压调节为 0 V，导体两端没有电势差，自由电子仅做无规则热运动，净电流为 0。"
           : "开关断开时，导体内没有电场，自由电子并不是静止的——它们仍在做剧烈的无规则热运动（观察金色高亮电子的折线轨迹），各方向抵消，因此宏观电流为 0。";
       }
+
+      if (mobStateEl) mobStateEl.textContent = I > 0 ? "闭合通路" : "断开";
+      if (mobCurrentEl) mobCurrentEl.textContent = "I = " + I.toFixed(2) + " A";
+      if (mobPowerEl) mobPowerEl.textContent = "P = " + P.toFixed(2) + " W";
 
       if (state.isClosed && I > 0) {
         markTask("close");

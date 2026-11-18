@@ -268,12 +268,59 @@
     }
 
     @media (max-width: 960px) {
-      .micro-layout { grid-template-columns: 1fr; }
-      .specimen-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .specimen-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; margin-bottom: 10px; }
+      .spec-btn { padding: 7px 9px; border-radius: 11px; }
+      .spec-btn strong { font-size: 0.84rem; }
+      .spec-btn span { font-size: 0.7rem; }
+
+      .eyepiece-stage {
+        grid-template-columns: minmax(0, 1fr) 136px;
+        gap: 10px;
+      }
+      .fov-shell {
+        max-width: min(250px, 56vw);
+        padding: 8px;
+      }
+      .side-diagram { padding: 7px; }
+      .side-diagram svg { max-height: 148px; }
+      .mini-stage-box { width: 92px; height: 60px; }
+
+      /* 上滑吸顶后：成像自动缩为紧凑小图，右侧只留实时读数与倒立小玻片，腾出下方空间操作旋钮 */
+      .sticky-stage.is-compact .eyepiece-stage {
+        grid-template-columns: 146px minmax(0, 1fr);
+        gap: 10px;
+      }
+      .sticky-stage.is-compact .fov-shell {
+        max-width: 146px;
+        padding: 6px;
+      }
+      .sticky-stage.is-compact .side-diagram svg,
+      .sticky-stage.is-compact #svgGapLabel {
+        display: none;
+      }
+      .sticky-stage.is-compact .side-diagram {
+        padding: 6px 8px;
+        text-align: left;
+      }
+      .sticky-stage.is-compact .mini-stage-wrap {
+        margin-top: 4px;
+        padding-top: 4px;
+        border-top: 0;
+        text-align: center;
+      }
+      .sticky-stage.is-compact .mini-stage-box {
+        width: 88px;
+        height: 50px;
+        margin: 3px auto 2px;
+      }
+      .sticky-stage.is-compact .knob-wheel { width: 54px; height: 54px; }
+      .knobs-row { gap: 8px; margin: 6px 0 10px; }
+      .knob-card { padding: 8px; }
     }
-    @media (max-width: 640px) {
-      .eyepiece-stage { grid-template-columns: 1fr; }
-      .side-diagram { max-width: 240px; margin: 0 auto; }
+    @media (max-width: 440px) {
+      .eyepiece-stage { grid-template-columns: minmax(0, 1fr) 118px; gap: 8px; }
+      .sticky-stage.is-compact .eyepiece-stage { grid-template-columns: 132px minmax(0, 1fr); }
+      .sticky-stage.is-compact .fov-shell { max-width: 132px; }
     }
   </style>
 </head>
@@ -335,7 +382,7 @@
 
     <div class="micro-layout">
       <div class="canvas-column">
-        <div class="card">
+        <div class="card sticky-stage">
           <div class="card-header">
             <h3>目镜视野 <span class="en-inline">Eyepiece Field of View</span></h3>
             <div class="legend-row">
@@ -348,6 +395,12 @@
                 <span>清晰时标注细胞结构 <span class="en-inline">Labels</span></span>
               </label>
             </div>
+          </div>
+
+          <div class="mobile-live-pills">
+            <span id="micMobMag">40×</span>
+            <span id="micMobClarity">清晰度 0%</span>
+            <span id="micMobLight">亮度适宜</span>
           </div>
 
           <div class="eyepiece-stage">
@@ -401,7 +454,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card secondary-stage">
           <h3 id="specInfoTitle">当前样本解析：洋葱鳞片叶内表皮细胞 <span class="en-inline">Specimen Notes</span></h3>
           <p id="specInfoDesc" style="margin:0 0 8px;color:var(--muted);font-size:0.9rem"></p>
           <div class="glossary-grid" id="specFeatures"></div>
@@ -527,6 +580,7 @@
   </main>
 
   <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="../shared/mobile-stage.js"></script>
   <script src="js/microscope.js"></script>
 </body>
 </html>

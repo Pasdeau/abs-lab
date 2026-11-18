@@ -630,15 +630,191 @@ code {
   font-size: 0.82rem;
 }
 
+.pin-stage-btn {
+  display: none;
+  appearance: none;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  color: var(--blue);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.mobile-live-pills {
+  display: none;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 0.76rem;
+}
+
+.mobile-live-pills span {
+  background: var(--blue-soft);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-weight: 600;
+}
+
+.mobile-view-switch {
+  display: none;
+  gap: 6px;
+  background: #eef1f6;
+  padding: 3px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.mobile-view-switch button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mobile-view-switch button.active {
+  background: #fff;
+  color: var(--blue);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 960px) {
   .portal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .progress-strip, .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .lab-grid { grid-template-columns: 1fr; }
+  .progress-strip, .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .glossary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* 手机/平板端：主实验画面自动吸顶，操控区紧随其下，边滑边看实时变化 */
+  .lab-grid,
+  .micro-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .canvas-column {
+    display: contents;
+  }
+  .sticky-sentinel {
+    order: 0;
+  }
+  .sticky-stage {
+    order: 1;
+    position: sticky;
+    top: 4px;
+    z-index: 18;
+    padding: 10px 12px;
+    box-shadow: 0 8px 22px -6px rgba(15, 23, 42, 0.22);
+    border-color: #cbd5e1;
+    transition: padding 0.16s ease;
+  }
+  .sticky-stage.is-unpinned {
+    position: static;
+    box-shadow: var(--shadow);
+  }
+  .sticky-stage .card-header {
+    margin-bottom: 6px;
+  }
+  .sticky-stage .card-header h3 {
+    font-size: 0.94rem;
+  }
+  .sticky-stage .legend-row {
+    display: none;
+  }
+  .sticky-stage .canvas-tip,
+  .sticky-stage .micro-caption {
+    font-size: 0.78rem;
+    padding: 6px 9px;
+    margin-top: 6px;
+  }
+  .sticky-stage.is-compact .canvas-tip,
+  .sticky-stage.is-compact .micro-caption {
+    display: none;
+  }
+  .sticky-stage.is-compact .canvas-wrap canvas {
+    max-height: 29vh;
+    width: auto;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .sticky-stage.is-compact {
+    padding: 8px 10px;
+  }
+  .pin-stage-btn {
+    display: inline-flex;
+    align-items: center;
+  }
+  .mobile-live-pills {
+    display: flex;
+  }
+  .mobile-view-switch {
+    display: flex;
+  }
+  .control-column {
+    order: 2;
+    gap: 12px;
+  }
+  .secondary-stage {
+    order: 3;
+  }
 }
 
 @media (max-width: 600px) {
-  .portal-grid, .progress-strip, .metrics-grid, .glossary-grid, .eq-box {
+  .hero-banner {
+    padding: 14px 14px 12px;
+  }
+  .hero-banner h1 {
+    font-size: 1.2rem;
+  }
+  .hero-banner p {
+    font-size: 0.84rem;
+    margin-top: 4px;
+  }
+  .hero-pill-btn {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+  }
+  .container {
+    padding: 12px 10px 32px;
+  }
+  .card {
+    padding: 12px 12px;
+    border-radius: 13px;
+  }
+  .metric-card,
+  .stat-box {
+    padding: 9px 10px;
+    border-radius: 11px;
+  }
+  .metric-value,
+  .stat-box .val {
+    font-size: 1.06rem;
+  }
+  .metric-sub,
+  .stat-box .sub {
+    font-size: 0.72rem;
+  }
+  .portal-grid {
     grid-template-columns: 1fr;
+  }
+  .glossary-grid,
+  .eq-box {
+    grid-template-columns: 1fr;
+  }
+  .btn {
+    min-height: 40px;
+    font-size: 0.84rem;
+  }
+  input[type="range"] {
+    height: 30px;
   }
 }

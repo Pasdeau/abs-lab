@@ -23,6 +23,18 @@
     var resetBtn = document.getElementById("chemResetBtn");
     var addButtons = document.querySelectorAll(".chem-add");
     var indicatorRadios = document.querySelectorAll('input[name="chemIndicator"]');
+    var mobVolEl = document.getElementById("chemMobVol");
+    var mobPHEl = document.getElementById("chemMobPH");
+    var mobColorEl = document.getElementById("chemMobColor");
+    var chemStageCard = document.getElementById("chemStageCard");
+    var chemMobBtns = document.querySelectorAll("#chemMobileSwitch button");
+    for (var cm = 0; cm < chemMobBtns.length; cm++) {
+      chemMobBtns[cm].addEventListener("click", function () {
+        var v = this.getAttribute("data-v");
+        if (chemStageCard) chemStageCard.setAttribute("data-mview", v);
+        for (var j = 0; j < chemMobBtns.length; j++) chemMobBtns[j].classList.toggle("active", chemMobBtns[j] === this);
+      });
+    }
 
     function loadSavedTasks() {
       var def = { drip: false, jump: false, indicator: false };
@@ -198,6 +210,9 @@
 
       colorTextEl.textContent = app.label;
       indicatorNameEl.textContent = app.name;
+      if (mobVolEl) mobVolEl.textContent = "V = " + vb.toFixed(1) + " mL";
+      if (mobPHEl) mobPHEl.textContent = "pH = " + ph.toFixed(2);
+      if (mobColorEl) mobColorEl.textContent = app.label.split(" ")[0];
 
       if (vb < 19.99) stageEl.textContent = "H⁺ 过量，每滴入 OH⁻ 即结合为 H₂O";
       else if (vb <= 20.01) stageEl.textContent = "达到等当点！H⁺ 与 OH⁻ 恰好完全中和";

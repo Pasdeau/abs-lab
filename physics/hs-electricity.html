@@ -6,6 +6,14 @@
   <title>高中双语电学：电流的形成与自由电子运动 · ABS Lab</title>
   <link rel="stylesheet" href="../shared/theme.css" />
   <script src="../shared/auth.js"></script>
+  <style>
+    .phy-sub-block { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+    @media (max-width: 960px) {
+      .phy-sub-block { margin-top: 0; padding-top: 0; border-top: 0; }
+      .phy-stage-card[data-mview="macro"] .phy-micro-pane { display: none; }
+      .phy-stage-card[data-mview="micro"] .phy-macro-pane { display: none; }
+    }
+  </style>
 </head>
 <body class="lang-bilingual">
   <script src="../shared/topbar.js" data-root=".." data-page="hs-electricity" data-bilingual="true"></script>
@@ -47,34 +55,48 @@
 
     <div class="lab-grid">
       <div class="canvas-column">
-        <div class="card">
+        <div class="card sticky-stage phy-stage-card" id="phyStageCard" data-mview="macro">
           <div class="card-header">
-            <h3>宏观电路图 <span class="en-inline">Macroscopic Circuit</span></h3>
+            <h3>电路与微观放大视野 <span class="en-inline">Circuit &amp; Microscopic View</span></h3>
             <div class="legend-row">
-              <span class="legend-item"><i class="swatch swatch-red"></i> 规定电流方向 <span class="en-inline">Current (I)</span></span>
-              <span class="legend-item"><i class="swatch swatch-blue"></i> 自由电子 <span class="en-inline">Electrons (e⁻)</span></span>
+              <span class="legend-item"><i class="swatch swatch-red"></i> 规定电流 <span class="en-inline">I</span></span>
+              <span class="legend-item"><i class="swatch swatch-blue"></i> 自由电子 <span class="en-inline">e⁻</span></span>
+              <span class="legend-item"><i class="swatch swatch-purple"></i> 电场 <span class="en-inline">E</span></span>
             </div>
           </div>
-          <div class="canvas-wrap">
-            <canvas id="phyCircuitCanvas" width="760" height="330"></canvas>
-          </div>
-          <div class="canvas-tip">提示：可直接点击画布中的“开关 S”或使用右侧控制台操作。</div>
-        </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3>金属导体微观放大镜 <span class="en-inline">Microscopic Conductor Zoom</span></h3>
-            <div class="legend-row">
-              <span class="legend-item"><i class="swatch swatch-gray"></i> 金属阳离子 <span class="en-inline">Lattice Ions (+)</span></span>
-              <span class="legend-item"><i class="swatch swatch-blue"></i> 自由电子 <span class="en-inline">Free e⁻</span></span>
-              <span class="legend-item"><i class="swatch swatch-purple"></i> 电场 <span class="en-inline">E-Field</span></span>
+          <div class="mobile-view-switch" id="phyMobileSwitch">
+            <button type="button" class="active" data-v="macro">宏观电路图</button>
+            <button type="button" data-v="micro">微观导体放大镜</button>
+          </div>
+          <div class="mobile-live-pills">
+            <span id="phyMobState">断开</span>
+            <span id="phyMobCurrent">I = 0.00 A</span>
+            <span id="phyMobPower">P = 0.00 W</span>
+          </div>
+
+          <div class="phy-macro-pane" style="margin-top:6px">
+            <div class="canvas-wrap">
+              <canvas id="phyCircuitCanvas" width="760" height="330"></canvas>
             </div>
+            <div class="canvas-tip">提示：可直接点击画布中的“开关 S”或使用下方/右侧控制台操作。</div>
           </div>
-          <div class="canvas-wrap">
-            <canvas id="phyMicroCanvas" width="760" height="220"></canvas>
-          </div>
-          <div class="micro-caption" id="phyMicroCaption">
-            开关断开时，导体内没有电场，自由电子仍在做剧烈的无规则热运动（Thermal Motion），各方向抵消，因此宏观电流为 0。
+
+          <div class="phy-sub-block phy-micro-pane">
+            <div class="card-header" style="margin-bottom:6px">
+              <h3>金属导体微观放大镜 <span class="en-inline">Microscopic Conductor Zoom</span></h3>
+              <div class="legend-row">
+                <span class="legend-item"><i class="swatch swatch-gray"></i> 金属阳离子 <span class="en-inline">(+)</span></span>
+                <span class="legend-item"><i class="swatch swatch-blue"></i> 自由电子 <span class="en-inline">e⁻</span></span>
+                <span class="legend-item"><i class="swatch swatch-purple"></i> 电场 <span class="en-inline">E</span></span>
+              </div>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="phyMicroCanvas" width="760" height="220"></canvas>
+            </div>
+            <div class="micro-caption" id="phyMicroCaption">
+              开关断开时，导体内没有电场，自由电子仍在做剧烈的无规则热运动（Thermal Motion），各方向抵消，因此宏观电流为 0。
+            </div>
           </div>
         </div>
       </div>
@@ -176,6 +198,7 @@
   </main>
 
   <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="../shared/mobile-stage.js"></script>
   <script src="js/hs-electricity.js"></script>
 </body>
 </html>
