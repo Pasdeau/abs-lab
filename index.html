@@ -33,7 +33,7 @@
       <div class="stat-box">
         <div class="lbl">⚡ 物理 <span class="en-inline">Physics</span></div>
         <div class="val" id="stat-phy">0 已掌握</div>
-        <div class="sub" id="stat-phy-sub">电学实验 1/4 · 21合1未开始</div>
+        <div class="sub" id="stat-phy-sub">实验台 0/21 · 高中电学 0/4</div>
       </div>
       <div class="stat-box">
         <div class="lbl">🧪 化学 <span class="en-inline">Chemistry</span></div>
@@ -232,12 +232,14 @@
 
         document.getElementById("stat-phy").textContent = s.kmMastered + " 知识点已掌握";
         document.getElementById("stat-phy-sub").textContent =
-          "高中电学 " + s.hsDone + "/" + s.hsTotal + " · 实验台" + (s.mxCur ? "第 " + s.mxCur + "/21 节" : "未开始");
+          "实验台已学 " + s.circuitsDone + "/" + s.circuitsTotal + " · 高中电学 " + s.hsDone + "/" + s.hsTotal;
         document.getElementById("stat-chem").textContent = s.chemDone + " / " + s.chemTotal;
         document.getElementById("stat-bio").textContent = s.bioDone + " / " + s.bioTotal;
 
-        if (s.mxCur) {
-          document.getElementById("card-mx-status").textContent = "上次浏览：第 " + s.mxCur + " 节";
+        if (s.circuitsDone > 0) {
+          document.getElementById("card-mx-status").textContent = "已学 " + s.circuitsDone + " / " + s.circuitsTotal + " 节";
+        } else {
+          document.getElementById("card-mx-status").textContent = "21 个互动实验";
         }
         document.getElementById("card-hs-status").textContent = "已完成 " + s.hsDone + " / " + s.hsTotal;
         document.getElementById("card-chem-status").textContent = "已完成 " + s.chemDone + " / " + s.chemTotal;

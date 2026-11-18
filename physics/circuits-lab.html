@@ -140,6 +140,11 @@ input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid var(--su
 #zbox{background:#fff;border-radius:12px;flex:0 0 auto;padding:6px}
 #zbox svg{display:block}
 footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
+
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.learn-btn{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.learn-btn:hover{border-color:var(--green);color:var(--green)}
+.learn-btn.done{background:var(--green);border-color:var(--green);color:#fff}
 </style>
 <script src="../shared/auth.js"></script>
 </head>
@@ -147,7 +152,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <script src="../shared/topbar.js" data-root=".." data-page="circuits-lab" data-mode="compact"></script>
 <header><h1>明馨的电学实验台</h1><p class="sub">电路 1–13 · 电与磁 14–21 · 动手拖一拖、点一点</p>
 <details><summary>怎么用？</summary><ul>
-<li>电路：1–5 已学，6–7 预习，8–13 结合真题进阶。电与磁（九年级第二十章）：14–18 预习，19–21 结合中考题进阶。</li>
+<li>本实验台包含电路（1–13）与电与磁（14–21）共 21 个互动实验；学完任一模块可点标题旁的「标记已学」，仅已学模块会显示绿色“已学”标记。</li>
 <li>电路图里橙色的小点表示电流方向（从电源正极出发），点跑得越快电流越大。</li>
 <li>每张图右上角都有“放大”。在手机上竖着拿时，放大后图会自动横过来，看得更清楚。</li>
 <li>手机上：用最上面的下拉菜单或左右箭头换模块；电脑和平板上：先选“电路 / 电与磁”，再点模块。</li>
@@ -228,7 +233,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m6">
-<h2>6 · 预习：电功率与灯的亮度</h2><p class="lead">以后会学：灯有多亮，看的是实际功率 P = UI，不是电流也不是电压单独说了算。</p>
+<h2>6 · 电功率与灯的亮度</h2><p class="lead">灯有多亮，看的是实际功率 P = UI，不是电流也不是电压单独说了算。</p>
 <div class="grid"><div class="stage"><svg id="s6" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>实验一：一盏“6 V 3 W”的灯</h3>
@@ -236,12 +241,12 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <div class="read" id="r6"></div><div id="o6"></div></div>
 <div class="card ctl"><h3>实验二：“6 V 3 W”和“6 V 6 W”接到 6 V 电源</h3>
 <div class="btns"><button data-set="m6:0">只看实验一</button><button data-set="m6:1">两灯串联</button><button data-set="m6:2">两灯并联</button></div><div id="o6b"></div></div>
-<div class="tip"><b>要点（预习）</b><ul><li>额定功率是灯上标的值，只有在额定电压下才达到。</li><li>实际电压变了，实际功率跟着变：P = U²/R。</li><li>串联时电流相同，电阻大的灯更亮；并联时电压相同，电阻小的灯更亮。</li></ul></div>
+<div class="tip"><b>要点</b><ul><li>额定功率是灯上标的值，只有在额定电压下才达到。</li><li>实际电压变了，实际功率跟着变：P = U²/R。</li><li>串联时电流相同，电阻大的灯更亮；并联时电压相同，电阻小的灯更亮。</li></ul></div>
 </div></div>
 </section>
 
 <section id="m7">
-<h2>7 · 预习：家庭电路为什么会跳闸</h2><p class="lead">家里的用电器都是并联的。点一点，把它们一个个打开。</p>
+<h2>7 · 家庭电路为什么会跳闸</h2><p class="lead">家里的用电器都是并联的。点一点，把它们一个个打开。</p>
 <div class="grid"><div class="stage"><svg id="s7" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card"><h3>用电器（电压 220 V）</h3><div class="apps" id="a7"></div>
@@ -249,12 +254,12 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <div class="card"><h3>干路</h3><div class="read" id="r7"></div>
 <div style="font-size:12.5px;color:var(--muted);margin-top:6px">干路电流（上限 16 A）</div><div class="bar"><i id="bar7"></i></div>
 <div style="font-size:12.5px;color:var(--muted)">导线发热（与电流的平方成正比）</div><div class="bar"><i id="bar7b" style="background:var(--coral)"></i></div><div id="o7"></div></div>
-<div class="tip"><b>要点（预习）</b><ul><li>并联的用电器越多，干路电流越大：I = P<sub>总</sub> / U。</li><li>焦耳定律 Q = I²Rt：电流翻倍，导线发热变成 4 倍。</li><li>电流过大时空气开关自动断开，保护导线不被烧坏。</li></ul></div>
+<div class="tip"><b>要点</b><ul><li>并联的用电器越多，干路电流越大：I = P<sub>总</sub> / U。</li><li>焦耳定律 Q = I²Rt：电流翻倍，导线发热变成 4 倍。</li><li>电流过大时空气开关自动断开，保护导线不被烧坏。</li></ul></div>
 </div></div>
 </section>
 
 <section id="m8">
-<h2>8 · 进阶：去表法——同一个电路的两副面孔</h2><p class="lead">原型是这次考试物理第 5 题。点图里的甲、乙可以把电压表换成电流表，再点开关 S，看电路结构怎么变。</p>
+<h2>8 · 去表法——同一个电路的两副面孔</h2><p class="lead">原型是这次考试物理第 5 题。点图里的甲、乙可以把电压表换成电流表，再点开关 S，看电路结构怎么变。</p>
 <div class="grid"><div class="stage"><svg id="s8" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -269,7 +274,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m9">
-<h2>9 · 进阶：动态电路——谁变、谁不变、比值和差值</h2><p class="lead">原型是物理第 12 题。拖动滑片，下面的表会告诉你每个量的变化方向；再切到“串联变形”对比。</p>
+<h2>9 · 动态电路——谁变、谁不变、比值和差值</h2><p class="lead">原型是物理第 12 题。拖动滑片，下面的表会告诉你每个量的变化方向；再切到“串联变形”对比。</p>
 <div class="grid"><div class="stage"><svg id="s9" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -282,7 +287,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m10">
-<h2>10 · 进阶：填电表挑战</h2><p class="lead">原型是物理第 15 题。点三个圆圈在电流表和电压表之间切换，完成指定的任务。</p>
+<h2>10 · 填电表挑战</h2><p class="lead">原型是物理第 15 题。点三个圆圈在电流表和电压表之间切换，完成指定的任务。</p>
 <div class="grid"><div class="stage"><svg id="s10" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>任务</h3>
@@ -296,7 +301,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m11">
-<h2>11 · 进阶：开关组合——一个电路，多种状态</h2><p class="lead">这是很常见的综合题型（改编）。三个开关有 8 种组合，试着完成右边的四个任务。</p>
+<h2>11 · 开关组合——一个电路，多种状态</h2><p class="lead">这是很常见的综合题型（改编）。三个开关有 8 种组合，试着完成右边的四个任务。</p>
 <div class="grid"><div class="stage"><svg id="s11" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -309,7 +314,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m12">
-<h2>12 · 进阶：电路安全——滑片最多能滑到哪</h2><p class="lead">常见的压轴题型（改编）。电流表量程 0～0.6 A，电压表量程 0～3 V。先自己算出变阻器的安全范围，再拖滑片验证。</p>
+<h2>12 · 电路安全——滑片最多能滑到哪</h2><p class="lead">常见的压轴题型（改编）。电流表量程 0～0.6 A，电压表量程 0～3 V。先自己算出变阻器的安全范围，再拖滑片验证。</p>
 <div class="grid"><div class="stage"><svg id="s12" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -324,7 +329,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m13">
-<h2>13 · 进阶：传感器类综合题——风速仪</h2><p class="lead">原型是物理第 21 题。风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
+<h2>13 · 传感器类综合题——风速仪</h2><p class="lead">原型是物理第 21 题。风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
 <div class="grid"><div class="stage"><svg id="s13" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -338,7 +343,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m14">
-<h2>14 · 预习：磁场与磁感线</h2><p class="lead">第二十章第 1 节。拖动（或点一下）图里的大指南针，看它在不同位置指向哪里。</p>
+<h2>14 · 磁场与磁感线</h2><p class="lead">第二十章第 1 节。拖动（或点一下）图里的大指南针，看它在不同位置指向哪里。</p>
 <div class="grid"><div class="stage"><svg id="s14" viewBox="0 0 560 340"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>选择磁体</h3>
@@ -355,7 +360,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m15">
-<h2>15 · 预习：电生磁——奥斯特实验与安培定则</h2><p class="lead">第二十章第 2 节。先看一根通电导线，再把导线绕成螺线管。</p>
+<h2>15 · 电生磁——奥斯特实验与安培定则</h2><p class="lead">第二十章第 2 节。先看一根通电导线，再把导线绕成螺线管。</p>
 <div class="grid"><div class="stage"><svg id="s15" viewBox="0 0 560 340"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -373,7 +378,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m16">
-<h2>16 · 预习：电磁铁的磁性强弱</h2><p class="lead">第二十章第 3 节。两个电磁铁串联：A 绕 50 匝，B 绕 100 匝。看它们各吸起多少枚大头针。</p>
+<h2>16 · 电磁铁的磁性强弱</h2><p class="lead">第二十章第 3 节。两个电磁铁串联：A 绕 50 匝，B 绕 100 匝。看它们各吸起多少枚大头针。</p>
 <div class="grid"><div class="stage"><svg id="s16" viewBox="0 0 560 290"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -390,7 +395,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m17">
-<h2>17 · 预习：磁场对通电导线的作用——电动机</h2><p class="lead">第二十章第 4、5 节。通电导线在磁场里会受力；把受力变成持续的转动，就是电动机。</p>
+<h2>17 · 磁场对通电导线的作用——电动机</h2><p class="lead">第二十章第 4、5 节。通电导线在磁场里会受力；把受力变成持续的转动，就是电动机。</p>
 <div class="grid"><div class="stage"><svg id="s17" viewBox="0 0 560 345"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -408,7 +413,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m18">
-<h2>18 · 预习：磁生电——电磁感应与发电机</h2><p class="lead">第二十章第 6 节。让导体在磁场里动起来，看灵敏电流计（零刻度在中间）的指针。</p>
+<h2>18 · 磁生电——电磁感应与发电机</h2><p class="lead">第二十章第 6 节。让导体在磁场里动起来，看灵敏电流计（零刻度在中间）的指针。</p>
 <div class="grid"><div class="stage"><svg id="s18" viewBox="0 0 560 320"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -428,7 +433,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m19">
-<h2>19 · 进阶：电磁继电器——用弱电控制强电</h2><p class="lead">第二十章第 3 节的压轴题型。左下是控制电路，右边是工作电路，中间靠电磁铁和衔铁联系起来。</p>
+<h2>19 · 电磁继电器——用弱电控制强电</h2><p class="lead">第二十章第 3 节的压轴题型。左下是控制电路，右边是工作电路，中间靠电磁铁和衔铁联系起来。</p>
 <div class="grid"><div class="stage"><svg id="s19" viewBox="0 0 560 340"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>情境</h3>
@@ -449,7 +454,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m20">
-<h2>20 · 进阶：弹簧、磁铁和电磁铁</h2><p class="lead">中考高频题型（改编）：把安培定则、磁极间的相互作用和动态电路串在一起考。</p>
+<h2>20 · 弹簧、磁铁和电磁铁</h2><p class="lead">中考高频题型（改编）：把安培定则、磁极间的相互作用和动态电路串在一起考。</p>
 <div class="grid"><div class="stage"><svg id="s20" viewBox="0 0 560 340"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -467,7 +472,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 <section id="m21">
-<h2>21 · 进阶：原理辨析——用的是哪个原理？</h2><p class="lead">中考选择题的常客：给出一个装置或实验，问它利用了哪个原理。</p>
+<h2>21 · 原理辨析——用的是哪个原理？</h2><p class="lead">中考选择题的常客：给出一个装置或实验，问它利用了哪个原理。</p>
 <div class="grid"><div class="stage nostick" style="padding:16px 18px"><div id="s21"></div></div>
 <div class="side">
 <div class="card"><h3>得分</h3><div class="read" id="r21"></div></div>
@@ -1115,8 +1120,58 @@ function draw(){MODS[cur][3]();document.querySelectorAll('[data-t]').forEach(b=>
   document.querySelectorAll('[data-f]').forEach(b=>b.classList.toggle('on',!S.q&&S.f==b.dataset.f))}
 
 const GRP=i=>i<13?0:1,LAST=[0,13];
-$('chips').innerHTML=MODS.map((m,k)=>`<button class="${['','pre','adv'][m[2]]} g${GRP(k)}" onclick="go(${k})"><small>${['已学','预习','进阶'][m[2]]}</small>${k+1} ${m[1]}</button>`).join('');
-$('msel').innerHTML=['电路','电与磁'].map((g,G)=>`<optgroup label="${g}">`+MODS.map((m,k)=>GRP(k)==G?`<option value="${k}">${k+1} ${m[1]}（${['已学','预习','进阶'][m[2]]}）</option>`:'').join('')+'</optgroup>').join('');
+function getLearnedMap(){
+  if(window.ABSLabAuth){
+    const m=window.ABSLabAuth.getProgress('circuits_learned',{});
+    return (m&&typeof m==='object')?Object.assign({},m):{};
+  }
+  return {};
+}
+function isLearned(id){return !!getLearnedMap()[id]}
+function toggleLearned(id){
+  const m=getLearnedMap();
+  if(m[id]) delete m[id]; else m[id]=true;
+  if(window.ABSLabAuth) window.ABSLabAuth.setProgress('circuits_learned',m);
+  renderProgressBadges();
+}
+function renderProgressBadges(){
+  const m=getLearnedMap();
+  $('chips').innerHTML=MODS.map((mod,k)=>{
+    const done=!!m[mod[0]];
+    return `<button class="g${GRP(k)}${k==cur?' on':''}" onclick="go(${k})">${done?'<small>已学</small>':''}${k+1} ${mod[1]}</button>`;
+  }).join('');
+  $('msel').innerHTML=['电路','电与磁'].map((g,G)=>`<optgroup label="${g}">`+MODS.map((mod,k)=>{
+    if(GRP(k)!=G) return '';
+    const done=!!m[mod[0]];
+    return `<option value="${k}">${k+1} ${mod[1]}${done?'（已学）':''}</option>`;
+  }).join('')+'</optgroup>').join('');
+  $('msel').value=cur;
+  MODS.forEach(mod=>{
+    const btn=document.querySelector('#'+mod[0]+' .learn-btn');
+    if(!btn) return;
+    const done=!!m[mod[0]];
+    btn.classList.toggle('done',done);
+    btn.textContent=done?'✓ 已学':'标记已学';
+  });
+  navH();
+}
+MODS.forEach(mod=>{
+  const sec=$(mod[0]);
+  const h2=sec&&sec.querySelector('h2');
+  if(!h2) return;
+  const wrap=document.createElement('div');
+  wrap.className='sec-head';
+  h2.parentNode.insertBefore(wrap,h2);
+  wrap.appendChild(h2);
+  const btn=document.createElement('button');
+  btn.type='button';
+  btn.className='learn-btn';
+  btn.textContent='标记已学';
+  btn.addEventListener('click',()=>toggleLearned(mod[0]));
+  wrap.appendChild(btn);
+});
+renderProgressBadges();
+window.addEventListener('abs-auth-changed',renderProgressBadges);
 $('msel').addEventListener('change',e=>go(+e.target.value));
 document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>go(LAST[+b.dataset.g])));
 MODS.forEach((m,k)=>{const d=document.createElement('div');d.className='pager';

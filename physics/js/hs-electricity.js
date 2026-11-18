@@ -32,7 +32,7 @@
     var taskListEl = document.getElementById("phyTaskList");
 
     function loadSavedTasks() {
-      var def = { open: true, close: false, ohm: false, flip: false };
+      var def = { close: false, open: false, ohm: false, flip: false };
       if (!window.ABSLabAuth) return def;
       var saved = window.ABSLabAuth.getProgress("hs_elec_tasks", null);
       return saved ? Object.assign({}, def, saved) : def;
@@ -169,6 +169,8 @@
         if (Math.abs(state.voltage - 12) < 0.01 && Math.abs(state.resistance - 6) < 0.01) {
           markTask("ohm");
         }
+      } else if (!state.isClosed && state.completedTasks.close) {
+        markTask("open");
       }
     }
 

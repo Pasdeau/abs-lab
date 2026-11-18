@@ -167,7 +167,7 @@
               : '<span class="abs-shell-badge local">本地模式</span>') +
           '</div>' +
           '<div class="abs-shell-stats">' +
-            '<div class="abs-shell-stat"><span>⚡ 物理</span><b>' + summary.kmMastered + ' 导图 · 电学 ' + summary.hsDone + '/' + summary.hsTotal + '</b></div>' +
+            '<div class="abs-shell-stat"><span>⚡ 物理</span><b>导图 ' + summary.kmMastered + ' · 实验台 ' + summary.circuitsDone + '/' + summary.circuitsTotal + ' · 高中 ' + summary.hsDone + '/' + summary.hsTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>🧪 化学</span><b>滴定任务 ' + summary.chemDone + ' / ' + summary.chemTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>📐 数学</span><b>规划中</b></div>' +
             '<div class="abs-shell-stat"><span>🧬 生物</span><b>显微镜 ' + summary.bioDone + ' / ' + summary.bioTotal + '</b></div>' +

@@ -118,7 +118,8 @@
     return {
       lang: "bilingual",
       visited: {},
-      hs_elec_tasks: { open: true, close: false, ohm: false, flip: false },
+      circuits_learned: {},
+      hs_elec_tasks: { close: false, open: false, ohm: false, flip: false },
       chem_neut_tasks: { drip: false, jump: false, indicator: false },
       bio_micro_tasks: { focus_low: false, high_mag: false, animal_cell: false, organelle: false },
       bridged: {}
@@ -483,14 +484,17 @@
       var mxCur = bridged["mx_lab_cur"] !== undefined ? parseInt(bridged["mx_lab_cur"], 10) + 1 : null;
       if (isNaN(mxCur)) mxCur = null;
 
+      var circuitsLearned = data.circuits_learned || {};
+      var circuitsDone = Object.keys(circuitsLearned).filter(function (k) { return !!circuitsLearned[k]; }).length;
+
       var hsTasks = data.hs_elec_tasks || {};
-      var hsDone = Object.keys(hsTasks).filter(function (k) { return hsTasks[k]; }).length;
+      var hsDone = ["close", "open", "ohm", "flip"].filter(function (k) { return !!hsTasks[k]; }).length;
 
       var chemTasks = data.chem_neut_tasks || {};
-      var chemDone = Object.keys(chemTasks).filter(function (k) { return chemTasks[k]; }).length;
+      var chemDone = Object.keys(chemTasks).filter(function (k) { return !!chemTasks[k]; }).length;
 
       var bioTasks = data.bio_micro_tasks || {};
-      var bioDone = Object.keys(bioTasks).filter(function (k) { return bioTasks[k]; }).length;
+      var bioDone = Object.keys(bioTasks).filter(function (k) { return !!bioTasks[k]; }).length;
 
       return {
         username: bucket.username,
@@ -498,6 +502,8 @@
         kmMastered: kmMastered,
         kmMarked: kmMarked,
         mxCur: mxCur,
+        circuitsDone: circuitsDone,
+        circuitsTotal: 21,
         hsDone: hsDone,
         hsTotal: 4,
         chemDone: chemDone,
