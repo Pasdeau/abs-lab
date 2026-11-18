@@ -86,11 +86,10 @@
 
     var navItems = [
       { id: "home", label: "首页", href: url("index.html") },
-      { id: "knowledge-map", label: "物理知识导图", href: url("physics/knowledge-map.html") },
-      { id: "circuits-lab", label: "电学实验台", href: url("physics/circuits-lab.html") },
-      { id: "hs-electricity", label: "高中电学", href: url("physics/hs-electricity.html") },
-      { id: "neutralization", label: "化学滴定", href: url("chemistry/neutralization.html") },
-      { id: "microscope", label: "显微镜实验", href: url("biology/microscope.html") }
+      { id: "physics", label: "⚡ 物理", href: url("index.html#physics"), match: ["knowledge-map", "circuits-lab", "hs-electricity"] },
+      { id: "chemistry", label: "🧪 化学", href: url("chemistry/neutralization.html"), match: ["neutralization"] },
+      { id: "math", label: "📐 数学", href: url("math/index.html"), match: ["math"] },
+      { id: "biology", label: "🧬 生物", href: url("biology/microscope.html"), match: ["biology", "microscope"] }
     ];
 
     var bar = document.createElement("div");
@@ -104,7 +103,8 @@
           '</a>' +
           '<div class="abs-shell-nav">' +
             navItems.map(function (it) {
-              return '<a class="abs-shell-link' + (it.id === PAGE ? ' is-cur' : '') + '" href="' + it.href + '">' + it.label + '</a>';
+              var isCur = it.id === PAGE || (it.match && it.match.indexOf(PAGE) !== -1);
+              return '<a class="abs-shell-link' + (isCur ? ' is-cur' : '') + '" href="' + it.href + '">' + it.label + '</a>';
             }).join("") +
           '</div>' +
         '</div>' +
@@ -167,10 +167,10 @@
               : '<span class="abs-shell-badge local">本地模式</span>') +
           '</div>' +
           '<div class="abs-shell-stats">' +
-            '<div class="abs-shell-stat"><span>物理知识导图</span><b>' + summary.kmMastered + ' 已掌握 / ' + summary.kmMarked + ' 标记</b></div>' +
-            '<div class="abs-shell-stat"><span>21合1电学实验台</span><b>' + (summary.mxCur ? '第 ' + summary.mxCur + ' / 21 节' : '未开始') + '</b></div>' +
-            '<div class="abs-shell-stat"><span>高中双语电学</span><b>' + summary.hsDone + ' / ' + summary.hsTotal + '</b></div>' +
-            '<div class="abs-shell-stat"><span>化学 · 生物实验</span><b>' + summary.chemDone + '/' + summary.chemTotal + ' · ' + summary.bioDone + '/' + summary.bioTotal + '</b></div>' +
+            '<div class="abs-shell-stat"><span>⚡ 物理</span><b>' + summary.kmMastered + ' 导图 · 电学 ' + summary.hsDone + '/' + summary.hsTotal + '</b></div>' +
+            '<div class="abs-shell-stat"><span>🧪 化学</span><b>滴定任务 ' + summary.chemDone + ' / ' + summary.chemTotal + '</b></div>' +
+            '<div class="abs-shell-stat"><span>📐 数学</span><b>规划中</b></div>' +
+            '<div class="abs-shell-stat"><span>🧬 生物</span><b>显微镜 ' + summary.bioDone + ' / ' + summary.bioTotal + '</b></div>' +
           '</div>' +
           '<div class="abs-shell-actions">' +
             '<button type="button" class="abs-shell-act" id="absExportBtn">导出备份</button>' +

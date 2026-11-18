@@ -1,16 +1,21 @@
 (function () {
   function initMicroscope() {
-    var canvas = document.getElementById("micCanvas");
-    if (!canvas) return;
-    var ctx = canvas.getContext("2d");
+    var specCanvas = document.getElementById("micSpecCanvas");
+    var overlayCanvas = document.getElementById("micOverlayCanvas");
+    var viewport = document.getElementById("micViewport");
+    if (!specCanvas || !overlayCanvas || !viewport) return;
 
-    // 4 种真实显微标本参数
+    var sCtx = specCanvas.getContext("2d");
+    var oCtx = overlayCanvas.getContext("2d");
+
+    // 焦平面特意设为非 2.5 整数倍（粗准焦步进为 2.5），还原真实物理：
+    // 只靠粗准焦螺旋无法达到 100% 锐利，必须配合细准焦螺旋精调！
     var SPECIMENS = {
       onion: {
         name: "洋葱鳞片叶内表皮细胞",
         en: "Onion Epidermis (Iodine Stained)",
         src: "specimens/onion-epidermis.jpg",
-        baseFocus: 62.0,
+        baseFocus: 63.65,
         desc: "典型植物表皮细胞，呈排列紧密的长方形/多边形砖墙结构。经碘液染色后，细胞壁轮廓清晰，细胞核染成深黄褐色，中央为大液泡，不含叶绿体。",
         features: [
           ["细胞壁", "Cell Wall · 规则多边形保护结构"],
@@ -28,7 +33,7 @@
         name: "人口腔上皮细胞",
         en: "Human Cheek Epithelial Cells (Methylene Blue)",
         src: "specimens/cheek-cells.jpg",
-        baseFocus: 65.5,
+        baseFocus: 66.2,
         desc: "典型动物细胞（扁平上皮细胞）。用亚甲基蓝染色后，深蓝色椭圆形细胞核清晰可见；与植物细胞相比，它没有细胞壁、没有大液泡、也没有叶绿体，外轮廓柔软不规则。",
         features: [
           ["细胞膜", "Cell Membrane · 柔软不规则边界"],
@@ -46,7 +51,7 @@
         name: "黑藻叶片细胞",
         en: "Elodea Leaf Cells (Unstained Living Tissue)",
         src: "specimens/elodea-leaf.jpg",
-        baseFocus: 58.5,
+        baseFocus: 58.85,
         desc: "高中生物观察叶绿体和细胞质流动的经典材料：叶片仅由一两层细胞构成，无需染色即可直接观察到大量椭球形绿色叶绿体沿细胞壁内侧分布。",
         features: [
           ["叶绿体", "Chloroplasts · 翠绿色椭球体"],
@@ -64,7 +69,7 @@
         name: "人血涂片",
         en: "Human Blood Smear (Wright-Giemsa)",
         src: "specimens/blood-smear.jpg",
-        baseFocus: 68.0,
+        baseFocus: 68.7,
         desc: "瑞氏染色的人外周血涂片：数量最多的是粉红色双凹圆盘状红细胞（哺乳动物成熟红细胞无细胞核）；体积较大、带有深紫色分叶或大圆核的是白细胞；细小紫点为血小板。",
         features: [
           ["红细胞", "RBC · 数量最多，双凹圆盘无核"],
@@ -81,13 +86,10 @@
       }
     };
 
-    // 预加载全部样本图
     var images = {};
     Object.keys(SPECIMENS).forEach(function (k) {
       var img = new Image();
-      img.onload = function () {
-        if (state.specimen === k) render();
-      };
+      img.onload = function () { if (state.specimen === k) render(); };
       img.src = SPECIMENS[k].src;
       images[k] = img;
     });
@@ -102,22 +104,19 @@
     var state = {
       specimen: "onion",
       eyepiece: 10,
-      objective: 4,     // 4, 10, 40
-      coarse: 28.0,     // 0 .. 100（初始故意离焦，让学生动手调焦！）
-      fine: 50.0,       // 0 .. 100 -> 偏移 (fine - 50) * 0.08
-      panX: 0.08,       // 归一偏移 -0.35 .. +0.35
-      panY: -0.06,
-      aperture: 1.0,    // 0.65 小, 1.0 中, 1.45 大
-      mirror: 1.0,      // 1.0 平面镜, 1.35 凹面镜
+      objective: 4,
+      coarse: 27.5, // 粗准焦步进 2.5
+      fine: 50.0,   // 细准焦 0..100 -> 偏移 (fine - 50) * 0.05 = [-2.5, +2.5]
+      // slideX/slideY 表示物理载物台玻片位置；视野成倒立像，视野图像偏移 = -slideX, -slideY！
+      slideX: -0.07,
+      slideY: 0.05,
+      aperture: 1.0,
+      mirror: 1.0,
       showCrosshair: true,
       showLabels: false,
-      coarseAngle: 0,
-      fineAngle: 0,
-      warningText: "",
       completedTasks: loadSavedTasks()
     };
 
-    // DOM 元素
     var magEl = document.getElementById("mic-mag");
     var magSubEl = document.getElementById("mic-mag-sub");
     var clarityEl = document.getElementById("mic-clarity");
@@ -128,6 +127,7 @@
     var stagePosEl = document.getElementById("mic-stage-pos");
     var warnEl = document.getElementById("micWarn");
     var captionEl = document.getElementById("micCaption");
+    var invertHintEl = document.getElementById("invertHint");
     var taskListEl = document.getElementById("micTaskList");
 
     var coarseSlider = document.getElementById("coarseSlider");
@@ -145,6 +145,7 @@
     var svgStageGroup = document.getElementById("svgStageGroup");
     var svgLamp = document.getElementById("svgLamp");
     var svgGapLabel = document.getElementById("svgGapLabel");
+    var miniSlideEl = document.getElementById("miniSlide");
 
     var specInfoTitle = document.getElementById("specInfoTitle");
     var specInfoDesc = document.getElementById("specInfoDesc");
@@ -173,27 +174,27 @@
       updateTaskUI();
     });
 
-    // 不同物镜的光学特性（齐焦微小偏差 + 景深灵敏度 + 光通量衰减）
     function getOptics() {
       var spec = SPECIMENS[state.specimen];
-      var objOffset = state.objective === 4 ? 0 : state.objective === 10 ? 0.6 : 1.5;
+      // 真实齐焦偏差：切高倍镜后焦面有细微偏移，必须用细准焦微调
+      var objOffset = state.objective === 4 ? 0 : state.objective === 10 ? 0.45 : 1.15;
       var targetZ = spec.baseFocus + objOffset;
-      var currentZ = state.coarse + (state.fine - 50) * 0.08;
+      var currentZ = state.coarse + (state.fine - 50) * 0.05;
       var defocus = Math.abs(currentZ - targetZ);
 
-      // 景深越浅（高倍镜），同样的离焦造成的模糊越剧烈
-      var sensitivity = state.objective === 4 ? 0.42 : state.objective === 10 ? 1.05 : 2.9;
-      var blurPx = Math.min(22, defocus * sensitivity);
-      var clarity = Math.max(0, Math.min(100, Math.round((1 - blurPx / 12) * 100)));
+      // 不同倍率景深：4x 较宽、10x 中等、40x 极浅
+      // 粗准焦最近步距约为 1.15，因此仅靠粗准焦时：
+      // 4x -> blur ≈ 1.8px (约82%较清，需细调至100%)
+      // 10x -> blur ≈ 3.8px (约62%模糊，必须细调)
+      // 40x -> blur ≈ 8.6px (约25%很模糊，必须细调)
+      var sensitivity = state.objective === 4 ? 1.55 : state.objective === 10 ? 3.3 : 7.5;
+      var blurPx = Math.min(26, defocus * sensitivity);
+      var clarity = Math.max(0, Math.min(100, Math.round(100 * Math.exp(-blurPx / 6.2))));
 
-      // 高倍镜进光量显著降低，需调大光圈/凹面镜补偿
       var objLightFactor = state.objective === 4 ? 1.05 : state.objective === 10 ? 0.88 : 0.56;
       var brightness = objLightFactor * state.aperture * state.mirror;
 
-      // 放大缩放倍率（视觉缩放）
-      var zoom = (state.objective / 4) * (state.eyepiece / 10);
-      // 4x -> 1.0x, 10x -> 2.15x, 40x -> 4.6x (清晰展示细胞核/叶绿体/白细胞细节)
-      var visualZoom = (state.objective === 4 ? 1.05 : state.objective === 10 ? 2.05 : 3.9) * (0.75 + 0.025 * state.eyepiece);
+      var visualZoom = (state.objective === 4 ? 1.08 : state.objective === 10 ? 2.1 : 4.0) * (0.75 + 0.025 * state.eyepiece);
 
       return {
         targetZ: targetZ,
@@ -217,7 +218,6 @@
     }
 
     function showWarning(msg) {
-      state.warningText = msg;
       if (msg) {
         warnEl.textContent = msg;
         warnEl.classList.add("show");
@@ -226,27 +226,24 @@
       }
     }
 
-    function updateSVG(opt) {
-      // 物镜长度与色环
-      var lensH = state.objective === 4 ? 22 : state.objective === 10 ? 32 : 44;
+    function updateDiagrams(opt) {
+      var lensH = state.objective === 4 ? 20 : state.objective === 10 ? 30 : 42;
       var ringColor = state.objective === 4 ? "#ef4444" : state.objective === 10 ? "#eab308" : "#2563eb";
       svgObjBody.setAttribute("height", String(lensH));
-      svgObjRing.setAttribute("y", String(90 + lensH - 10));
+      svgObjRing.setAttribute("y", String(82 + lensH - 9));
       svgObjRing.setAttribute("fill", ringColor);
 
-      // 载物台高度（currentZ 越大越靠近物镜，y 越小）
-      var stageY = 195 - (opt.currentZ / 100) * 58; // 195 -> 137
+      var stageY = 182 - (opt.currentZ / 100) * 54;
       svgStageGroup.setAttribute("transform", "translate(0," + stageY.toFixed(1) + ")");
 
-      var gapPx = stageY - 3 - (90 + lensH);
-      var wdMm = Math.max(0.2, (gapPx * 0.35)).toFixed(1);
-      wdEl.textContent = wdMm + " mm";
-      stagePosEl.textContent = "载物台高度 " + opt.currentZ.toFixed(1);
+      var gapPx = stageY - 3 - (82 + lensH);
+      wdEl.textContent = Math.max(0.2, gapPx * 0.35).toFixed(1) + " mm";
+      stagePosEl.textContent = "载物台高度 " + opt.currentZ.toFixed(2);
 
       if (gapPx < 8) {
         svgGapLabel.textContent = "物镜紧贴装片（仅用细准焦）";
         svgGapLabel.style.color = "#b91c1c";
-      } else if (gapPx < 24) {
+      } else if (gapPx < 22) {
         svgGapLabel.textContent = "物镜距装片：较近";
         svgGapLabel.style.color = "#d97706";
       } else {
@@ -255,148 +252,134 @@
       }
 
       svgLamp.setAttribute("opacity", String(Math.min(1, 0.35 + state.aperture * state.mirror * 0.45)));
+
+      // 俯视迷你载物台上的物理玻片位移（与视野成像方向严格相反！）
+      if (miniSlideEl) {
+        var tx = (state.slideX * 52).toFixed(1);
+        var ty = (state.slideY * 44).toFixed(1);
+        miniSlideEl.style.transform = "translate(" + tx + "px, " + ty + "px)";
+      }
     }
 
     function checkTasks(opt) {
-      var isSharp = opt.clarity >= 88;
+      var isSharp = opt.clarity >= 92;
       var isWellLit = opt.brightness >= 0.78;
-
-      if (state.specimen === "onion" && state.objective <= 10 && isSharp) {
-        markTask("focus_low");
-      }
-      if (state.objective === 40 && isSharp && isWellLit) {
-        markTask("high_mag");
-      }
-      if (state.specimen === "cheek" && isSharp) {
-        markTask("animal_cell");
-      }
-      if ((state.specimen === "elodea" || state.specimen === "blood") && state.objective === 40 && isSharp) {
-        markTask("organelle");
-      }
+      if (state.specimen === "onion" && state.objective <= 10 && isSharp) markTask("focus_low");
+      if (state.objective === 40 && isSharp && isWellLit) markTask("high_mag");
+      if (state.specimen === "cheek" && isSharp) markTask("animal_cell");
+      if ((state.specimen === "elodea" || state.specimen === "blood") && state.objective === 40 && isSharp) markTask("organelle");
     }
 
     function render() {
       var opt = getOptics();
-      var w = canvas.width;
-      var h = canvas.height;
+      var w = specCanvas.width;
+      var h = specCanvas.height;
       var cx = w / 2;
       var cy = h / 2;
       var r = w / 2;
 
-      ctx.clearRect(0, 0, w, h);
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.clip();
+      // 1. 底层画布绘制高清样本图像，用 CSS GPU filter 做模糊和亮度（100% 兼容 Safari / Chrome / iOS）
+      sCtx.clearRect(0, 0, w, h);
+      sCtx.fillStyle = "#f8fafc";
+      sCtx.fillRect(0, 0, w, h);
 
-      // 视野底色
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(0, 0, w, h);
+      var clampedBright = Math.max(0.32, Math.min(1.45, opt.brightness));
+      specCanvas.style.filter =
+        "blur(" + opt.blurPx.toFixed(2) + "px) brightness(" + clampedBright.toFixed(2) + ")";
 
       var img = images[state.specimen];
+      var drawSize = w * opt.visualZoom;
+      // 真实光学倒立像：玻片向右 (+slideX) 时，视野中的物像向左 (-slideX) 移动！
+      var viewPanX = -state.slideX;
+      var viewPanY = -state.slideY;
+      var dx = cx - drawSize / 2 + viewPanX * drawSize;
+      var dy = cy - drawSize / 2 + viewPanY * drawSize;
+
       if (img && img.complete && img.naturalWidth > 0) {
-        ctx.save();
-        var clampedBright = Math.max(0.32, Math.min(1.45, opt.brightness));
-        ctx.filter = "blur(" + opt.blurPx.toFixed(2) + "px) brightness(" + clampedBright.toFixed(2) + ")";
-
-        var drawSize = w * opt.visualZoom;
-        // 视野成倒立像：panX/panY 对应样本相对中心平移
-        var dx = cx - drawSize / 2 + state.panX * drawSize;
-        var dy = cy - drawSize / 2 + state.panY * drawSize;
-
-        // 稍微多画一圈镜像平铺，保证大幅移动玻片时不会露黑边
-        ctx.drawImage(img, dx, dy, drawSize, drawSize);
-        ctx.restore();
+        sCtx.drawImage(img, dx, dy, drawSize, drawSize);
       } else {
-        ctx.fillStyle = "#94a3b8";
-        ctx.font = "14px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("正在载入样本图像...", cx, cy);
+        sCtx.fillStyle = "#94a3b8";
+        sCtx.font = "14px sans-serif";
+        sCtx.textAlign = "center";
+        sCtx.fillText("正在载入样本图像...", cx, cy);
       }
 
-      // 清晰且开启标注时叠加细胞结构标注
-      if (state.showLabels && opt.clarity >= 82) {
-        var drawSizeL = w * opt.visualZoom;
-        var dxL = cx - drawSizeL / 2 + state.panX * drawSizeL;
-        var dyL = cy - drawSizeL / 2 + state.panY * drawSizeL;
-        var labels = SPECIMENS[state.specimen].labels || [];
+      // 2. 顶层叠加层（保持锐利，不随样本离焦而模糊：十字丝、比例尺、暗角、结构标注）
+      oCtx.clearRect(0, 0, w, h);
 
-        ctx.save();
-        ctx.font = "bold 12px sans-serif";
+      if (state.showLabels && opt.clarity >= 88) {
+        var labels = SPECIMENS[state.specimen].labels || [];
+        oCtx.save();
+        oCtx.font = "bold 12px sans-serif";
         for (var i = 0; i < labels.length; i++) {
           var lb = labels[i];
-          var lx = dxL + lb.x * drawSizeL;
-          var ly = dyL + lb.y * drawSizeL;
-          if (Math.hypot(lx - cx, ly - cy) > r - 24) continue;
+          var lx = dx + lb.x * drawSize;
+          var ly = dy + lb.y * drawSize;
+          if (Math.hypot(lx - cx, ly - cy) > r - 28) continue;
 
-          ctx.fillStyle = "rgba(15, 23, 42, 0.82)";
-          var tw = ctx.measureText(lb.text).width + 14;
-          ctx.beginPath();
-          ctx.roundRect(lx + 8, ly - 13, tw, 22, 6);
-          ctx.fill();
+          oCtx.fillStyle = "rgba(15, 23, 42, 0.84)";
+          var tw = oCtx.measureText(lb.text).width + 14;
+          oCtx.beginPath();
+          oCtx.roundRect(lx + 8, ly - 13, tw, 22, 6);
+          oCtx.fill();
 
-          ctx.fillStyle = "#facc15";
-          ctx.beginPath();
-          ctx.arc(lx, ly, 4, 0, Math.PI * 2);
-          ctx.fill();
+          oCtx.fillStyle = "#facc15";
+          oCtx.beginPath();
+          oCtx.arc(lx, ly, 4, 0, Math.PI * 2);
+          oCtx.fill();
 
-          ctx.fillStyle = "#ffffff";
-          ctx.textAlign = "left";
-          ctx.fillText(lb.text, lx + 15, ly + 2);
+          oCtx.fillStyle = "#ffffff";
+          oCtx.textAlign = "left";
+          oCtx.fillText(lb.text, lx + 15, ly + 2);
         }
-        ctx.restore();
+        oCtx.restore();
       }
 
-      // 十字刻度线与比例尺
       if (state.showCrosshair) {
-        ctx.save();
-        ctx.strokeStyle = "rgba(15, 23, 42, 0.25)";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(cx - 28, cy); ctx.lineTo(cx + 28, cy);
-        ctx.moveTo(cx, cy - 28); ctx.lineTo(cx, cy + 28);
-        ctx.stroke();
+        oCtx.save();
+        oCtx.strokeStyle = "rgba(15, 23, 42, 0.28)";
+        oCtx.lineWidth = 1;
+        oCtx.beginPath();
+        oCtx.moveTo(cx - 28, cy); oCtx.lineTo(cx + 28, cy);
+        oCtx.moveTo(cx, cy - 28); oCtx.lineTo(cx, cy + 28);
+        oCtx.stroke();
 
-        // 动态比例尺（随放大倍数变化）
-        var scaleUm = Math.round(8000 / opt.totalMag); // 40x -> 200 μm, 100x -> 80 μm, 400x -> 20 μm
-        var barLen = 68;
-        ctx.fillStyle = "rgba(15, 23, 42, 0.72)";
-        ctx.beginPath();
-        ctx.roundRect(cx - 46, h - 42, 92, 24, 6);
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(cx - barLen / 2, h - 25);
-        ctx.lineTo(cx + barLen / 2, h - 25);
-        ctx.stroke();
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px monospace";
-        ctx.textAlign = "center";
-        ctx.fillText(scaleUm + " μm", cx, h - 30);
-        ctx.restore();
+        var scaleUm = Math.round(8000 / opt.totalMag);
+        oCtx.fillStyle = "rgba(15, 23, 42, 0.74)";
+        oCtx.beginPath();
+        oCtx.roundRect(cx - 46, h - 42, 92, 24, 6);
+        oCtx.fill();
+        oCtx.strokeStyle = "#ffffff";
+        oCtx.lineWidth = 2.5;
+        oCtx.beginPath();
+        oCtx.moveTo(cx - 34, h - 25);
+        oCtx.lineTo(cx + 34, h - 25);
+        oCtx.stroke();
+        oCtx.fillStyle = "#ffffff";
+        oCtx.font = "bold 11px monospace";
+        oCtx.textAlign = "center";
+        oCtx.fillText(scaleUm + " μm", cx, h - 30);
+        oCtx.restore();
       }
 
-      // 真实目镜边缘暗角
-      var vig = ctx.createRadialGradient(cx, cy, r * 0.76, cx, cy, r);
+      // 目镜光学暗角
+      var vig = oCtx.createRadialGradient(cx, cy, r * 0.76, cx, cy, r);
       vig.addColorStop(0, "rgba(0,0,0,0)");
       vig.addColorStop(0.88, "rgba(0,0,0,0.16)");
       vig.addColorStop(1, "rgba(0,0,0,0.58)");
-      ctx.fillStyle = vig;
-      ctx.fillRect(0, 0, w, h);
+      oCtx.fillStyle = vig;
+      oCtx.fillRect(0, 0, w, h);
 
-      ctx.restore();
-
-      // 更新顶部指标与文字
+      // 指标更新
       magEl.textContent = opt.totalMag + "×";
       magSubEl.textContent = "目镜 " + state.eyepiece + "× · 物镜 " + state.objective + "×";
 
       clarityBarEl.style.width = opt.clarity + "%";
-      if (opt.clarity >= 90) {
-        clarityEl.textContent = "清晰 (" + opt.clarity + "%)";
+      if (opt.clarity >= 92) {
+        clarityEl.textContent = "锐利清晰 (" + opt.clarity + "%)";
         clarityEl.style.color = "#12956b";
       } else if (opt.clarity >= 60) {
-        clarityEl.textContent = "接近清晰 (" + opt.clarity + "%)";
+        clarityEl.textContent = "轮廓可见 (" + opt.clarity + "%)";
         clarityEl.style.color = "#d97706";
       } else {
         clarityEl.textContent = "离焦模糊 (" + opt.clarity + "%)";
@@ -424,69 +407,74 @@
       coarseWheel.style.transform = "rotate(" + (state.coarse * 7.2).toFixed(1) + "deg)";
       fineWheel.style.transform = "rotate(" + (state.fine * 10.8).toFixed(1) + "deg)";
 
-      // 动态实验指导语
-      if (opt.clarity < 85) {
-        var dirHint = opt.currentZ < opt.targetZ ? "增大（顺时针）" : "减小（逆时针）";
+      // 动态实验指导
+      var dirHint = opt.currentZ < opt.targetZ ? "调大（顺时针）" : "调小（逆时针）";
+      if (opt.clarity < 92) {
         if (state.objective === 40) {
-          captionEl.textContent = "高倍镜（40×）景深极浅：请轻轻调节「细准焦螺旋」（向" + dirHint + "微调），切勿大幅转动粗准焦螺旋！";
+          captionEl.textContent = "高倍镜（40×）景深极浅：请轻轻调节「细准焦螺旋」（" + dirHint + "）精调清晰，切勿转动粗准焦螺旋！";
+        } else if (opt.defocus > 2.2) {
+          captionEl.textContent = "当前离焦较远：请先旋转「粗准焦螺旋」（" + dirHint + "）快速找到细胞轮廓。";
         } else {
-          captionEl.textContent = "当前画面离焦：请旋转「粗准焦螺旋」（" + dirHint + "）快速接近焦平面，再用「细准焦螺旋」精调清晰。";
+          captionEl.textContent = "已接近焦平面（粗准焦步进较大，无法独自达到 100% 锐利）：请改用「细准焦螺旋」（" + dirHint + "）微调至完全清晰！";
         }
       } else if (opt.brightness < 0.72) {
-        captionEl.textContent = "已成功对焦！但高倍镜下进光量减少导致视野偏暗，请切换「大光圈」或「凹面镜」增亮视野。";
+        captionEl.textContent = "对焦已非常清晰！但高倍镜下进光量减少导致视野偏暗，请切换「大光圈」或「凹面镜」增亮视野。";
       } else {
-        captionEl.textContent = "成像清晰、亮度适宜！可以勾选上方「清晰时标注细胞结构」核对观察到的结构，或拖动视野探索其他细胞。";
+        captionEl.textContent = "成像锐利清晰、亮度适宜！可勾选「清晰时标注细胞结构」核对结构，或用载物台方向键观察倒立像反向移动。";
       }
 
-      updateSVG(opt);
+      updateDiagrams(opt);
       checkTasks(opt);
     }
 
+    function snapCoarse(val) {
+      return Math.round(Math.max(0, Math.min(100, val)) / 2.5) * 2.5;
+    }
+
     function setCoarse(val) {
-      var clamped = Math.max(0, Math.min(100, val));
-      // 40x 高倍镜安全检查：大幅转动粗准焦螺旋给教学警告
-      if (state.objective === 40 && Math.abs(clamped - state.coarse) > 1.2) {
-        showWarning("⚠️ 高倍镜规范警告：40× 物镜与玻片间距极近，严禁大幅转动粗准焦螺旋（易压碎装片或刮伤镜头）！请改用「细准焦螺旋」微调。");
-        // 允许极小位移或阻止压碎
-        if (clamped > SPECIMENS[state.specimen].baseFocus + 4) {
-          clamped = SPECIMENS[state.specimen].baseFocus + 4;
-        }
-      } else {
-        showWarning("");
+      var next = snapCoarse(val);
+      if (state.objective === 40 && Math.abs(next - state.coarse) >= 2.5) {
+        showWarning("⚠️ 高倍镜规范警告：40× 物镜与玻片间距极近，严禁转动粗准焦螺旋（易压碎装片或刮伤镜头）！请改用「细准焦螺旋」微调。");
+        return; // 高倍镜下保护装片，阻止粗调压碎
       }
-      state.coarse = clamped;
+      showWarning("");
+      state.coarse = next;
       render();
     }
 
     function setFine(val) {
       showWarning("");
-      state.fine = Math.max(0, Math.min(100, val));
+      state.fine = Math.round(Math.max(0, Math.min(100, val)) * 2) / 2;
       render();
     }
 
-    // 绑定旋钮拖拽与滚轮旋转
     function bindWheel(el, isFine) {
-      var dragging = false;
-      var lastY = 0;
-
+      var dragging = false, lastY = 0, acc = 0;
       el.addEventListener("pointerdown", function (ev) {
-        dragging = true;
-        lastY = ev.clientY;
+        dragging = true; lastY = ev.clientY; acc = 0;
         el.setPointerCapture(ev.pointerId);
       });
       el.addEventListener("pointermove", function (ev) {
         if (!dragging) return;
         var dy = lastY - ev.clientY;
         lastY = ev.clientY;
-        if (isFine) setFine(state.fine + dy * 0.6);
-        else setCoarse(state.coarse + dy * 0.45);
+        if (isFine) {
+          setFine(state.fine + dy * 0.45);
+        } else {
+          acc += dy;
+          if (Math.abs(acc) >= 12) {
+            var steps = Math.trunc(acc / 12);
+            acc -= steps * 12;
+            setCoarse(state.coarse + steps * 2.5);
+          }
+        }
       });
       el.addEventListener("pointerup", function () { dragging = false; });
       el.addEventListener("wheel", function (ev) {
         ev.preventDefault();
-        var delta = ev.deltaY < 0 ? 1 : -1;
-        if (isFine) setFine(state.fine + delta * 2.5);
-        else setCoarse(state.coarse + delta * 2.0);
+        var dir = ev.deltaY < 0 ? 1 : -1;
+        if (isFine) setFine(state.fine + dir * 2.0);
+        else setCoarse(state.coarse + dir * 2.5);
       }, { passive: false });
     }
     bindWheel(coarseWheel, false);
@@ -502,11 +490,10 @@
         var key = this.getAttribute("data-spec");
         state.specimen = key;
         for (var i = 0; i < specBtns.length; i++) specBtns[i].classList.toggle("active", specBtns[i] === this);
-        // 换新玻片：回到默认偏移，略微失焦（模拟真实换片需重新微调）
-        state.panX = 0.04;
-        state.panY = -0.03;
+        state.slideX = -0.04;
+        state.slideY = 0.03;
         if (state.objective === 4) {
-          state.coarse = Math.max(20, SPECIMENS[key].baseFocus - 18);
+          state.coarse = snapCoarse(SPECIMENS[key].baseFocus - 17.5);
         }
         state.fine = 50;
         showWarning("");
@@ -519,8 +506,7 @@
     var objBtns = document.querySelectorAll(".obj-btn");
     for (var o = 0; o < objBtns.length; o++) {
       objBtns[o].addEventListener("click", function () {
-        var nextObj = parseInt(this.getAttribute("data-obj"), 10);
-        state.objective = nextObj;
+        state.objective = parseInt(this.getAttribute("data-obj"), 10);
         for (var i = 0; i < objBtns.length; i++) objBtns[i].classList.toggle("active", objBtns[i] === this);
         showWarning("");
         render();
@@ -532,7 +518,6 @@
       render();
     });
 
-    // 光圈与反光镜
     var apBtns = document.querySelectorAll(".mic-ap");
     for (var a = 0; a < apBtns.length; a++) {
       apBtns[a].addEventListener("click", function () {
@@ -557,13 +542,21 @@
       });
     }
 
-    // 载物台移动按钮（真实倒立像：玻片向右移 -> 视野中物像向左移！）
+    // 真实倒立像：按下“玻片向右 →”时，物理玻片 slideX 增加（右移），视野中细胞像向左移！
     function moveSlide(dx, dy) {
-      var step = 0.06 / (state.objective === 4 ? 1 : state.objective === 10 ? 1.8 : 3.2);
-      state.panX = Math.max(-0.34, Math.min(0.34, state.panX - dx * step));
-      state.panY = Math.max(-0.34, Math.min(0.34, state.panY - dy * step));
+      var step = 0.055 / (state.objective === 4 ? 1 : state.objective === 10 ? 1.8 : 3.2);
+      state.slideX = Math.max(-0.34, Math.min(0.34, state.slideX + dx * step));
+      state.slideY = Math.max(-0.34, Math.min(0.34, state.slideY + dy * step));
+
+      var msg = "";
+      if (dx > 0) msg = "玻片向右移 (→)  ⇔  视野中物像向左移 (←)";
+      else if (dx < 0) msg = "玻片向左移 (←)  ⇔  视野中物像向右移 (→)";
+      else if (dy < 0) msg = "玻片向上移 (↑)  ⇔  视野中物像向下移 (↓)";
+      else if (dy > 0) msg = "玻片向下移 (↓)  ⇔  视野中物像向上移 (↑)";
+      if (msg && invertHintEl) invertHintEl.textContent = msg;
       render();
     }
+
     var moveBtns = document.querySelectorAll("[data-move]");
     for (var mv = 0; mv < moveBtns.length; mv++) {
       moveBtns[mv].addEventListener("click", function () {
@@ -572,25 +565,31 @@
       });
     }
     document.getElementById("micCenterBtn").addEventListener("click", function () {
-      state.panX = 0; state.panY = 0; render();
-    });
-
-    // 视野直接拖拽平移
-    var panDrag = false, px0 = 0, py0 = 0;
-    canvas.addEventListener("pointerdown", function (ev) {
-      panDrag = true; px0 = ev.clientX; py0 = ev.clientY;
-      canvas.setPointerCapture(ev.pointerId);
-    });
-    canvas.addEventListener("pointermove", function (ev) {
-      if (!panDrag) return;
-      var opt = getOptics();
-      var scale = canvas.getBoundingClientRect().width * opt.visualZoom;
-      state.panX = Math.max(-0.34, Math.min(0.34, state.panX + (ev.clientX - px0) / scale));
-      state.panY = Math.max(-0.34, Math.min(0.34, state.panY + (ev.clientY - py0) / scale));
-      px0 = ev.clientX; py0 = ev.clientY;
+      state.slideX = 0; state.slideY = 0;
+      if (invertHintEl) invertHintEl.textContent = "玻片已回到载物台正中央";
       render();
     });
-    canvas.addEventListener("pointerup", function () { panDrag = false; });
+
+    // 在视野中拖拽：手指向右拖动玻片 -> 玻片右移 -> 视野物像向左移（同样遵循真实倒立像！同时小玻片跟着手指同向移动）
+    var panDrag = false, px0 = 0, py0 = 0;
+    viewport.addEventListener("pointerdown", function (ev) {
+      panDrag = true; px0 = ev.clientX; py0 = ev.clientY;
+      viewport.setPointerCapture(ev.pointerId);
+    });
+    viewport.addEventListener("pointermove", function (ev) {
+      if (!panDrag) return;
+      var opt = getOptics();
+      var scale = viewport.getBoundingClientRect().width * opt.visualZoom;
+      var mdx = ev.clientX - px0;
+      var mdy = ev.clientY - py0;
+      px0 = ev.clientX; py0 = ev.clientY;
+      // 模拟手推载物台玻片：向右拖 -> 玻片向右 (+slideX) -> 目镜中物像向左移动！
+      state.slideX = Math.max(-0.34, Math.min(0.34, state.slideX + mdx / scale));
+      state.slideY = Math.max(-0.34, Math.min(0.34, state.slideY + mdy / scale));
+      if (invertHintEl) invertHintEl.textContent = "正在推动玻片：视野成像与玻片运动方向相反（倒立虚像）";
+      render();
+    });
+    viewport.addEventListener("pointerup", function () { panDrag = false; });
 
     crosshairChk.addEventListener("change", function () { state.showCrosshair = crosshairChk.checked; render(); });
     labelsChk.addEventListener("change", function () { state.showLabels = labelsChk.checked; render(); });
@@ -599,13 +598,14 @@
       state.objective = 4;
       state.eyepiece = 10;
       eyepieceSel.value = "10";
-      state.coarse = 28.0;
+      state.coarse = 27.5;
       state.fine = 50.0;
-      state.panX = 0.08;
-      state.panY = -0.06;
+      state.slideX = -0.07;
+      state.slideY = 0.05;
       state.aperture = 1.0;
       state.mirror = 1.0;
       showWarning("");
+      if (invertHintEl) invertHintEl.textContent = "点击方向键移动玻片，观察右侧小玻片与左侧视野的反向移动";
       for (var i = 0; i < objBtns.length; i++) objBtns[i].classList.toggle("active", objBtns[i].getAttribute("data-obj") === "4");
       for (var j = 0; j < apBtns.length; j++) {
         var isMid = apBtns[j].getAttribute("data-ap") === "1.0";
