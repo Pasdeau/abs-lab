@@ -234,7 +234,7 @@
           '</div>' +
           '<label class="abs-shell-chk">' +
             '<input type="checkbox" id="absRemember" checked />' +
-            '<span>记住我 <span style="color:#64748b">(Remember me · 下次打开免登录)</span></span>' +
+            '<span>记住我 <span style="color:#64748b">(下次打开免登录)</span></span>' +
           '</label>' +
           (activeTab === "register"
             ? '<label class="abs-shell-chk"><input type="checkbox" id="absInherit" checked /><span>保留当前浏览的学习记录</span></label>'
