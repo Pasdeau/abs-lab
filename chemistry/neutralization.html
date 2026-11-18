@@ -102,7 +102,12 @@
           <div class="divider"></div>
 
           <div class="control-group">
-            <div class="group-title">选择酸碱指示剂 <span class="en-inline">Indicator</span></div>
+            <div class="group-title">选择酸碱指示剂（点击切换对比变色） <span class="en-inline">Indicator</span></div>
+            <div class="btn-row" style="margin-bottom:8px">
+              <button class="btn btn-primary chem-ind-btn" data-ind="phenolphthalein" type="button">酚酞</button>
+              <button class="btn btn-outline chem-ind-btn" data-ind="litmus" type="button">紫色石蕊</button>
+              <button class="btn btn-outline chem-ind-btn" data-ind="methylorange" type="button">甲基橙</button>
+            </div>
             <div class="radio-stack">
               <label class="check-row">
                 <input type="radio" name="chemIndicator" value="phenolphthalein" checked />
@@ -144,11 +149,11 @@
         </div>
 
         <div class="card">
-          <h3>动手探究任务（自动记入账号进度） <span class="en-inline">Guided Tasks</span></h3>
+          <h3>动手探究任务 <span class="en-inline">Guided Tasks</span></h3>
           <ol class="task-list" id="chemTaskList">
             <li data-task="drip">滴加 NaOH，观察微观视野中 H⁺ 减少、H₂O 增加而 Cl⁻ 不变。</li>
             <li data-task="jump">到达或跨越 20.0 mL 中和点，在曲线上观察 pH 突跃与指示剂变色。</li>
-            <li data-task="indicator">切换不同指示剂（酚酞 / 石蕊 / 甲基橙），比较它们的变色区间。</li>
+            <li data-task="indicator">在上方「选择酸碱指示剂」中点击切换紫色石蕊或甲基橙，对比它们的变色区间。</li>
           </ol>
         </div>
       </aside>
@@ -169,7 +174,7 @@
     </div>
   </main>
 
-  <footer class="footer">ABS Lab · 化学双语互动实验</footer>
+  <footer class="footer">ABS-LAB · 作者：Wenzheng Wang · Hang Li</footer>
   <script src="js/neutralization.js"></script>
 </body>
 </html>

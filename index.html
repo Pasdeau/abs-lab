@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ABS Lab · 数理化生互动实验平台</title>
+  <title>ABS-LAB · 数理化生互动实验平台</title>
   <link rel="stylesheet" href="shared/theme.css" />
   <script src="shared/auth.js"></script>
 </head>
@@ -13,21 +13,20 @@
   <header class="hero-banner">
     <div class="hero-inner">
       <div>
-        <h1>ABS Lab · 数理化生互动实验平台 <span class="en-sub">Interactive STEM Lab &amp; Knowledge Atlas</span></h1>
+        <h1>ABS-LAB · 数理化生互动实验平台 <span class="en-sub">Interactive STEM Lab &amp; Knowledge Atlas</span></h1>
         <p>
-          从初中衔接到高中的可视化原理探索台：整合知识导图、21 合 1 电学实验台、双语高中微观电学与化学实验。
-          登录后可按用户名独立保存所有学习进度，平台更新不丢记录。
+          面向中学阶段的可视化原理探索与互动实验台：涵盖物理知识导图、21 合 1 电学实验台、双语微观电学、化学中和滴定与光学显微镜实操。
         </p>
       </div>
-      <button type="button" class="hero-pill-btn" id="heroAuthBtn">👤 登录 / 注册保存进度</button>
+      <button type="button" class="hero-pill-btn" id="heroAuthBtn">👤 登录 / 注册</button>
     </div>
   </header>
 
   <main class="container">
     <!-- 学习进度总览 -->
     <div class="section-head">
-      <h2>我的学习进度 <span class="en-inline">Learning Progress</span></h2>
-      <span id="homeAccountHint" style="font-size:0.86rem;color:var(--muted)">当前为游客模式，登录后可按用户名独立保存记录</span>
+      <h2>学习进度 <span class="en-inline">Learning Progress</span></h2>
+      <span id="homeAccountHint" style="font-size:0.86rem;color:var(--muted)">游客模式</span>
     </div>
 
     <div class="progress-strip">
@@ -39,17 +38,17 @@
       <div class="stat-box">
         <div class="lbl">21合1电学实验台 <span class="en-inline">Circuits Lab</span></div>
         <div class="val" id="stat-mx">尚未开始</div>
-        <div class="sub">自动记住上次浏览章节</div>
+        <div class="sub">电路 1–13 · 电与磁 14–21</div>
       </div>
       <div class="stat-box">
-        <div class="lbl">高中双语电学 <span class="en-inline">HS Electricity</span></div>
-        <div class="val" id="stat-hs">1 / 4</div>
-        <div class="sub">探究任务完成数</div>
+        <div class="lbl">高中电学 · 化学滴定 <span class="en-inline">Physics &amp; Chem</span></div>
+        <div class="val" id="stat-pc">1/4 · 0/3</div>
+        <div class="sub">探究任务完成情况</div>
       </div>
       <div class="stat-box">
-        <div class="lbl">化学中和滴定 <span class="en-inline">Titration Lab</span></div>
-        <div class="val" id="stat-chem">0 / 3</div>
-        <div class="sub">探究任务完成数</div>
+        <div class="lbl">生物光学显微镜 <span class="en-inline">Microscope Lab</span></div>
+        <div class="val" id="stat-bio">0 / 4</div>
+        <div class="sub">4 种真实细胞玻片</div>
       </div>
     </div>
 
@@ -61,10 +60,10 @@
       <a class="portal-card" href="physics/knowledge-map.html">
         <div class="portal-top">
           <div class="portal-icon">🗺️</div>
-          <span class="badge badge-ref">知识导图 · 原样集成</span>
+          <span class="badge badge-ref">知识导图</span>
         </div>
         <h3>物理知识体系与导图 <span class="en-sub">Physics Knowledge System &amp; Atlas</span></h3>
-        <p>完整保留知识地图、关键词搜索、考频/难度/薄弱点筛选、「显示高中内容」开关与进度管理，自动关联当前登录账号。</p>
+        <p>完整知识地图、关键词搜索、考频与难度筛选、薄弱点标记与「显示高中内容」拓展切换。</p>
         <div class="portal-foot">
           <span id="card-km-status">查看知识体系</span>
           <span>进入 →</span>
@@ -77,7 +76,7 @@
           <span class="badge badge-live">21 个互动实验</span>
         </div>
         <h3>电学与磁学交互实验台 <span class="en-sub">21-in-1 Circuits &amp; Electromagnetism</span></h3>
-        <p>涵盖通路/短路、串并联、滑动变阻器 U-I 图像、故障侦探、动态电路、磁场、电动机、发电机与电磁继电器等 21 个模块。</p>
+        <p>涵盖通路与短路、串并联、滑动变阻器 U-I 图像、故障侦探、动态电路、磁场、电动机、发电机与电磁继电器。</p>
         <div class="portal-foot">
           <span id="card-mx-status">动手拖一拖、点一点</span>
           <span>进入 →</span>
@@ -109,7 +108,7 @@
           <span class="badge badge-live">高中双语实验</span>
         </div>
         <h3>酸碱中和滴定与微观离子视图 <span class="en-sub">Acid-Base Neutralization &amp; Ions</span></h3>
-        <p>模拟 HCl 与 NaOH 滴定全过程：切换酚酞/石蕊/甲基橙观察变色，实时绘制 pH 突跃曲线并透视 H⁺、OH⁻ 与旁观离子。</p>
+        <p>模拟 HCl 与 NaOH 滴定全过程：切换酚酞、石蕊与甲基橙观察变色，实时绘制 pH 突跃曲线并透视微观离子。</p>
         <div class="portal-foot">
           <span id="card-chem-status">3 个互动探究任务</span>
           <span>进入 →</span>
@@ -119,7 +118,7 @@
       <div class="portal-card is-soon">
         <div class="portal-top">
           <div class="portal-icon">🔋</div>
-          <span class="badge badge-soon">即将上线</span>
+          <span class="badge badge-soon">规划中</span>
         </div>
         <h3>原电池与电子转移 <span class="en-sub">Galvanic Cell (Zn-Cu)</span></h3>
         <p>联动电学知识：展示铜锌原电池外电路电子流向、盐桥离子迁移与电极反应式。</p>
@@ -129,7 +128,7 @@
       <div class="portal-card is-soon">
         <div class="portal-top">
           <div class="portal-icon sun">⚖️</div>
-          <span class="badge badge-soon">即将上线</span>
+          <span class="badge badge-soon">规划中</span>
         </div>
         <h3>化学平衡与勒夏特列原理 <span class="en-sub">Chemical Equilibrium</span></h3>
         <p>调节温度、压强与浓度，直观观察正逆反应速率与平衡移动方向。</p>
@@ -137,11 +136,34 @@
       </div>
     </div>
 
-    <!-- 数学与生物 -->
+    <!-- 生物与数学 -->
     <div class="section-head">
-      <h2>📐 数学 &amp; 🧬 生物 <span class="en-inline">Mathematics &amp; Biology</span></h2>
+      <h2>🧬 生物 &amp; 📐 数学 <span class="en-inline">Biology &amp; Mathematics</span></h2>
     </div>
     <div class="portal-grid">
+      <a class="portal-card" href="biology/microscope.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🔬</div>
+          <span class="badge badge-live">真实标本 · 实操模拟</span>
+        </div>
+        <h3>光学显微镜实操实验台 <span class="en-sub">Compound Light Microscope</span></h3>
+        <p>洋葱表皮、人口腔上皮、黑藻叶片与人血涂片 4 种真实标本：切换 4×/10×/40× 物镜、旋转粗/细准焦螺旋与调节光圈。</p>
+        <div class="portal-foot">
+          <span id="card-bio-status">4 个实操任务</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="biology/index.html">
+        <div class="portal-top">
+          <div class="portal-icon coral">🧬</div>
+          <span class="badge badge-soon">更多生物规划</span>
+        </div>
+        <h3>生物实验室目录 <span class="en-sub">Biology Modules</span></h3>
+        <p>渗透作用与质壁分离、孟德尔遗传定律模拟与更多细胞可视化实验规划。</p>
+        <div class="portal-foot"><span>查看目录</span><span>进入 →</span></div>
+      </a>
+
       <a class="portal-card" href="math/index.html">
         <div class="portal-top">
           <div class="portal-icon">📐</div>
@@ -151,22 +173,10 @@
         <p>单位圆与三角函数波形、导数切线斜率极限、平面向量合成与分解。</p>
         <div class="portal-foot"><span>查看规划路线</span><span>进入 →</span></div>
       </a>
-
-      <a class="portal-card" href="biology/index.html">
-        <div class="portal-top">
-          <div class="portal-icon green">🧬</div>
-          <span class="badge badge-soon">规划中</span>
-        </div>
-        <h3>生物可视化实验室 <span class="en-sub">Interactive Biology</span></h3>
-        <p>渗透作用与质壁分离、孟德尔遗传定律模拟、神经冲动与动作电位。</p>
-        <div class="portal-foot"><span>查看规划路线</span><span>进入 →</span></div>
-      </a>
     </div>
   </main>
 
-  <footer class="footer">
-    ABS Lab · 独立托管于 <code>Pasdeau/abs-lab</code>，通过 <code>wenzheng.eu/abs-lab/</code> 访问
-  </footer>
+  <footer class="footer">ABS-LAB · 作者：Wenzheng Wang · Hang Li</footer>
 
   <script>
     (function () {
@@ -177,24 +187,25 @@
         var heroBtn = document.getElementById("heroAuthBtn");
 
         if (s.username) {
-          hint.innerHTML = "已登录账号：<strong>" + s.username + "</strong>（学习记录自动独立保存）";
-          heroBtn.textContent = "👤 " + s.username + " · 管理进度与备份";
+          hint.innerHTML = "当前账号：<strong>" + s.username + "</strong>" + (s.cloud ? " · 云端同步" : "");
+          heroBtn.textContent = "👤 " + s.username;
         } else {
-          hint.textContent = "当前为游客模式：登录后可按用户名独立保存记录，更新网页不丢失";
-          heroBtn.textContent = "👤 登录 / 注册保存进度";
+          hint.textContent = "游客模式";
+          heroBtn.textContent = "👤 登录 / 注册";
         }
 
         document.getElementById("stat-km").textContent = s.kmMastered + " 已掌握";
         document.getElementById("stat-km-sub").textContent = "共标记 " + s.kmMarked + " 个知识点";
         document.getElementById("stat-mx").textContent = s.mxCur ? "第 " + s.mxCur + " / 21 节" : "尚未开始";
-        document.getElementById("stat-hs").textContent = s.hsDone + " / " + s.hsTotal;
-        document.getElementById("stat-chem").textContent = s.chemDone + " / " + s.chemTotal;
+        document.getElementById("stat-pc").textContent = s.hsDone + "/" + s.hsTotal + " · " + s.chemDone + "/" + s.chemTotal;
+        document.getElementById("stat-bio").textContent = s.bioDone + " / " + s.bioTotal;
 
         if (s.mxCur) {
-          document.getElementById("card-mx-status").textContent = "继续上次：第 " + s.mxCur + " 节";
+          document.getElementById("card-mx-status").textContent = "上次浏览：第 " + s.mxCur + " 节";
         }
-        document.getElementById("card-hs-status").textContent = "已完成 " + s.hsDone + " / " + s.hsTotal + " 个任务";
-        document.getElementById("card-chem-status").textContent = "已完成 " + s.chemDone + " / " + s.chemTotal + " 个任务";
+        document.getElementById("card-hs-status").textContent = "已完成 " + s.hsDone + " / " + s.hsTotal;
+        document.getElementById("card-chem-status").textContent = "已完成 " + s.chemDone + " / " + s.chemTotal;
+        document.getElementById("card-bio-status").textContent = "已完成 " + s.bioDone + " / " + s.bioTotal;
       }
 
       document.getElementById("heroAuthBtn").addEventListener("click", function () {

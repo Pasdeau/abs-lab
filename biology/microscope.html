@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>光学显微镜实操实验台 · ABS-LAB</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <script src="../shared/auth.js"></script>
+  <style>
+    .micro-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .specimen-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .spec-btn {
+      appearance: none;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+    .spec-btn:hover { border-color: var(--blue); }
+    .spec-btn.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .spec-btn strong { display: block; font-size: 0.92rem; color: var(--ink); }
+    .spec-btn span { display: block; font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+
+    .eyepiece-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 175px;
+      gap: 14px;
+      align-items: center;
+    }
+    .fov-shell {
+      position: relative;
+      width: 100%;
+      max-width: 470px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: #0b1120;
+      padding: 12px;
+      box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.85), 0 10px 28px rgba(15, 23, 42, 0.16);
+    }
+    .fov-shell canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      cursor: grab;
+      display: block;
+    }
+    .fov-shell canvas:active { cursor: grabbing; }
+
+    .side-diagram {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+    }
+    .side-diagram svg { width: 100%; height: auto; display: block; }
+    .side-diagram .diag-lbl { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+
+    /* 双调焦旋钮 */
+    .knobs-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 8px 0 12px;
+    }
+    .knob-card {
+      background: var(--surface-soft);
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    .knob-wheel {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      margin: 6px auto 8px;
+      background: radial-gradient(circle at 35% 30%, #475569, #1e293b 70%);
+      border: 4px dashed #94a3b8;
+      position: relative;
+      cursor: ns-resize;
+      user-select: none;
+      touch-action: none;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25);
+    }
+    .knob-wheel.fine {
+      width: 52px;
+      height: 52px;
+      margin: 13px auto 15px;
+      background: radial-gradient(circle at 35% 30%, #3b5bdb, #1e3a8a 75%);
+      border-color: #93c5fd;
+    }
+    .knob-wheel::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 12px;
+      border-radius: 3px;
+      background: #ffc83d;
+    }
+    .knob-title { font-size: 0.84rem; font-weight: 700; }
+    .knob-sub { font-size: 0.72rem; color: var(--light); }
+
+    /* 物镜选择胶囊 */
+    .obj-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .obj-btn {
+      appearance: none;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 6px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.86rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .obj-btn .ring {
+      width: 28px;
+      height: 5px;
+      border-radius: 99px;
+    }
+    .obj-btn.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    /* 载物台方向键 */
+    .stage-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 44px);
+      gap: 6px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+    .stage-pad button {
+      height: 36px;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .stage-pad button:hover { border-color: var(--blue); color: var(--blue); }
+
+    .warn-banner {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fef2f2;
+      border: 1.5px solid #fca5a5;
+      color: #b91c1c;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+    .warn-banner.show { display: block; }
+
+    .clarity-bar {
+      height: 8px;
+      border-radius: 99px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .clarity-bar i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #12956b);
+      transition: width 0.12s ease;
+    }
+
+    @media (max-width: 960px) {
+      .micro-layout { grid-template-columns: 1fr; }
+      .specimen-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .eyepiece-stage { grid-template-columns: 1fr; }
+      .side-diagram { max-width: 240px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body class="lang-bilingual">
+  <script src="../shared/topbar.js" data-root=".." data-page="microscope" data-bilingual="true"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>光学显微镜实操实验台 <span class="en-sub">Compound Light Microscope Simulator</span></h1>
+        <p>装上真实细胞玻片，切换低倍/高倍物镜、旋转粗/细准焦螺旋、移动载物台并调节光圈与亮度，完整还原实验室操作流程。</p>
+      </div>
+      <a class="hero-pill-btn" href="../index.html">← 返回数理化生门户</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 样本选择栏 -->
+    <div class="specimen-bar" role="tablist" aria-label="选择装片样本">
+      <button class="spec-btn active" data-spec="onion" type="button">
+        <strong>🧅 洋葱表皮细胞</strong>
+        <span>Onion Epidermis · 碘液染色</span>
+      </button>
+      <button class="spec-btn" data-spec="cheek" type="button">
+        <strong>🧬 人口腔上皮细胞</strong>
+        <span>Cheek Epithelium · 亚甲基蓝</span>
+      </button>
+      <button class="spec-btn" data-spec="elodea" type="button">
+        <strong>🌿 黑藻叶片细胞</strong>
+        <span>Elodea Leaf · 叶绿体观察</span>
+      </button>
+      <button class="spec-btn" data-spec="blood" type="button">
+        <strong>🩸 人血涂片</strong>
+        <span>Blood Smear · 红/白细胞</span>
+      </button>
+    </div>
+
+    <!-- 实时参数指标 -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">总放大倍数 <span class="en-inline">Magnification</span></div>
+        <div class="metric-value accent-blue" id="mic-mag">40×</div>
+        <div class="metric-sub" id="mic-mag-sub">目镜 10× · 物镜 4×</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">对焦清晰度 <span class="en-inline">Focus Clarity</span></div>
+        <div class="metric-value" id="mic-clarity">模糊</div>
+        <div class="clarity-bar"><i id="mic-clarity-bar"></i></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">视野亮度 <span class="en-inline">Illumination</span></div>
+        <div class="metric-value accent-amber" id="mic-light">适宜</div>
+        <div class="metric-sub" id="mic-light-sub">中光圈 · 平面镜</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">工作距离 <span class="en-inline">Working Distance</span></div>
+        <div class="metric-value" id="mic-wd">18.5 mm</div>
+        <div class="metric-sub" id="mic-stage-pos">载物台高度 30.0</div>
+      </div>
+    </div>
+
+    <div class="micro-layout">
+      <!-- 左侧：圆形目镜视野 + 机身侧视联动 -->
+      <div class="canvas-column">
+        <div class="card">
+          <div class="card-header">
+            <h3>目镜视野 <span class="en-inline">Eyepiece Field of View</span></h3>
+            <div class="legend-row">
+              <label class="check-row" style="margin:0">
+                <input id="micCrosshair" type="checkbox" checked />
+                <span>十字刻度与比例尺 <span class="en-inline">Scale</span></span>
+              </label>
+              <label class="check-row" style="margin:0">
+                <input id="micLabels" type="checkbox" />
+                <span>清晰时标注细胞结构 <span class="en-inline">Labels</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="eyepiece-stage">
+            <div class="fov-shell">
+              <canvas id="micCanvas" width="460" height="460"></canvas>
+            </div>
+
+            <!-- 显微镜机身侧视联动 SVG -->
+            <div class="side-diagram">
+              <svg id="micSvg" viewBox="0 0 160 270" aria-label="显微镜结构联动示意">
+                <!-- 底座与镜柱 -->
+                <rect x="26" y="242" width="108" height="14" rx="5" fill="#334155"/>
+                <path d="M114 242 L114 102 Q114 72 82 72 L72 72" fill="none" stroke="#475569" stroke-width="14" stroke-linecap="round"/>
+                <!-- 镜筒与目镜 -->
+                <rect x="52" y="18" width="24" height="22" rx="3" fill="#1e293b"/>
+                <rect x="48" y="12" width="32" height="8" rx="3" fill="#3b5bdb"/>
+                <rect x="55" y="40" width="18" height="44" fill="#64748b"/>
+                <!-- 转换器与当前物镜 -->
+                <ellipse cx="64" cy="86" rx="22" ry="7" fill="#334155"/>
+                <g id="svgObjGroup">
+                  <rect id="svgObjBody" x="58" y="90" width="12" height="24" rx="2" fill="#94a3b8"/>
+                  <rect id="svgObjRing" x="58" y="104" width="12" height="4" fill="#ef4444"/>
+                </g>
+                <!-- 可升降载物台 -->
+                <g id="svgStageGroup" transform="translate(0, 156)">
+                  <rect x="24" y="0" width="84" height="8" rx="2" fill="#1e293b"/>
+                  <!-- 玻璃装片 -->
+                  <rect x="38" y="-3" width="54" height="3" fill="#38bdf8" opacity="0.85"/>
+                  <rect x="58" y="-4" width="12" height="2" fill="#facc15"/>
+                </g>
+                <!-- 底部光源/反光镜 -->
+                <ellipse cx="64" cy="228" rx="18" ry="6" fill="#fde047" opacity="0.85" id="svgLamp"/>
+                <!-- 粗/细准焦螺旋 -->
+                <circle cx="114" cy="156" r="14" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+                <circle cx="114" cy="156" r="6" fill="#3b5bdb"/>
+                <text x="80" y="266" text-anchor="middle" font-size="10" fill="#64748b">载物台实时联动</text>
+              </svg>
+              <div class="diag-lbl" id="svgGapLabel">物镜距装片：较远（安全）</div>
+            </div>
+          </div>
+
+          <div class="warn-banner" id="micWarn"></div>
+
+          <div class="micro-caption" id="micCaption">
+            操作步骤：① 先用低倍镜（4× 或 10×）旋转「粗准焦螺旋」找到细胞轮廓 → ② 拖动视野把目标移到正中央 → ③ 换 40× 高倍物镜 → ④ 仅用「细准焦螺旋」调至清晰并调亮光圈。
+          </div>
+        </div>
+
+        <!-- 样本生物学解析卡片 -->
+        <div class="card">
+          <h3 id="specInfoTitle">当前样本解析：洋葱鳞片叶内表皮细胞 <span class="en-inline">Specimen Notes</span></h3>
+          <p id="specInfoDesc" style="margin:0 0 8px;color:var(--muted);font-size:0.9rem"></p>
+          <div class="glossary-grid" id="specFeatures"></div>
+        </div>
+      </div>
+
+      <!-- 右侧：显微镜操作台 -->
+      <aside class="control-column">
+        <div class="card">
+          <h3>物镜与目镜转换 <span class="en-inline">Objective &amp; Eyepiece</span></h3>
+
+          <div class="control-group">
+            <div class="group-title">物镜转换器 <span class="en-inline">Objective Lens</span></div>
+            <div class="obj-group">
+              <button class="obj-btn active" data-obj="4" type="button">
+                <span class="ring" style="background:#ef4444"></span>
+                <span>4× 低倍</span>
+              </button>
+              <button class="obj-btn" data-obj="10" type="button">
+                <span class="ring" style="background:#eab308"></span>
+                <span>10× 中倍</span>
+              </button>
+              <button class="obj-btn" data-obj="40" type="button">
+                <span class="ring" style="background:#2563eb"></span>
+                <span>40× 高倍</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="slider-head">
+              <label for="micEyepiece">目镜选择 <span class="en-inline">Eyepiece</span></label>
+              <select id="micEyepiece" style="border:1.5px solid var(--line);border-radius:8px;padding:4px 8px;font-family:inherit">
+                <option value="5">5×</option>
+                <option value="10" selected>10×（常用）</option>
+                <option value="16">16×</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="group-title">调焦旋钮（上下拖动旋钮或滑块） <span class="en-inline">Focus Knobs</span></div>
+          <div class="knobs-row">
+            <div class="knob-card">
+              <div class="knob-title">粗准焦螺旋</div>
+              <div class="knob-sub">Coarse Focus</div>
+              <div class="knob-wheel" id="coarseWheel" title="上下拖动或滚动滚轮旋转"></div>
+              <input id="coarseSlider" type="range" min="0" max="100" step="0.5" value="28" />
+              <div class="knob-sub" id="coarseVal">28.0</div>
+            </div>
+            <div class="knob-card">
+              <div class="knob-title">细准焦螺旋</div>
+              <div class="knob-sub">Fine Focus</div>
+              <div class="knob-wheel fine" id="fineWheel" title="上下拖动或滚动滚轮微调"></div>
+              <input id="fineSlider" type="range" min="0" max="100" step="0.5" value="50" />
+              <div class="knob-sub" id="fineVal">50.0</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="control-group">
+            <div class="group-title">遮光器光圈与反光镜 <span class="en-inline">Diaphragm &amp; Mirror</span></div>
+            <div class="btn-row" style="margin-bottom:8px">
+              <button class="btn btn-outline mic-ap" data-ap="0.65" type="button">小光圈</button>
+              <button class="btn btn-primary mic-ap" data-ap="1.0" type="button">中光圈</button>
+              <button class="btn btn-outline mic-ap" data-ap="1.45" type="button">大光圈</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary mic-mir" data-mir="1.0" type="button">平面镜</button>
+              <button class="btn btn-outline mic-mir" data-mir="1.35" type="button">凹面镜（聚光）</button>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="control-group">
+            <div class="group-title">移动玻片（注意：视野成倒立像） <span class="en-inline">Move Slide</span></div>
+            <div class="stage-pad">
+              <span></span>
+              <button type="button" data-move="0,-1" title="玻片向上移（物像向下移）">↑</button>
+              <span></span>
+              <button type="button" data-move="-1,0" title="玻片向左移（物像向右移）">←</button>
+              <button type="button" id="micCenterBtn" title="玻片回中">◎</button>
+              <button type="button" data-move="1,0" title="玻片向右移（物像向左移）">→</button>
+              <span></span>
+              <button type="button" data-move="0,1" title="玻片向下移（物像向上移）">↓</button>
+              <span></span>
+            </div>
+            <div style="text-align:center;font-size:0.76rem;color:var(--light);margin-top:6px">
+              也可直接在左侧圆形视野内按住拖拽
+            </div>
+          </div>
+
+          <div class="control-group btn-row" style="margin-top:10px">
+            <button id="micResetBtn" class="btn btn-outline" type="button">重新放片复位</button>
+          </div>
+        </div>
+
+        <!-- 探究任务 -->
+        <div class="card">
+          <h3>实验探究任务 <span class="en-inline">Lab Tasks</span></h3>
+          <ol class="task-list" id="micTaskList">
+            <li data-task="focus_low">在低倍镜（4×/10×）下旋转粗/细准焦螺旋，将「洋葱表皮」调焦至清晰。</li>
+            <li data-task="high_mag">换用 40× 高倍物镜，用细准焦螺旋对焦清晰并调大光圈/凹面镜增亮视野。</li>
+            <li data-task="animal_cell">切换「人口腔上皮细胞」并调焦清晰，观察无细胞壁的动物细胞。</li>
+            <li data-task="organelle">在 40× 高倍镜下清晰观察「黑藻叶片叶绿体」或「人血涂片白细胞」。</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 中英术语对照 -->
+    <div class="card glossary-card">
+      <h3>中英显微镜术语对照 <span class="en-inline">Bilingual Glossary</span></h3>
+      <div class="glossary-grid">
+        <div class="term"><b>目镜 / 物镜</b><span>Eyepiece / Objective Lens</span></div>
+        <div class="term"><b>粗准焦螺旋</b><span>Coarse Adjustment Knob</span></div>
+        <div class="term"><b>细准焦螺旋</b><span>Fine Adjustment Knob</span></div>
+        <div class="term"><b>遮光器 / 光圈</b><span>Diaphragm / Aperture</span></div>
+        <div class="term"><b>载物台 / 装片</b><span>Stage / Prepared Slide</span></div>
+        <div class="term"><b>倒立虚像</b><span>Inverted Virtual Image</span></div>
+        <div class="term"><b>细胞壁 / 细胞膜</b><span>Cell Wall / Cell Membrane</span></div>
+        <div class="term"><b>细胞核 / 叶绿体</b><span>Nucleus / Chloroplast</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">ABS-LAB · 作者：Wenzheng Wang · Hang Li</footer>
+  <script src="js/microscope.js"></script>
+</body>
+</html>

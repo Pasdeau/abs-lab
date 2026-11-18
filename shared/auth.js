@@ -1,9 +1,9 @@
 (function () {
   var ACCOUNTS_KEY = "abs_lab_v1_accounts";
   var CURRENT_KEY = "abs_lab_v1_current_user";
+  var TOKEN_KEY = "abs_lab_v1_cloud_token";
   var GUEST_KEY = "abs_lab_v1_guest_data";
 
-  // 兼容知识导图与电学实验台的原生 localStorage 键名
   var BRIDGED_KEYS = [
     "wlzs.status",
     "wlzs.statusNames",
@@ -11,35 +11,31 @@
     "mx_lab_cur"
   ];
 
-  // 保存原生 Storage 方法，避免递归调用
+  // 计算相对的 API 根路径（支持 file://、*.vercel.app 以及 wenzheng.eu/abs-lab/）
+  var API_BASE = null;
+  try {
+    if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+      var scriptEl = document.currentScript;
+      if (scriptEl && scriptEl.src) {
+        API_BASE = scriptEl.src.replace(/shared\/auth\.js(\?.*)?$/, "api/");
+      }
+    }
+  } catch (e) {}
+
   var rawGet = Storage.prototype.getItem;
   var rawSet = Storage.prototype.setItem;
   var rawRemove = Storage.prototype.removeItem;
 
-  function safeRawGet(key) {
-    try {
-      return rawGet.call(window.localStorage, key);
-    } catch (e) {
-      return null;
-    }
+  function safeGet(storage, key) {
+    try { return rawGet.call(storage, key); } catch (e) { return null; }
+  }
+  function safeSet(storage, key, val) {
+    try { rawSet.call(storage, key, val); return true; } catch (e) { return false; }
+  }
+  function safeRemove(storage, key) {
+    try { rawRemove.call(storage, key); } catch (e) {}
   }
 
-  function safeRawSet(key, val) {
-    try {
-      rawSet.call(window.localStorage, key, val);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function safeRawRemove(key) {
-    try {
-      rawRemove.call(window.localStorage, key);
-    } catch (e) {}
-  }
-
-  // 轻量确定性加盐哈希（离线 file:// 和 https:// 均可运行）
   function hashPassword(username, password) {
     var input = "abs-lab::" + username.toLowerCase() + "::" + password + "::2026";
     var h1 = 0xdeadbeef ^ input.length;
@@ -51,24 +47,17 @@
     }
     h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
     h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-    return (
-      (h2 >>> 0).toString(16).padStart(8, "0") +
-      (h1 >>> 0).toString(16).padStart(8, "0")
-    );
+    return (h2 >>> 0).toString(16).padStart(8, "0") + (h1 >>> 0).toString(16).padStart(8, "0");
   }
 
   function readJSON(key, fallback) {
-    var raw = safeRawGet(key);
+    var raw = safeGet(window.localStorage, key);
     if (raw === null) return fallback;
-    try {
-      return JSON.parse(raw);
-    } catch (e) {
-      return fallback;
-    }
+    try { return JSON.parse(raw); } catch (e) { return fallback; }
   }
 
   function writeJSON(key, val) {
-    safeRawSet(key, JSON.stringify(val));
+    safeSet(window.localStorage, key, JSON.stringify(val));
   }
 
   function getAccounts() {
@@ -84,11 +73,45 @@
     return String(name || "").trim();
   }
 
+  // 会话读写（支持 Remember Me：勾选存 localStorage，不勾选仅存 sessionStorage）
+  function getSessionUser() {
+    return safeGet(window.sessionStorage, CURRENT_KEY) || safeGet(window.localStorage, CURRENT_KEY) || null;
+  }
+
+  function getSessionToken() {
+    return safeGet(window.sessionStorage, TOKEN_KEY) || safeGet(window.localStorage, TOKEN_KEY) || null;
+  }
+
+  function setSession(username, token, rememberMe) {
+    safeRemove(window.localStorage, CURRENT_KEY);
+    safeRemove(window.localStorage, TOKEN_KEY);
+    safeRemove(window.sessionStorage, CURRENT_KEY);
+    safeRemove(window.sessionStorage, TOKEN_KEY);
+
+    var target = rememberMe ? window.localStorage : window.sessionStorage;
+    safeSet(target, CURRENT_KEY, username);
+    if (token) safeSet(target, TOKEN_KEY, token);
+  }
+
+  function clearSession() {
+    safeRemove(window.localStorage, CURRENT_KEY);
+    safeRemove(window.localStorage, TOKEN_KEY);
+    safeRemove(window.sessionStorage, CURRENT_KEY);
+    safeRemove(window.sessionStorage, TOKEN_KEY);
+  }
+
   function getCurrentUsername() {
-    var u = safeRawGet(CURRENT_KEY);
+    var u = getSessionUser();
     if (!u) return null;
     var accounts = getAccounts();
-    return accounts[u] ? u : null;
+    if (accounts[u]) return u;
+    // 云端 token 存在时自动补本地缓存桶
+    if (getSessionToken()) {
+      accounts[u] = { createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), data: createEmptyData() };
+      saveAccounts(accounts);
+      return u;
+    }
+    return null;
   }
 
   function createEmptyData() {
@@ -97,6 +120,7 @@
       visited: {},
       hs_elec_tasks: { open: true, close: false, ohm: false, flip: false },
       chem_neut_tasks: { drip: false, jump: false, indicator: false },
+      bio_micro_tasks: { focus_low: false, high_mag: false, animal_cell: false, organelle: false },
       bridged: {}
     };
   }
@@ -112,37 +136,56 @@
     return { username: null, data: guest, accounts: null };
   }
 
-  function saveActiveBucket(bucket) {
+  // 防抖云端同步
+  var cloudState = { checked: false, enabled: false };
+  var pushTimer = null;
+
+  function scheduleCloudPush(data) {
+    var token = getSessionToken();
+    if (!API_BASE || !token || !cloudState.enabled) return;
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () {
+      fetch(API_BASE + "progress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token
+        },
+        body: JSON.stringify({ data: data })
+      }).catch(function () {});
+    }, 600);
+  }
+
+  function saveActiveBucket(bucket, skipCloud) {
     bucket.data.updatedAt = new Date().toISOString();
     if (bucket.username && bucket.accounts) {
       bucket.accounts[bucket.username].data = bucket.data;
       bucket.accounts[bucket.username].updatedAt = bucket.data.updatedAt;
       saveAccounts(bucket.accounts);
+      if (!skipCloud) scheduleCloudPush(bucket.data);
     } else {
       writeJSON(GUEST_KEY, bucket.data);
     }
   }
 
-  // 把当前活跃用户的 bridged 数据写入原生 localStorage，供原样集成的知识导图/实验台读取
   function hydrateBridgedToStorage(data) {
     var bridged = (data && data.bridged) || {};
     for (var i = 0; i < BRIDGED_KEYS.length; i++) {
       var k = BRIDGED_KEYS[i];
       if (Object.prototype.hasOwnProperty.call(bridged, k) && bridged[k] !== null && bridged[k] !== undefined) {
-        safeRawSet(k, bridged[k]);
+        safeSet(window.localStorage, k, bridged[k]);
       } else {
-        safeRawRemove(k);
+        safeRemove(window.localStorage, k);
       }
     }
   }
 
-  // 把原生 localStorage 中可能变化过的 bridged 键抓回到当前账号
   function snapshotBridgedFromStorage(bucket) {
     if (!bucket.data.bridged) bucket.data.bridged = {};
     var changed = false;
     for (var i = 0; i < BRIDGED_KEYS.length; i++) {
       var k = BRIDGED_KEYS[i];
-      var val = safeRawGet(k);
+      var val = safeGet(window.localStorage, k);
       if (val !== null && bucket.data.bridged[k] !== val) {
         bucket.data.bridged[k] = val;
         changed = true;
@@ -151,7 +194,6 @@
     if (changed) saveActiveBucket(bucket);
   }
 
-  // 劫持当前窗口的 localStorage.setItem，使原样集成页面保存进度时自动同步进当前用户档案
   var syncingNow = false;
   try {
     Storage.prototype.setItem = function (key, value) {
@@ -170,17 +212,14 @@
     };
   } catch (e) {}
 
-  // 页面加载早期立即将当前用户的数据同步到 bridged keys（必须在原页面脚本运行前）
   (function bootstrap() {
     var username = getCurrentUsername();
     if (username) {
       var accounts = getAccounts();
-      var acc = accounts[username];
-      if (acc && acc.data) {
-        hydrateBridgedToStorage(acc.data);
+      if (accounts[username] && accounts[username].data) {
+        hydrateBridgedToStorage(accounts[username].data);
       }
     } else {
-      // 游客模式：如果已有历史进度，记录到游客桶中，方便注册时一键继承
       var guestBucket = getActiveBucket();
       snapshotBridgedFromStorage(guestBucket);
     }
@@ -189,21 +228,73 @@
   var listeners = [];
   function notifyChange() {
     for (var i = 0; i < listeners.length; i++) {
+      try { listeners[i](api.getCurrentUser()); } catch (e) {}
+    }
+    try { window.dispatchEvent(new CustomEvent("abs-auth-changed")); } catch (e) {}
+  }
+
+  // 启动时探测云端数据库状态；若已登录且有 token，拉取云端最新进度
+  async function initCloud() {
+    if (!API_BASE) {
+      cloudState.checked = true;
+      cloudState.enabled = false;
+      return;
+    }
+    try {
+      var res = await fetch(API_BASE + "auth", { method: "GET" });
+      if (res.ok) {
+        var json = await res.json();
+        cloudState.checked = true;
+        cloudState.enabled = !!json.cloudEnabled;
+      }
+    } catch (e) {
+      cloudState.checked = true;
+      cloudState.enabled = false;
+    }
+
+    var token = getSessionToken();
+    var username = getCurrentUsername();
+    if (cloudState.enabled && token && username) {
       try {
-        listeners[i](api.getCurrentUser());
+        var pr = await fetch(API_BASE + "progress", {
+          method: "GET",
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (pr.ok) {
+          var pJson = await pr.json();
+          if (pJson.ok && pJson.data) {
+            var bucket = getActiveBucket();
+            var localTs = bucket.data.updatedAt ? Date.parse(bucket.data.updatedAt) : 0;
+            var cloudTs = pJson.updatedAt ? Date.parse(pJson.updatedAt) : 0;
+            if (cloudTs > localTs) {
+              bucket.data = Object.assign(createEmptyData(), pJson.data);
+              saveActiveBucket(bucket, true);
+              hydrateBridgedToStorage(bucket.data);
+              notifyChange();
+            } else if (localTs > cloudTs) {
+              scheduleCloudPush(bucket.data);
+            }
+          }
+        }
       } catch (e) {}
     }
   }
+  initCloud();
 
   var api = {
+    isCloudEnabled: function () {
+      return cloudState.enabled;
+    },
+
     getCurrentUser: function () {
       var u = getCurrentUsername();
       if (!u) return null;
       var accounts = getAccounts();
       return {
         username: u,
-        createdAt: accounts[u].createdAt,
-        updatedAt: accounts[u].updatedAt
+        cloud: cloudState.enabled && Boolean(getSessionToken()),
+        createdAt: accounts[u] ? accounts[u].createdAt : null,
+        updatedAt: accounts[u] ? accounts[u].updatedAt : null
       };
     },
 
@@ -211,78 +302,143 @@
       return Object.keys(getAccounts());
     },
 
-    register: function (rawName, rawPassword, inheritGuest) {
+    register: async function (rawName, rawPassword, options) {
+      options = options || {};
+      var inheritGuest = options.inheritGuest !== false;
+      var rememberMe = options.rememberMe !== false;
       var username = normalizeName(rawName);
       var password = String(rawPassword || "");
+
       if (username.length < 2 || username.length > 20) {
         return { ok: false, message: "用户名长度需为 2～20 个字符。" };
       }
       if (password.length < 4) {
         return { ok: false, message: "密码请至少设置 4 位字符或数字。" };
       }
-      var accounts = getAccounts();
+
+      var currentBucket = getActiveBucket();
+      snapshotBridgedFromStorage(currentBucket);
+      var initData = inheritGuest && !getCurrentUsername()
+        ? JSON.parse(JSON.stringify(currentBucket.data))
+        : createEmptyData();
+
+      // 优先走云端数据库
+      if (API_BASE && (!cloudState.checked || cloudState.enabled)) {
+        try {
+          var r = await fetch(API_BASE + "auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "register", username: username, password: password, initialData: initData })
+          });
+          var j = await r.json();
+          if (r.status !== 503 && j.cloudEnabled !== false) {
+            cloudState.checked = true;
+            cloudState.enabled = true;
+            if (!r.ok || !j.ok) return { ok: false, message: j.message || "注册失败" };
+
+            var accounts = getAccounts();
+            var now = new Date().toISOString();
+            accounts[j.username] = {
+              passwordHash: hashPassword(j.username, password),
+              createdAt: now,
+              updatedAt: now,
+              data: Object.assign(createEmptyData(), j.data || initData)
+            };
+            saveAccounts(accounts);
+            setSession(j.username, j.token, rememberMe);
+            hydrateBridgedToStorage(accounts[j.username].data);
+            notifyChange();
+            return { ok: true, username: j.username, cloud: true, message: "注册成功！" };
+          }
+          cloudState.checked = true;
+          cloudState.enabled = false;
+        } catch (e) {}
+      }
+
+      // 本地模式兜底
+      var localAccounts = getAccounts();
       var lower = username.toLowerCase();
-      var existing = Object.keys(accounts).find(function (k) {
-        return k.toLowerCase() === lower;
-      });
+      var existing = Object.keys(localAccounts).find(function (k) { return k.toLowerCase() === lower; });
       if (existing) {
         return { ok: false, message: "用户名「" + existing + "」已存在，请直接登录或换一个名字。" };
       }
-
-      // 先快照当前状态
-      var currentBucket = getActiveBucket();
-      snapshotBridgedFromStorage(currentBucket);
-
-      var initData = createEmptyData();
-      if (inheritGuest && !getCurrentUsername()) {
-        initData = JSON.parse(JSON.stringify(currentBucket.data));
-      }
-
-      var now = new Date().toISOString();
-      accounts[username] = {
+      var ts = new Date().toISOString();
+      localAccounts[username] = {
         passwordHash: hashPassword(username, password),
-        createdAt: now,
-        updatedAt: now,
+        createdAt: ts,
+        updatedAt: ts,
         data: initData
       };
-      saveAccounts(accounts);
-      safeRawSet(CURRENT_KEY, username);
+      saveAccounts(localAccounts);
+      setSession(username, null, rememberMe);
       hydrateBridgedToStorage(initData);
       notifyChange();
-      return { ok: true, username: username, message: "注册成功，已自动登录！" };
+      return { ok: true, username: username, cloud: false, message: "注册成功！" };
     },
 
-    login: function (rawName, rawPassword) {
+    login: async function (rawName, rawPassword, options) {
+      options = options || {};
+      var rememberMe = options.rememberMe !== false;
       var username = normalizeName(rawName);
       var password = String(rawPassword || "");
-      var accounts = getAccounts();
-      var lower = username.toLowerCase();
-      var matchedKey = Object.keys(accounts).find(function (k) {
-        return k.toLowerCase() === lower;
-      });
-      if (!matchedKey) {
-        return { ok: false, message: "未找到该用户名，请先注册一个新账号。" };
-      }
-      var expected = accounts[matchedKey].passwordHash;
-      if (hashPassword(matchedKey, password) !== expected) {
-        return { ok: false, message: "密码不正确，请重试。" };
-      }
 
-      // 切换前先保存上一个账号/游客的 bridged 进度
       var prevBucket = getActiveBucket();
       snapshotBridgedFromStorage(prevBucket);
 
-      safeRawSet(CURRENT_KEY, matchedKey);
-      if (!accounts[matchedKey].data) accounts[matchedKey].data = createEmptyData();
-      hydrateBridgedToStorage(accounts[matchedKey].data);
+      // 优先走云端数据库
+      if (API_BASE && (!cloudState.checked || cloudState.enabled)) {
+        try {
+          var r = await fetch(API_BASE + "auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "login", username: username, password: password })
+          });
+          var j = await r.json();
+          if (r.status !== 503 && j.cloudEnabled !== false) {
+            cloudState.checked = true;
+            cloudState.enabled = true;
+            if (!r.ok || !j.ok) return { ok: false, message: j.message || "登录失败" };
+
+            var accounts = getAccounts();
+            var now = new Date().toISOString();
+            var merged = Object.assign(createEmptyData(), j.data || {});
+            accounts[j.username] = {
+              passwordHash: hashPassword(j.username, password),
+              createdAt: (accounts[j.username] && accounts[j.username].createdAt) || now,
+              updatedAt: now,
+              data: merged
+            };
+            saveAccounts(accounts);
+            setSession(j.username, j.token, rememberMe);
+            hydrateBridgedToStorage(merged);
+            notifyChange();
+            return { ok: true, username: j.username, cloud: true, message: "欢迎回来，" + j.username + "！" };
+          }
+          cloudState.checked = true;
+          cloudState.enabled = false;
+        } catch (e) {}
+      }
+
+      // 本地模式兜底
+      var localAccounts = getAccounts();
+      var lower = username.toLowerCase();
+      var matchedKey = Object.keys(localAccounts).find(function (k) { return k.toLowerCase() === lower; });
+      if (!matchedKey) return { ok: false, message: "未找到该用户名，请先注册。" };
+      if (hashPassword(matchedKey, password) !== localAccounts[matchedKey].passwordHash) {
+        return { ok: false, message: "密码不正确，请重试。" };
+      }
+
+      setSession(matchedKey, null, rememberMe);
+      if (!localAccounts[matchedKey].data) localAccounts[matchedKey].data = createEmptyData();
+      hydrateBridgedToStorage(localAccounts[matchedKey].data);
       notifyChange();
-      return { ok: true, username: matchedKey, message: "欢迎回来，" + matchedKey + "！" };
+      return { ok: true, username: matchedKey, cloud: false, message: "欢迎回来，" + matchedKey + "！" };
     },
 
     logout: function () {
       var prevBucket = getActiveBucket();
       snapshotBridgedFromStorage(prevBucket);
-      safeRawRemove(CURRENT_KEY);
+      clearSession();
       var guest = readJSON(GUEST_KEY, null) || createEmptyData();
       hydrateBridgedToStorage(guest);
       notifyChange();
@@ -290,9 +446,7 @@
 
     getProgress: function (key, fallback) {
       var bucket = getActiveBucket();
-      if (Object.prototype.hasOwnProperty.call(bucket.data, key)) {
-        return bucket.data[key];
-      }
+      if (Object.prototype.hasOwnProperty.call(bucket.data, key)) return bucket.data[key];
       return fallback;
     },
 
@@ -315,9 +469,7 @@
       var data = bucket.data;
       var bridged = data.bridged || {};
 
-      // 知识导图统计
-      var kmMastered = 0;
-      var kmMarked = 0;
+      var kmMastered = 0, kmMarked = 0;
       if (bridged["wlzs.status"]) {
         try {
           var st = JSON.parse(bridged["wlzs.status"]);
@@ -328,30 +480,30 @@
         } catch (e) {}
       }
 
-      // 21合1电学实验台上次模块
       var mxCur = bridged["mx_lab_cur"] !== undefined ? parseInt(bridged["mx_lab_cur"], 10) + 1 : null;
       if (isNaN(mxCur)) mxCur = null;
 
-      // 高中电学任务
       var hsTasks = data.hs_elec_tasks || {};
       var hsDone = Object.keys(hsTasks).filter(function (k) { return hsTasks[k]; }).length;
-      var hsTotal = 4;
 
-      // 化学任务
       var chemTasks = data.chem_neut_tasks || {};
       var chemDone = Object.keys(chemTasks).filter(function (k) { return chemTasks[k]; }).length;
-      var chemTotal = 3;
+
+      var bioTasks = data.bio_micro_tasks || {};
+      var bioDone = Object.keys(bioTasks).filter(function (k) { return bioTasks[k]; }).length;
 
       return {
         username: bucket.username,
+        cloud: cloudState.enabled && Boolean(getSessionToken()),
         kmMastered: kmMastered,
         kmMarked: kmMarked,
         mxCur: mxCur,
         hsDone: hsDone,
-        hsTotal: hsTotal,
+        hsTotal: 4,
         chemDone: chemDone,
-        chemTotal: chemTotal,
-        visitedCount: Object.keys(data.visited || {}).length,
+        chemTotal: 3,
+        bioDone: bioDone,
+        bioTotal: 4,
         updatedAt: data.updatedAt || null
       };
     },
@@ -359,30 +511,29 @@
     exportBackup: function () {
       var bucket = getActiveBucket();
       snapshotBridgedFromStorage(bucket);
-      var payload = {
+      return JSON.stringify({
         app: "abs-lab",
         version: 1,
         username: bucket.username || "guest",
         exportedAt: new Date().toISOString(),
         data: bucket.data
-      };
-      return JSON.stringify(payload, null, 2);
+      }, null, 2);
     },
 
     importBackup: function (jsonText) {
       try {
         var parsed = JSON.parse(jsonText);
         if (!parsed || parsed.app !== "abs-lab" || !parsed.data) {
-          return { ok: false, message: "文件格式不正确，请选择 ABS Lab 导出的备份文件。" };
+          return { ok: false, message: "文件格式不正确，请选择 ABS-LAB 导出的备份文件。" };
         }
         var bucket = getActiveBucket();
         bucket.data = Object.assign(createEmptyData(), parsed.data);
         saveActiveBucket(bucket);
         hydrateBridgedToStorage(bucket.data);
         notifyChange();
-        return { ok: true, message: "学习进度已成功恢复！" };
+        return { ok: true, message: "学习记录已恢复！" };
       } catch (e) {
-        return { ok: false, message: "JSON 解析失败，请确认文件完整。" };
+        return { ok: false, message: "文件读取失败，请确认 JSON 格式完整。" };
       }
     },
 

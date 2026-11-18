@@ -485,11 +485,31 @@
       setVolume(parseFloat(slider.value), false);
     });
 
+    var indicatorButtons = document.querySelectorAll(".chem-ind-btn");
+    function setIndicator(val) {
+      state.indicator = val;
+      for (var i = 0; i < indicatorRadios.length; i++) {
+        indicatorRadios[i].checked = indicatorRadios[i].value === val;
+      }
+      for (var j = 0; j < indicatorButtons.length; j++) {
+        var active = indicatorButtons[j].getAttribute("data-ind") === val;
+        indicatorButtons[j].classList.toggle("btn-primary", active);
+        indicatorButtons[j].classList.toggle("btn-outline", !active);
+      }
+      if (val !== "phenolphthalein") {
+        markTask("indicator");
+      }
+      updateUI();
+    }
+
     for (var r = 0; r < indicatorRadios.length; r++) {
       indicatorRadios[r].addEventListener("change", function () {
-        state.indicator = this.value;
-        markTask("indicator");
-        updateUI();
+        setIndicator(this.value);
+      });
+    }
+    for (var ib = 0; ib < indicatorButtons.length; ib++) {
+      indicatorButtons[ib].addEventListener("click", function () {
+        setIndicator(this.getAttribute("data-ind"));
       });
     }
 
