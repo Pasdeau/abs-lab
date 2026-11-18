@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#3B5BDB">
+<title>明馨的电学实验台</title>
+<style>
+:root{--ink:#2B2D42;--muted:#6B7280;--line:#E3E6EC;--blue:#3B5BDB;--blue-s:#E8EDFF;--coral:#F2643D;--coral-s:#FFEDE6;
+--green:#12956B;--green-s:#DCF5EC;--sun:#FFC83D;--sun-s:#FFF6D6;--red:#D7263D;--red-s:#FDE8EB;--bg:#F6F7FB}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;line-height:1.6;font-size:15px}
+header{background:var(--blue);color:#fff;padding:16px 20px}
+header h1{margin:0;font-size:22px}
+header p{margin:2px 0 0;font-size:13.5px;opacity:.95}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:inherit}
+nav button small{font-size:11px;border-radius:6px;padding:0 5px;margin-right:5px;color:#fff;background:var(--green)}
+nav button.pre small{background:var(--coral)}
+nav button.adv small{background:#7A36A6}
+nav button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+main{max-width:1040px;margin:0 auto;padding:16px}
+section{display:none}
+section.on{display:block}
+h2{margin:4px 0 2px;font-size:20px}
+.lead{color:var(--muted);margin:0 0 12px}
+.grid{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.stage{flex:1 1 520px;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:8px}
+.stage svg{width:100%;height:auto;display:block}
+.side{flex:1 1 300px;display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:15px}
+.ctl label{display:block;margin:7px 0 0;font-size:13.5px}
+.ctl input[type=range]{width:100%}
+.ctl b.v{color:var(--blue)}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.btns button,.ctl select{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:5px 10px;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--ink)}
+.btns button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.btns button.go{background:var(--coral);border-color:var(--coral);color:#fff}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.read div{background:var(--blue-s);border-radius:10px;padding:6px 9px;font-size:12.5px;color:var(--muted)}
+.read div b{display:block;font-size:17px;color:var(--ink)}
+.msg{border-radius:10px;padding:8px 11px;margin-top:8px;font-weight:600;background:var(--sun-s)}
+.msg.bad{background:var(--red-s);color:var(--red)}
+.msg.ok{background:var(--green-s);color:var(--green)}
+.tip{background:var(--sun-s);border-radius:16px;padding:10px 14px}
+.tip b{color:#9A6400}
+.tip ul{margin:4px 0 0;padding-left:18px}
+.tag{display:inline-block;background:var(--coral-s);color:var(--coral);border-radius:8px;padding:0 8px;font-size:12.5px;font-weight:700;margin-top:6px}
+.w{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linejoin:round}
+.f{fill:none;stroke:#FF9F1C;stroke-width:5.5;stroke-linecap:round;stroke-dasharray:1 17;animation:fl linear infinite}
+@keyframes fl{to{stroke-dashoffset:-18}}
+.sw{cursor:pointer}
+.sw:hover circle{fill:var(--sun)}
+text{font-family:inherit;fill:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+td,th{border-bottom:1px solid var(--line);padding:3px 6px;text-align:center}
+.apps label{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0;cursor:pointer}
+.apps label.on{background:var(--sun-s);border-color:var(--sun)}
+.bar{height:22px;border-radius:11px;background:#EEF0F4;overflow:hidden;margin:4px 0 2px}
+.bar i{display:block;height:100%;background:var(--green);transition:width .2s}
+nav .grp{font-size:12px;font-weight:800;color:var(--muted);align-self:center;margin:0 2px 0 4px}
+nav .brk{flex-basis:100%;height:0}
+.it21{border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;margin:8px 0}
+.it21.ok{border-color:var(--green);background:var(--green-s)}
+.it21.bad{border-color:var(--red);background:var(--red-s)}
+.it21 .btns button{font-size:12.5px}
+.it21 .btns button:disabled{cursor:default;opacity:.85}
+.it21 .btns button.on:disabled{opacity:1}
+/* ===== 适配手机 / 平板 / 电脑 ===== */
+html{-webkit-text-size-adjust:100%}
+button,select,input,label{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+header{padding:14px max(20px,env(safe-area-inset-left)) 10px}
+header .sub{margin:2px 0 0;font-size:13.5px;opacity:.95}
+header details{margin-top:6px;font-size:13px}
+header summary{cursor:pointer;display:inline-block;background:rgba(255,255,255,.2);border-radius:8px;padding:1px 10px;list-style:none;font-weight:700}
+header summary::-webkit-details-marker{display:none}
+header details ul{margin:6px 0 2px;padding-left:18px;opacity:.95;max-width:900px}
+nav{align-items:flex-start;gap:10px;flex-wrap:nowrap;padding:8px max(16px,env(safe-area-inset-left));box-shadow:0 2px 8px -6px rgba(0,0,0,.25)}
+.tabs{display:flex;flex:0 0 auto;background:#EEF0F4;border-radius:12px;padding:3px;gap:2px}
+.tabs button{border:0;background:transparent;border-radius:9px;padding:5px 12px;font-weight:700;color:var(--muted);font-size:14px}
+.tabs button.on{background:#fff;color:var(--blue);border:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;flex:1 1 auto;min-width:0}
+nav[data-g="0"] .chips .g1,nav[data-g="1"] .chips .g0{display:none}
+.mnav{display:none}
+main{max-width:1180px;padding:16px max(16px,env(safe-area-inset-left)) 24px}
+.stage{position:relative}
+.stage svg{user-select:none;-webkit-user-select:none;max-height:calc(100vh - var(--navh,60px) - 40px);max-height:calc(100dvh - var(--navh,60px) - 40px)}
+.zbtn{position:absolute;right:8px;top:8px;z-index:2;border:1.5px solid var(--line);background:rgba(255,255,255,.94);border-radius:9px;padding:3px 9px;font-size:12.5px;cursor:pointer;color:var(--muted);font-family:inherit}
+.zbtn:hover{color:var(--blue);border-color:var(--blue)}
+@media (min-width:900px){.grid{flex-wrap:nowrap}.stage{position:sticky;top:calc(var(--navh,60px) + 12px)}}
+@media (max-width:899px){.stage{flex-basis:100%;position:sticky;top:calc(var(--navh,52px) + 6px);z-index:4;box-shadow:0 8px 16px -12px rgba(0,0,0,.45)}.side{flex-basis:100%}}
+.stage.nostick{position:static!important;box-shadow:none!important}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.pager button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 14px;font-size:14px;cursor:pointer;font-family:inherit;color:var(--ink);max-width:49%;text-align:left}
+.pager button.nx{text-align:right;margin-left:auto}
+.pager button:hover{border-color:var(--blue);color:var(--blue)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:2px 0;cursor:pointer}
+input[type=range]:focus{outline:none}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#D9DFEC}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35);margin-top:-8px}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#D9DFEC}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--blue);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid var(--sun)}
+@media (hover:hover){.btns button:hover:not(.on):not(.go):not(:disabled){border-color:var(--blue);color:var(--blue)}nav .chips button:hover:not(.on){border-color:var(--blue)}}
+@media (max-width:699px){
+ header{padding:10px 14px 8px}header h1{font-size:19px}header .sub{font-size:12.5px}
+ .tabs,.chips{display:none}
+ .mnav{display:flex;flex:1;gap:8px;align-items:center;min-width:0}
+ .mnav select{flex:1;min-width:0;font-size:15px;padding:8px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font-family:inherit;font-weight:700;height:42px}
+ .mnav button{flex:0 0 44px;height:42px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:24px;line-height:1;color:var(--blue);cursor:pointer;padding:0}
+ nav{padding:7px 10px}
+ main{padding:10px 8px 20px}h2{font-size:17px}.lead{font-size:13px;margin-bottom:8px}
+ .stage{padding:4px;border-radius:12px}.grid{gap:10px}.side{gap:10px}
+ .card{padding:10px 12px}.tip{padding:9px 12px;font-size:14px}
+ .read div b{font-size:16px}
+}
+@media (pointer:coarse){
+ .btns button,.pager button{min-height:42px;padding:7px 12px;font-size:14.5px}
+ .it21 .btns button{font-size:13.5px}
+ input[type=range]{height:42px}
+ input[type=range]::-webkit-slider-thumb{width:30px;height:30px;margin-top:-12px}
+ input[type=range]::-moz-range-thumb{width:24px;height:24px}
+ .apps label{padding:10px 12px}
+ .zbtn{padding:6px 11px;font-size:13.5px}
+ nav .chips button{padding:7px 12px}
+}
+@media (orientation:landscape) and (max-height:520px){
+ nav{position:static}
+ .grid{flex-wrap:nowrap}.stage{flex:1 1 58%;position:sticky;top:6px;box-shadow:none}.side{flex:1 1 42%;min-width:0}
+ .stage svg{max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px)}
+ header .sub,header details{display:none}
+}
+#zoom{position:fixed;inset:0;z-index:50;background:rgba(20,22,35,.94);display:flex;flex-direction:column}
+#zoom[hidden]{display:none}
+.zbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 14px;padding-top:max(8px,env(safe-area-inset-top));color:#fff}
+.zbar b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zbar button{flex:0 0 auto;border:0;border-radius:10px;padding:8px 16px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);cursor:pointer}
+.zwrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
+#zbox{background:#fff;border-radius:12px;flex:0 0 auto;padding:6px}
+#zbox svg{display:block}
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
+</style>
+<script src="../shared/auth.js"></script>
+</head>
+<body>
+<script src="../shared/topbar.js" data-root=".." data-page="circuits-lab" data-mode="compact"></script>
+<header><h1>明馨的电学实验台</h1><p class="sub">电路 1–13 · 电与磁 14–21 · 动手拖一拖、点一点</p>
+<details><summary>怎么用？</summary><ul>
+<li>电路：1–5 已学，6–7 预习，8–13 结合真题进阶。电与磁（九年级第二十章）：14–18 预习，19–21 结合中考题进阶。</li>
+<li>电路图里橙色的小点表示电流方向（从电源正极出发），点跑得越快电流越大。</li>
+<li>每张图右上角都有“放大”。在手机上竖着拿时，放大后图会自动横过来，看得更清楚。</li>
+<li>手机上：用最上面的下拉菜单或左右箭头换模块；电脑和平板上：先选“电路 / 电与磁”，再点模块。</li>
+<li>网页会记住你上次看到哪个模块。</li></ul></details></header>
+<nav id="nav" data-g="0"><div class="tabs" id="tabs"><button data-g="0">电路</button><button data-g="1">电与磁</button></div><div class="chips" id="chips"></div>
+<div class="mnav"><button onclick="go(cur-1)" aria-label="上一个">‹</button><select id="msel" aria-label="选择模块"></select><button onclick="go(cur+1)" aria-label="下一个">›</button></div></nav>
+<main>
+
+<section id="m1">
+<h2>1 · 通路、断路、短路</h2><p class="lead">点图里的开关试试。再试试两根“捣乱”的导线。</p>
+<div class="grid"><div class="stage"><svg id="s1" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3><div class="btns">
+<button data-t="s">开关 S</button><button data-t="sl">用导线短接灯</button><button data-t="sp">用导线短接电源</button></div>
+<div id="o1"></div></div>
+<div class="tip"><b>要点</b><ul><li>通路：处处连通，用电器工作。</li><li>断路：某处断开，哪儿都没有电流。</li><li>短接用电器：电流走“捷径”，那个用电器不工作，但电路里还有别的电阻，安全。</li><li>电源短路：电流不经过任何用电器，电流极大，会烧坏电源，绝对不允许。</li></ul>
+<span class="tag">对应错题：物理第 4 题（安全带指示灯）</span></div>
+</div></div>
+</section>
+
+<section id="m2">
+<h2>2 · 串联和并联</h2><p class="lead">同样两盏灯，换一种接法，电流和电压的分法完全不同。</p>
+<div class="grid"><div class="stage"><svg id="s2" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-set="mode:0">串联</button><button data-set="mode:1">并联</button><button data-t="out">拧下 L₁</button></div>
+<label>电源电压 U = <b class="v" id="v2u"></b> V<input type="range" id="i2u" min="3" max="12" step="1" value="6"></label>
+<label>L₁ 的电阻 R₁ = <b class="v" id="v2a"></b> Ω<input type="range" id="i2a" min="5" max="30" step="5" value="10"></label>
+<label>L₂ 的电阻 R₂ = <b class="v" id="v2b"></b> Ω<input type="range" id="i2b" min="5" max="30" step="5" value="20"></label>
+</div>
+<div class="card"><h3>读数</h3><div class="read" id="r2"></div><div id="o2"></div></div>
+<div class="tip"><b>要点</b><ul><li>串联：电流处处相等，电压按电阻分——电阻大的分得多（U₁:U₂ = R₁:R₂）。</li><li>并联：各支路电压相等，电流按电阻的反比分——电阻大的电流小（I₁:I₂ = R₂:R₁）。</li><li>拧下一盏灯：串联全灭，并联另一盏照常亮。</li></ul>
+<span class="tag">对应错题：物理第 5、15 题</span></div>
+</div></div>
+</section>
+
+<section id="m3">
+<h2>3 · 滑动变阻器与 U-I 图像</h2><p class="lead">拖动滑片，同时盯住右边的图像：图上的每一个点，都是“此刻的电路”。</p>
+<div class="grid"><div class="stage"><svg id="s3" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<label>滑片位置：变阻器接入 <b class="v" id="v3p"></b> Ω<input type="range" id="i3p" min="0" max="50" step="1" value="25"></label>
+<label>定值电阻 R₀ = <b class="v" id="v3r"></b> Ω<input type="range" id="i3r" min="5" max="20" step="5" value="10"></label>
+<div class="btns"><button data-set="vm:0">电压表测 R₀</button><button data-set="vm:1">电压表测变阻器</button></div></div>
+<div class="card"><h3>电压表示数 U 与电流 I</h3><svg id="g3" viewBox="0 0 300 210" style="width:100%"></svg><div class="read" id="r3"></div></div>
+<div class="tip"><b>要点</b><ul><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul>
+<span class="tag">对应错题：物理第 6、12、14 题</span></div>
+</div></div>
+</section>
+
+<section id="m4">
+<h2>4 · 电路故障侦探</h2><p class="lead">先自己选故障看两只表怎么变，再点“考考我”，根据表的变化反推故障。</p>
+<div class="grid"><div class="stage"><svg id="s4" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3 id="h4">选择故障</h3>
+<div class="btns" id="b4"><button data-f="ok">正常</button><button data-f="Lo">L 断路</button><button data-f="Ls">L 短路</button><button data-f="Ro">R 断路</button><button data-f="Rs">R 短路</button></div>
+<div class="btns"><button data-set="vm4:0">电压表测 R</button><button data-set="vm4:1">电压表测 L</button><button class="go" id="quiz">考考我</button></div>
+<div id="o4"></div></div>
+<div class="card"><h3>读数（正常时 I = 0.3 A）</h3><div class="read" id="r4"></div></div>
+<div class="tip"><b>要点</b><ul><li>先看电流表：还有示数是短路，变为 0 是断路。</li><li>再看电压表“抱”着的元件：它断路，表变大（≈电源电压）；它短路，表变为 0。</li></ul>
+<span class="tag">对应错题：物理第 9 题</span></div>
+</div></div>
+</section>
+
+<section id="m5">
+<h2>5 · 实验：探究电流与电阻的关系</h2><p class="lead">任务：换 5 个定值电阻，每次都把它两端的电压调回 8 V，再记录电流。</p>
+<div class="grid"><div class="stage"><svg id="s5" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns" id="b5"></div>
+<label>变阻器接入 <b class="v" id="v5p"></b> Ω<input type="range" id="i5p" min="0" max="20" step="0.5" value="5"></label>
+<label>变阻器规格：<select id="i5m"><option value="10">最大 10 Ω</option><option value="20" selected>最大 20 Ω</option><option value="30">最大 30 Ω</option></select></label>
+<div class="btns"><button class="go" id="rec">记录这组数据</button><button id="clr">清空</button></div><div id="o5"></div></div>
+<div class="card"><h3>数据与图像</h3><svg id="g5" viewBox="0 0 300 190" style="width:100%"></svg><div id="t5"></div></div>
+<div class="tip"><b>要点</b><ul><li>这个实验里不变的是电阻两端的电压，变的是电阻。</li><li>换大调大：换上更大的电阻，变阻器也要调大。</li><li>电源 10 V、电阻保持 8 V，变阻器分 2 V，阻值是定值电阻的 1/4；用到 60 Ω 时至少需要 15 Ω。</li></ul>
+<span class="tag">对应错题：物理第 8、19 题</span></div>
+</div></div>
+</section>
+
+<section id="m6">
+<h2>6 · 预习：电功率与灯的亮度</h2><p class="lead">以后会学：灯有多亮，看的是实际功率 P = UI，不是电流也不是电压单独说了算。</p>
+<div class="grid"><div class="stage"><svg id="s6" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>实验一：一盏“6 V 3 W”的灯</h3>
+<label>灯两端电压 U = <b class="v" id="v6u"></b> V<input type="range" id="i6u" min="0" max="9" step="0.5" value="6"></label>
+<div class="read" id="r6"></div><div id="o6"></div></div>
+<div class="card ctl"><h3>实验二：“6 V 3 W”和“6 V 6 W”接到 6 V 电源</h3>
+<div class="btns"><button data-set="m6:0">只看实验一</button><button data-set="m6:1">两灯串联</button><button data-set="m6:2">两灯并联</button></div><div id="o6b"></div></div>
+<div class="tip"><b>要点（预习）</b><ul><li>额定功率是灯上标的值，只有在额定电压下才达到。</li><li>实际电压变了，实际功率跟着变：P = U²/R。</li><li>串联时电流相同，电阻大的灯更亮；并联时电压相同，电阻小的灯更亮。</li></ul></div>
+</div></div>
+</section>
+
+<section id="m7">
+<h2>7 · 预习：家庭电路为什么会跳闸</h2><p class="lead">家里的用电器都是并联的。点一点，把它们一个个打开。</p>
+<div class="grid"><div class="stage"><svg id="s7" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card"><h3>用电器（电压 220 V）</h3><div class="apps" id="a7"></div>
+<div class="btns"><button id="rst" class="go" style="display:none">合上空气开关</button></div></div>
+<div class="card"><h3>干路</h3><div class="read" id="r7"></div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:6px">干路电流（上限 16 A）</div><div class="bar"><i id="bar7"></i></div>
+<div style="font-size:12.5px;color:var(--muted)">导线发热（与电流的平方成正比）</div><div class="bar"><i id="bar7b" style="background:var(--coral)"></i></div><div id="o7"></div></div>
+<div class="tip"><b>要点（预习）</b><ul><li>并联的用电器越多，干路电流越大：I = P<sub>总</sub> / U。</li><li>焦耳定律 Q = I²Rt：电流翻倍，导线发热变成 4 倍。</li><li>电流过大时空气开关自动断开，保护导线不被烧坏。</li></ul></div>
+</div></div>
+</section>
+
+<section id="m8">
+<h2>8 · 进阶：去表法——同一个电路的两副面孔</h2><p class="lead">原型是这次考试物理第 5 题。点图里的甲、乙可以把电压表换成电流表，再点开关 S，看电路结构怎么变。</p>
+<div class="grid"><div class="stage"><svg id="s8" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-pre="1">真题状态一：S 闭合，两表是电压表</button><button data-pre="2">真题状态二：S 断开，两表是电流表</button></div>
+<div class="btns"><button data-m="jia">切换 甲</button><button data-m="yi">切换 乙</button><button data-t="s8">开关 S</button><button data-t="strip" class="go">去表看结构</button></div>
+<label>R₁ = <b class="v" id="v8a"></b> Ω<input type="range" id="i8a" min="5" max="30" step="5" value="10"></label>
+<label>R₂ = <b class="v" id="v8b"></b> Ω<input type="range" id="i8b" min="5" max="30" step="5" value="15"></label></div>
+<div class="card"><h3>读数与结构</h3><div class="read" id="r8"></div><div id="o8"></div></div>
+<div class="tip"><b>分析方法：去表三步</b><ul><li>去表：电流表换成导线，电压表所在的支路直接擦掉（点“去表看结构”）。</li><li>看剩下的电阻是串联、并联，还是有的被短接。</li><li>把表放回去：电流表和谁在同一条路上就测谁；电压表两个接点之间夹着谁就测谁。</li></ul>
+<span class="tag">原型：物理第 5 题（答案 1:1、2:3、2:5 都能在这里验证）</span></div>
+</div></div>
+</section>
+
+<section id="m9">
+<h2>9 · 进阶：动态电路——谁变、谁不变、比值和差值</h2><p class="lead">原型是物理第 12 题。拖动滑片，下面的表会告诉你每个量的变化方向；再切到“串联变形”对比。</p>
+<div class="grid"><div class="stage"><svg id="s9" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-set="dyn:0">真题：并联版</button><button data-set="dyn:1">变形：串联版</button></div>
+<label>变阻器接入 <b class="v" id="v9p"></b> Ω（向右拖 = 阻值变大）<input type="range" id="i9p" min="5" max="50" step="1" value="25"></label></div>
+<div class="card"><h3>阻值变大时，各个量怎么变</h3><div id="t9"></div><div id="o9"></div></div>
+<div class="tip"><b>分析方法：动态电路四步</b><ul><li>去表看结构：串联还是并联。</li><li>判断每只表测谁。</li><li>先找不变的量：电源电压、定值电阻的阻值。</li><li>比值和差值要“翻译”：两表示数之比通常是某个电阻；两表示数之差通常是另一条支路的电流（或另一个元件的电压）。</li></ul>
+<span class="tag">原型：物理第 12 题</span></div>
+</div></div>
+</section>
+
+<section id="m10">
+<h2>10 · 进阶：填电表挑战</h2><p class="lead">原型是物理第 15 题。点三个圆圈在电流表和电压表之间切换，完成指定的任务。</p>
+<div class="grid"><div class="stage"><svg id="s10" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>任务</h3>
+<div class="btns"><button data-set="goal:0">任务一：让两灯并联</button><button data-set="goal:1">任务二（变形）：让两灯串联</button></div>
+<div class="btns"><button data-m="m1">切换 上方的表</button><button data-m="m2">切换 右边的表</button><button data-m="m3">切换 中间的表</button></div>
+<div id="o10"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r10"></div></div>
+<div class="tip"><b>分析方法：先画路，再填表</b><ul><li>按要求先用手指描出电流要走的路：并联就是每盏灯各有一条独立的路。</li><li>路上经过的圆圈必须让电流通过，填电流表。</li><li>不在路上的圆圈填电压表；填成电流表就会多出一条“捷径”，造成短路。</li></ul>
+<span class="tag">原型：物理第 15 题</span></div>
+</div></div>
+</section>
+
+<section id="m11">
+<h2>11 · 进阶：开关组合——一个电路，多种状态</h2><p class="lead">这是很常见的综合题型（改编）。三个开关有 8 种组合，试着完成右边的四个任务。</p>
+<div class="grid"><div class="stage"><svg id="s11" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-t="k1">S₁</button><button data-t="k2">S₂</button><button data-t="k3">S₃</button><button data-t="strip" class="go">去表看结构</button></div>
+<div id="o11"></div></div>
+<div class="card"><h3>任务清单（完成过的会打勾）</h3><div id="t11"></div><div class="read" id="r11" style="margin-top:8px"></div></div>
+<div class="tip"><b>分析方法：每个状态画一张等效图</b><ul><li>闭合的开关当导线，断开的开关连同它那一段直接擦掉。</li><li>从电源正极出发描电流的路，走不通的支路不用管。</li><li>一个电阻两端被导线直接连在一起，它就被短接了。</li><li>每换一种开关组合，都当成一道新题重新画。</li></ul>
+<span class="tag">经典题型（改编），R₁ = 10 Ω，R₂ = 20 Ω，电源 6 V</span></div>
+</div></div>
+</section>
+
+<section id="m12">
+<h2>12 · 进阶：电路安全——滑片最多能滑到哪</h2><p class="lead">常见的压轴题型（改编）。电流表量程 0～0.6 A，电压表量程 0～3 V。先自己算出变阻器的安全范围，再拖滑片验证。</p>
+<div class="grid"><div class="stage"><svg id="s12" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<label>变阻器接入 <b class="v" id="v12p"></b> Ω<input type="range" id="i12p" min="0" max="20" step="0.5" value="6"></label>
+<div class="btns"><button data-t="show12" class="go">显示安全范围</button></div>
+<div id="o12"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r12"></div>
+<div style="font-size:12.5px;color:var(--muted);margin-top:8px">变阻器阻值 0 ～ 20 Ω</div><svg id="g12" viewBox="0 0 300 34" style="width:100%"></svg></div>
+<div class="tip"><b>分析方法：两头各有一个“限制者”</b><ul><li>阻值调小 → 电流变大 → 先撞到电流表量程（或用电器的额定电流）：由 I 最大求出阻值的最小值。</li><li>阻值调大 → 变阻器分压变大 → 先撞到电压表量程：由 U 最大求出阻值的最大值。</li><li>注意电压表测的是谁。如果它测的是定值电阻，两个限制都在“阻值调小”这一头。</li></ul>
+<span class="tag">经典题型（改编），电源 4.5 V，R₀ = 5 Ω，变阻器最大 20 Ω</span></div>
+</div></div>
+</section>
+
+<section id="m13">
+<h2>13 · 进阶：传感器类综合题——风速仪</h2><p class="lead">原型是物理第 21 题。风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
+<div class="grid"><div class="stage"><svg id="s13" viewBox="0 0 560 280"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<label>风速 v = <b class="v" id="v13v"></b> m/s<input type="range" id="i13v" min="0" max="16" step="0.5" value="6"></label>
+<div class="btns"><button data-set="r13:20">R₀ = 20 Ω（原题）</button><button data-set="r13:100">R₀ = 100 Ω（第 3 问更换后）</button></div>
+<div id="o13"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r13"></div></div>
+<div class="tip"><b>分析方法：先找“谁在变”</b><ul><li>电压表几乎不通电流，所以电阻丝整根都串在电路里：电流不随风速变化，变的只是电压表量的那一段长度。</li><li>先用已知的一组数据求出常数 k 和电源电压，再回答其他问题。</li><li>“保证安全”就是让电压表最大示数（P 在 N 端时）不超过 15 V。</li></ul>
+<span class="tag">原型：物理第 21 题（验证：9 V 对应 9 m/s；换成 100 Ω 后最大可测 15 m/s）</span></div>
+</div></div>
+</section>
+
+<section id="m14">
+<h2>14 · 预习：磁场与磁感线</h2><p class="lead">第二十章第 1 节。拖动（或点一下）图里的大指南针，看它在不同位置指向哪里。</p>
+<div class="grid"><div class="stage"><svg id="s14" viewBox="0 0 560 340"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>选择磁体</h3>
+<div class="btns"><button data-set="eMag:0">条形磁铁</button><button data-set="eMag:1">蹄形磁铁</button><button data-set="eMag:2">同名磁极相对</button><button data-set="eMag:3">异名磁极相对</button><button data-set="eMag:4">地球</button></div>
+<div class="btns"><button data-t="eLines">磁感线</button><button data-t="eGrid">撒一片小磁针</button></div>
+<div id="o14"></div></div>
+<div class="card"><h3>大指南针所在的位置</h3><div class="read" id="r14"></div></div>
+<div class="tip"><b>要点</b><ul>
+<li>磁体周围存在磁场。磁感线是为了描述磁场画出的假想曲线，越密的地方磁场越强。</li>
+<li>磁体外部，磁感线从 N 极出发，回到 S 极。</li>
+<li>小磁针静止时 N 极所指的方向，就是这一点的磁场方向，也就是磁感线的方向。</li>
+<li>同名磁极相互排斥，异名磁极相互吸引。</li>
+<li>地磁北极在地理南极附近，所以指南针的 N 极指向地理北方。</li></ul></div>
+</div></div></section>
+
+<section id="m15">
+<h2>15 · 预习：电生磁——奥斯特实验与安培定则</h2><p class="lead">第二十章第 2 节。先看一根通电导线，再把导线绕成螺线管。</p>
+<div class="grid"><div class="stage"><svg id="s15" viewBox="0 0 560 340"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-set="eOe:0">奥斯特实验</button><button data-set="eOe:1">通电螺线管</button></div>
+<div id="p15a"><div class="btns"><button data-t="eOeI">开关</button><button data-t="eOeR">电流反向</button></div></div>
+<div id="p15b"><div class="btns"><button data-act="pol15">电源正负极对调</button><button data-act="wind15">换一种绕法</button><button data-t="eSl">磁感线</button></div>
+<div class="btns"><button class="go" data-act="q15">考考我</button><span id="q15b" class="btns" style="margin:0"></span></div></div>
+<div id="o15"></div></div>
+<div class="tip"><b>要点</b><ul>
+<li>1820 年，丹麦物理学家奥斯特发现：通电导线周围存在磁场，磁场方向与电流方向有关。</li>
+<li>通电螺线管外部的磁场和条形磁铁的很像，两端就是 N 极和 S 极。</li>
+<li>安培定则：用右手握住螺线管，让四指指向螺线管中电流的方向，大拇指所指的那端就是 N 极。</li>
+<li>技巧：先在螺线管正面（看得见的那一面）标出电流方向，再去“握”。</li></ul>
+<span class="tag">中考高频：由电源正负极判断磁极，或由小磁针反推电源正负极</span></div>
+</div></div></section>
+
+<section id="m16">
+<h2>16 · 预习：电磁铁的磁性强弱</h2><p class="lead">第二十章第 3 节。两个电磁铁串联：A 绕 50 匝，B 绕 100 匝。看它们各吸起多少枚大头针。</p>
+<div class="grid"><div class="stage"><svg id="s16" viewBox="0 0 560 290"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<label>变阻器接入 <b class="v" id="v16"></b> Ω<input type="range" id="i16" min="0" max="25" step="1" value="10"></label>
+<div class="btns"><button data-t="eCore16">铁芯</button><button data-t="eRev16">电流反向</button></div>
+<div class="btns"><button class="go" data-act="rec16">记录这组数据</button><button data-act="clr16">清空</button></div><div id="o16"></div></div>
+<div class="card"><h3>读数与记录</h3><div class="read" id="r16"></div><div id="t16"></div></div>
+<div class="tip"><b>要点</b><ul>
+<li>电磁铁磁性的强弱，与电流大小、线圈匝数、有没有铁芯有关。</li>
+<li>转换法：磁性强弱看不见，用吸起大头针的多少来反映。</li>
+<li>控制变量：A、B 串联，电流一定相同，只有匝数不同，比较的就是匝数。比较电流时，看同一个电磁铁、调节变阻器。</li>
+<li>改变电流方向只会对调磁极，不改变磁性强弱。</li></ul>
+<span class="tag">和物理第 8、19 题练过的“控制变量”是同一个思路</span></div>
+</div></div></section>
+
+<section id="m17">
+<h2>17 · 预习：磁场对通电导线的作用——电动机</h2><p class="lead">第二十章第 4、5 节。通电导线在磁场里会受力；把受力变成持续的转动，就是电动机。</p>
+<div class="grid"><div class="stage"><svg id="s17" viewBox="0 0 560 345"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-set="eMt:0">导轨实验</button><button data-set="eMt:1">电动机模型</button></div>
+<div id="p17a"><div class="btns"><button data-t="eSw17">开关</button><button data-t="eMI">电源正负极对调</button><button data-t="eMB">磁体上下翻转</button><button data-act="rst17">把导体放回中间</button></div>
+<label>电流大小（第 <b class="v" id="v17"></b> 档）<input type="range" id="i17" min="1" max="3" step="1" value="2"></label></div>
+<div id="p17b"><div class="btns"><button data-t="eMon">通电</button><button data-t="eComm">换向器</button><button data-act="bal17">把线圈拨到平衡位置</button><button data-act="push17">用手拨一下</button></div></div>
+<div id="o17"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r17"></div></div>
+<div class="tip"><b>要点</b><ul>
+<li>通电导线在磁场中会受到力的作用，力的方向跟电流方向、磁场方向都有关。</li>
+<li>只改变其中一个，受力方向反过来；两个同时改变，受力方向不变。</li>
+<li>线圈转到平衡位置（线圈平面与磁感线垂直）时受力平衡。换向器在这时自动改变线圈中的电流方向，线圈才能一直转下去。两个电刷把电源接到换向器上。</li>
+<li>电动机：电能 → 机械能。</li></ul></div>
+</div></div></section>
+
+<section id="m18">
+<h2>18 · 预习：磁生电——电磁感应与发电机</h2><p class="lead">第二十章第 6 节。让导体在磁场里动起来，看灵敏电流计（零刻度在中间）的指针。</p>
+<div class="grid"><div class="stage"><svg id="s18" viewBox="0 0 560 320"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-set="eGt:0">导体切割实验</button><button data-set="eGt:1">发电机模型</button></div>
+<div id="p18a"><div class="btns"><button data-act="mv:L">向左</button><button data-act="mv:R">向右</button><button data-act="mv:U">向上</button><button data-act="mv:D">向下</button><button data-act="mv:F">向前（沿导体）</button><button data-act="mv:K">向后（沿导体）</button><button data-act="mv:X">斜向右上</button></div>
+<div class="btns"><button data-t="eGB">磁体上下翻转</button><button data-t="eGopen">断开开关</button><button data-act="ctr18">放回中间</button></div>
+<label>运动快慢（第 <b class="v" id="v18"></b> 档）<input type="range" id="i18" min="1" max="3" step="1" value="2"></label></div>
+<div id="p18b"><label>手摇转速 <b class="v" id="v18g"></b> 圈/秒<input type="range" id="i18g" min="0" max="2" step="0.25" value="0.5"></label>
+<div class="btns"><button data-t="eGenComm">换成换向器（拓展）</button></div><svg id="g18" viewBox="0 0 300 120" style="width:100%;margin-top:6px"></svg></div>
+<div id="o18"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r18"></div></div>
+<div class="tip"><b>要点</b><ul>
+<li>闭合电路的一部分导体在磁场中做切割磁感线运动时，导体中就会产生电流，这叫电磁感应。1831 年由英国物理学家法拉第发现。</li>
+<li>感应电流的方向跟导体运动方向、磁场方向都有关；运动越快、磁场越强，电流越大。</li>
+<li>沿着磁感线运动，或沿着导体自身方向运动，都没有切割磁感线，不产生电流。</li>
+<li>发电机：机械能 → 电能。线圈转动产生的电流方向周期性变化，是交流电。我国电网的频率是 50 Hz。</li></ul></div>
+</div></div></section>
+
+<section id="m19">
+<h2>19 · 进阶：电磁继电器——用弱电控制强电</h2><p class="lead">第二十章第 3 节的压轴题型。左下是控制电路，右边是工作电路，中间靠电磁铁和衔铁联系起来。</p>
+<div class="grid"><div class="stage"><svg id="s19" viewBox="0 0 560 340"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>情境</h3>
+<div class="btns"><button data-set="eRl:0">恒温箱（中考常见题）</button><button data-set="eRl:1">电梯超载报警（2013 娄底中考改编）</button></div>
+<div id="p19a">
+<label>控制电路电源 U₁ = <b class="v" id="v19u"></b> V<input type="range" id="i19u" min="3" max="9" step="0.5" value="6"></label>
+<label>串联的变阻器 R′ = <b class="v" id="v19r"></b> Ω<input type="range" id="i19r" min="0" max="200" step="10" value="0"></label>
+<div class="btns"><button class="go" data-t="eRun">开始 / 暂停加热</button><button data-act="rst19">恢复室温 20 ℃</button></div></div>
+<div id="p19b"><label>电梯里乘客的总质量 m = <b class="v" id="v19m"></b> kg<input type="range" id="i19m" min="0" max="1150" step="50" value="600"></label></div>
+<div id="o19"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r19"></div><svg id="g19" viewBox="0 0 300 160" style="width:100%;margin-top:6px"></svg></div>
+<div class="tip"><b>分析方法：拆成两个电路</b><ul>
+<li>控制电路：用欧姆定律算电流，I = U ÷ R<sub>总</sub>。</li>
+<li>临界条件：线圈电流达到吸合电流（这里是 20 mA）时衔铁被吸下。临界时 R<sub>总</sub> = U ÷ 0.02 A，是一个定值。</li>
+<li>工作电路：看衔铁在上、在下时，动触点分别和哪个静触点接通，接通的是谁。</li>
+<li>想改变动作点（比如恒温的温度），就改控制电路的电源电压或串联电阻。</li></ul>
+<span class="tag" id="tag19"></span></div>
+</div></div></section>
+
+<section id="m20">
+<h2>20 · 进阶：弹簧、磁铁和电磁铁</h2><p class="lead">中考高频题型（改编）：把安培定则、磁极间的相互作用和动态电路串在一起考。</p>
+<div class="grid"><div class="stage"><svg id="s20" viewBox="0 0 560 340"></svg></div>
+<div class="side">
+<div class="card ctl"><h3>操作</h3>
+<div class="btns"><button data-set="eSpObj:0">挂磁铁（N 朝下）</button><button data-set="eSpObj:1">挂磁铁（S 朝下）</button><button data-set="eSpObj:2">挂铁块</button></div>
+<div class="btns"><button data-act="pol20">电源正负极对调</button><button data-act="w20">换一种绕法</button><button data-t="eSpCore">铁芯</button></div>
+<label>滑片 P 的位置（看图：接入电路的是 P 左边那段电阻丝）<input type="range" id="i20" min="0" max="1" step="0.05" value="0.5"></label>
+<div class="btns"><button class="go" data-act="q20">考考我</button><span id="q20b" class="btns" style="margin:0"></span></div>
+<div id="o20"></div></div>
+<div class="card"><h3>读数</h3><div class="read" id="r20"></div></div>
+<div class="tip"><b>分析方法：一条推理链</b><ul>
+<li>第一步，安培定则：判断螺线管上端是 N 极还是 S 极。</li>
+<li>第二步，磁极间的相互作用：与磁铁下端同名相斥、异名相吸；铁块总是被吸引。</li>
+<li>第三步，动态电路：滑片移动 → 电阻 → 电流 → 磁性强弱 → 力的大小。</li>
+<li>合起来：吸引力变大或排斥力变小，弹簧都变长；反过来就变短。</li></ul></div>
+</div></div></section>
+
+<section id="m21">
+<h2>21 · 进阶：原理辨析——用的是哪个原理？</h2><p class="lead">中考选择题的常客：给出一个装置或实验，问它利用了哪个原理。</p>
+<div class="grid"><div class="stage nostick" style="padding:16px 18px"><div id="s21"></div></div>
+<div class="side">
+<div class="card"><h3>得分</h3><div class="read" id="r21"></div></div>
+<div class="tip"><b>分析方法：三看</b><ul>
+<li>看因果：通电产生磁 → 电流的磁效应；通电后在磁场里受力动起来 → 电动机原理；在磁场里动起来产生了电 → 发电机原理（电磁感应）。</li>
+<li>看能量：电能 → 机械能是电动机；机械能 → 电能是发电机。</li>
+<li>看实验图：电路里有电源，研究的是磁场对电流的作用；没有电源、只有灵敏电流计，研究的是电磁感应。</li></ul></div>
+</div></div></section>
+
+</main>
+<footer>这是帮助理解的简化模型：导线、电表和电源都当作理想的，灯丝电阻当作不变。电与磁部分的磁感线是用简化的磁极模型画出的示意图。</footer>
+<div id="zoom" hidden><div class="zbar"><b id="ztitle"></b><button onclick="zoomClose()">✕ 关闭</button></div><div class="zwrap" id="zwrap"><div id="zbox"></div></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={s:false,sl:false,sp:false,mode:0,out:false,vm:1,f:'ok',vm4:0,q:null,R5:20,pts:{},m6:0,on7:{},trip:false};
+const f2=n=>String(Math.round(n*100)/100);
+const P=p=>p.map(a=>a.join(',')).join(' ');
+const wire=(p,c)=>`<polyline class="w" ${c?`style="stroke:${c}"`:''} points="${P(p)}"/>`;
+const flow=(p,I)=>I>0.001?`<polyline class="f" style="animation-duration:${Math.max(.18,Math.min(3,.45/I)).toFixed(2)}s" points="${P(p)}"/>`:'';
+const tx=(x,y,s,o='')=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="13" ${o}>${s}</text>`;
+const res=(x,y,l,c)=>`<rect x="${x-24}" y="${y-9}" width="48" height="18" rx="3" fill="#fff" stroke="${c||'#2B2D42'}" stroke-width="2.2"/>`+(l?tx(x,y+27,l):'');
+const resV=(x,y,l)=>`<rect x="${x-9}" y="${y-24}" width="18" height="48" rx="3" fill="#fff" stroke="#2B2D42" stroke-width="2.2"/>`+tx(x+38,y+5,l);
+const lamp=(x,y,b,l)=>`<circle cx="${x}" cy="${y}" r="${16+Math.min(b,1.6)*22}" fill="#FFC83D" opacity="${Math.min(b,1)*.75}"/><circle cx="${x}" cy="${y}" r="14" fill="${b>0.02?'#FFF3B8':'#fff'}" stroke="#2B2D42" stroke-width="2.2"/><path d="M${x-10} ${y-10}L${x+10} ${y+10}M${x-10} ${y+10}L${x+10} ${y-10}" stroke="#2B2D42" stroke-width="2"/>`+(l?tx(x,y+34,l):'');
+const meter=(x,y,ch,v,c)=>`<circle cx="${x}" cy="${y}" r="16" fill="#fff" stroke="${c}" stroke-width="2.4"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="15" font-weight="700" style="fill:${c}">${ch}</text>`+tx(x,y-22,v,`font-weight="700" style="fill:${c}"`);
+const batt=(x,y)=>`<rect x="${x-13}" y="${y-16}" width="26" height="32" fill="#fff"/><path d="M${x+12} ${y-15}V${y+15}" stroke="#2B2D42" stroke-width="2.4"/><path d="M${x-12} ${y-8}V${y+8}" stroke="#2B2D42" stroke-width="5"/>`+tx(x+22,y-12,'+')+tx(x-22,y-12,'−');
+const sw=(x,y,on,k,l)=>`<g class="sw" data-t="${k}"><rect x="${x-26}" y="${y-22}" width="52" height="34" fill="#fff"/><circle cx="${x-20}" cy="${y}" r="4" fill="#fff" stroke="#2B2D42" stroke-width="2"/><circle cx="${x+20}" cy="${y}" r="3" fill="#2B2D42"/><path d="M${x-17} ${y-1}L${on?x+20:x+14} ${on?y:y-17}" stroke="#2B2D42" stroke-width="2.4"/>${tx(x,y+26,l+(on?'（闭合）':'（断开）'),'font-size="12"')}</g>`;
+const node=(x,y)=>`<circle cx="${x}" cy="${y}" r="3.5" fill="#2B2D42"/>`;
+const vlead=(x,y,v)=>wire([[x-46,y],[x-46,y-42],[x+46,y-42],[x+46,y]],'#3B5BDB')+meter(x,y-42,'V',v,'#3B5BDB')+node(x-46,y)+node(x+46,y);
+const rd=a=>a.map(([k,v])=>`<div>${k}<b>${v}</b></div>`).join('');
+const msg=(t,c='')=>`<div class="msg ${c}">${t}</div>`;
+const LOOP=[[232,220],[490,220],[490,60],[70,60],[70,220],[208,220]];
+
+function r1(){
+  const U=6,RL=10,R=10;let I=0,b=0,st;
+  if(S.sp){I=9;st=msg('电源短路！电流不经过任何用电器，瞬间变得极大，会烧坏电源。马上撤掉这根导线。','bad')}
+  else if(!S.s){st=msg('断路：开关断开，整个电路没有电流，灯不亮。')}
+  else if(S.sl){I=U/R;st=msg(`灯被短接：电流全走绿色导线，灯不亮。电路里还有保护电阻，所以电流是 ${f2(I)} A，电源安全。`,'ok')}
+  else{I=U/(RL+R);b=.8;st=msg(`通路：电流 ${f2(I)} A，灯亮。`,'ok')}
+  let h=wire([[70,60],[490,60],[490,220],[70,220],[70,60]]);
+  h+=wire([[280,60],[280,22],[380,22],[380,60]],S.sl?'#12956B':'#C9CED8');
+  h+=wire([[190,220],[190,258],[370,258],[370,220]],S.sp?'#D7263D':'#C9CED8');
+  if(S.sp)h+=flow([[292,220],[370,220],[370,258],[190,258],[190,220],[268,220]],I);
+  else if(S.sl)h+=flow([[292,220],[490,220],[490,60],[380,60],[380,22],[280,22],[280,60],[70,60],[70,220],[268,220]],I);
+  else h+=flow([[292,220],[490,220],[490,60],[70,60],[70,220],[268,220]],I);
+  h+=sw(170,60,S.s,'s','S')+lamp(330,60,b,'灯 L')+resV(490,140,'保护电阻')+batt(280,220);
+  $('s1').innerHTML=h;$('o1').innerHTML=st;
+}
+function r2(){
+  const U=+$('i2u').value,a=+$('i2a').value,b=+$('i2b').value;$('v2u').textContent=U;$('v2a').textContent=a;$('v2b').textContent=b;
+  let h,I1,I2,U1,U2,I,o='';
+  if(S.mode==0){
+    I=S.out?0:U/(a+b);I1=I2=I;U1=I*a;U2=I*b;
+    h=wire([[70,60],[490,60],[490,220],[70,220],[70,60]])+flow(LOOP,I)+(S.out?tx(200,45,'L₁ 被拧下','style="fill:#D7263D"')+`<rect x="184" y="48" width="32" height="24" fill="#fff"/>`:lamp(200,60,I*I*a/8,'L₁'))+lamp(360,60,I*I*b/8,'L₂')+batt(220,220);
+    o=S.out?msg('串联只有一条路：拧下 L₁，整条路断开，L₂ 也灭了。','bad'):msg(`U₁ : U₂ = ${f2(U1)} : ${f2(U2)}，正好等于 R₁ : R₂ = ${a} : ${b}。`,'ok');
+  }else{
+    I1=S.out?0:U/a;I2=U/b;I=I1+I2;U1=S.out?0:U;U2=U;
+    h=wire([[70,50],[490,50],[490,230],[70,230],[70,50]])+wire([[70,130],[490,130]])+flow([[232,230],[490,230],[490,50],[70,50],[70,230],[208,230]],I1)+flow([[232,230],[490,230],[490,130],[70,130],[70,230],[208,230]],I2)
+     +(S.out?tx(280,36,'L₁ 被拧下','style="fill:#D7263D"')+`<rect x="264" y="38" width="32" height="24" fill="#fff"/>`:lamp(280,50,I1*I1*a/8,''))+tx(330,44,S.out?'':'L₁')+lamp(280,130,I2*I2*b/8,'')+tx(330,124,'L₂')+node(70,130)+node(490,130)+batt(220,230)+tx(400,250,'干路','style="fill:#6B7280"');
+    o=S.out?msg('并联各走各的路：拧下 L₁，L₂ 照常亮，电流也不变。','ok'):msg(`I₁ : I₂ = ${f2(I1)} : ${f2(I2)}，等于 R₂ : R₁ = ${b} : ${a}（反过来）。干路电流 = I₁ + I₂。`,'ok');
+  }
+  $('s2').innerHTML=h;$('o2').innerHTML=o;
+  $('r2').innerHTML=rd([['干路电流 I',f2(I)+' A'],['L₁ 电流 I₁',f2(I1)+' A'],['L₂ 电流 I₂',f2(I2)+' A'],['L₁ 电压 U₁',f2(U1)+' V'],['L₂ 电压 U₂',f2(U2)+' V']]);
+}
+function rheo(x,y,frac,l){const px=x-45+90*frac;return `<rect x="${x-45}" y="${y-9}" width="90" height="18" rx="3" fill="#fff" stroke="#2B2D42" stroke-width="2.2"/><rect x="${x-45}" y="${y-9}" width="${90*frac}" height="18" rx="3" fill="#FFC9B8" stroke="#2B2D42" stroke-width="2.2"/><path d="M${px} ${y-30}V${y-11}" stroke="#F2643D" stroke-width="2.6"/><path d="M${px-6} ${y-19}L${px} ${y-10}L${px+6} ${y-19}Z" fill="#F2643D"/>`+tx(px,y-34,'P','style="fill:#F2643D" font-weight="700"')+tx(x,y+27,l)}
+function r3(){
+  const U=12,Rp=+$('i3p').value,R0=+$('i3r').value;$('v3p').textContent=Rp;$('v3r').textContent=R0;
+  const I=U/(R0+Rp),U0=I*R0,Up=I*Rp,UV=S.vm?Up:U0;
+  $('s3').innerHTML=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I)+res(180,90,'R₀ = '+R0+' Ω')+rheo(370,90,Rp/50,'变阻器（最大 50 Ω）')
+   +(S.vm?wire([[300,90],[300,150],[440,150],[440,90]],'#3B5BDB')+meter(370,150,'V','','#3B5BDB')+tx(370,180,f2(UV)+' V','font-weight="700" style="fill:#3B5BDB"')+node(300,90)+node(440,90):vlead(180,90,f2(UV)+' V'))
+   +meter(490,165,'A','','#F2643D')+tx(527,170,f2(I)+' A','font-weight="700" style="fill:#F2643D"')+batt(220,230)+tx(220,262,'电源 12 V','style="fill:#6B7280"');
+  const Im=U/5,X=i=>40+i/Im*240,Y=u=>180-u/U*160;let pts=[];
+  for(let r=0;r<=50;r++){const i=U/(R0+r);pts.push([X(i).toFixed(1),Y(S.vm?i*r:i*R0).toFixed(1)])}
+  let g=`<path d="M40 14V180H292" fill="none" stroke="#2B2D42" stroke-width="1.6"/>`+tx(16,10,'U/V','font-size="11"')+tx(284,172,'I/A','font-size="11"');
+  for(let k=1;k<=4;k++)g+=`<path d="M40 ${Y(3*k)}H280" stroke="#E3E6EC"/>`+tx(28,Y(3*k)+4,3*k,'font-size="10"');
+  for(let k=1;k<=4;k++)g+=tx(X(.6*k),194,(.6*k).toFixed(1),'font-size="10"');
+  if(S.vm)g+=`<path d="M${X(0)} ${Y(U)}L${pts[0][0]} ${pts[0][1]}" stroke="#0FA3A3" stroke-dasharray="4 3" stroke-width="1.6"/>`+tx(96,Y(U)-4,'延长到 I=0：12 V','font-size="10" style="fill:#0FA3A3"');
+  g+=`<polyline points="${P(pts)}" fill="none" stroke="#F2643D" stroke-width="2.6"/><circle cx="${X(I)}" cy="${Y(UV)}" r="6" fill="#3B5BDB" stroke="#fff" stroke-width="2"/>`;
+  $('g3').innerHTML=g;
+  $('r3').innerHTML=rd([['电流 I',f2(I)+' A'],['R₀ 两端 U₀',f2(U0)+' V'],['变阻器两端 U滑',f2(Up)+' V'],['U₀ + U滑','12 V']]);
+}
+const FN={ok:'正常',Lo:'L 断路',Ls:'L 短路',Ro:'R 断路',Rs:'R 短路'};
+function calc4(f,vm){const U=6;let I,UV;
+  if(f=='Lo'||f=='Ro'){I=0;UV=((f=='Lo')==(vm==1))?U:0}
+  else{const rl=f=='Ls'?0:10,r=f=='Rs'?0:10;I=U/(rl+r);UV=I*(vm?rl:r)}
+  return{I,UV,b:(I>0&&f!='Ls')?I*I*10/1.2:0}}
+function r4(){
+  const f=S.q?S.q.f:S.f,c=calc4(f,S.vm4),n=calc4('ok',S.vm4),show=!S.q||S.q.done;
+  const chg=(a,b)=>Math.abs(a-b)<1e-6?'不变':a>b?'变大 ↑':a==0?'变为 0':'变小 ↓';
+  let h=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],c.I)+lamp(180,90,c.b,'灯 L')+res(370,90,'电阻 R')
+   +(S.vm4?vlead(180,90,f2(c.UV)+' V'):vlead(370,90,f2(c.UV)+' V'))+meter(490,165,'A','','#F2643D')+tx(527,170,f2(c.I)+' A','font-weight="700" style="fill:#F2643D"')+batt(220,230)+tx(220,262,'电源 6 V','style="fill:#6B7280"');
+  if(show){const x=f[0]=='L'?180:370;
+    if(f[1]=='o')h+=`<path d="M${x-12} 118L${x+12} 142M${x-12} 142L${x+12} 118" stroke="#D7263D" stroke-width="4"/>`+tx(x,160,'这里断了','style="fill:#D7263D" font-weight="700"');
+    if(f[1]=='s')h+=wire([[x-34,90],[x-34,128],[x+34,128],[x+34,90]],'#12956B')+tx(x,146,'被短接','style="fill:#12956B" font-weight="700"')}
+  $('s4').innerHTML=h;
+  $('r4').innerHTML=rd([['电流表',f2(c.I)+' A（'+chg(c.I,n.I)+'）'],['电压表',f2(c.UV)+' V（'+chg(c.UV,n.UV)+'）'],['灯 L',c.b>0?(c.b>1.2?'更亮':'亮'):'不亮']]);
+  $('h4').textContent=S.q&&!S.q.done?'侦探时间：是哪种故障？':'选择故障';
+  let o='';
+  if(S.q&&!S.q.done)o=msg('电路出了一个故障。看两只表和灯的变化，点上面的按钮作答。');
+  else if(S.q)o=msg(S.q.right?'答对了！故障是 '+FN[f]+'。':'这次是 '+FN[f]+'。看图上标出的位置，再对照两只表想一想。',S.q.right?'ok':'bad');
+  else if(f=='ok')o=msg('正常：灯亮，两只表都有示数。');
+  else if(f[1]=='o')o=msg(FN[f]+'：电路断开，电流为 0。电压表'+(c.UV>0?'“抱”着断开的元件，示数等于电源电压。':'另一端接不通电源，示数为 0。'));
+  else o=msg(FN[f]+'：总电阻变小，电流变大。电压表'+(c.UV>0?'量到全部电源电压。':'“抱”着的元件相当于一段导线，示数为 0。'));
+  $('o4').innerHTML=o;
+}
+function r5(){
+  const U=10,R=S.R5,mx=+$('i5m').value,sl=$('i5p');sl.max=mx;if(+sl.value>mx)sl.value=mx;const Rp=+sl.value;$('v5p').textContent=Rp;
+  const I=U/(R+Rp),UR=I*R,ok=Math.abs(UR-8)<.02;
+  $('s5').innerHTML=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I)+res(180,90,'R = '+R+' Ω','#F2643D')+rheo(370,90,Rp/mx,'变阻器（最大 '+mx+' Ω）')+vlead(180,90,f2(UR)+' V')
+   +meter(490,165,'A','','#F2643D')+tx(527,170,f2(I)+' A','font-weight="700" style="fill:#F2643D"')+batt(220,230)+tx(220,262,'电源 10 V','style="fill:#6B7280"');
+  $('b5').innerHTML=[20,30,40,50,60].map(r=>`<button data-r="${r}" class="${r==R?'on':''}">${r} Ω${S.pts[r]?' ✓':''}</button>`).join('');
+  let o;
+  if(ok)o=msg('电压正好 8 V，可以记录了。','ok');
+  else if(UR>8)o=mx<R/4?msg(`变阻器调到最大（${mx} Ω）也降不到 8 V。这个电阻需要变阻器 ${R/4} Ω——规格不够，换一个更大的。`,'bad'):msg(`现在是 ${f2(UR)} V，偏大。把变阻器的阻值调大，多分走一些电压。`);
+  else o=msg(`现在是 ${f2(UR)} V，偏小。把变阻器的阻值调小。`);
+  $('o5').innerHTML=o;$('rec').disabled=!ok;$('rec').style.opacity=ok?1:.4;
+  const X=r=>40+r/70*240,Y=i=>165-i/.45*145;let g=`<path d="M40 12V165H292" fill="none" stroke="#2B2D42" stroke-width="1.6"/>`+tx(22,16,'I/A','font-size="11"')+tx(282,182,'R/Ω','font-size="11"');
+  [20,40,60].forEach(r=>g+=tx(X(r),180,r,'font-size="10"'));[.1,.2,.3,.4].forEach(i=>g+=`<path d="M40 ${Y(i)}H280" stroke="#E3E6EC"/>`+tx(26,Y(i)+4,i,'font-size="10"'));
+  const ks=Object.keys(S.pts).map(Number).sort((a,b)=>a-b);
+  if(ks.length==5){let c=[];for(let r=18;r<=64;r+=2)c.push([X(r).toFixed(1),Y(8/r).toFixed(1)]);g+=`<polyline points="${P(c)}" fill="none" stroke="#F2643D" stroke-width="2.2"/>`}
+  ks.forEach(r=>g+=`<circle cx="${X(r)}" cy="${Y(S.pts[r])}" r="5" fill="#3B5BDB"/>`);$('g5').innerHTML=g;
+  $('t5').innerHTML=ks.length?`<table><tr><th>R/Ω</th><th>I/A</th><th>I×R</th></tr>${ks.map(r=>`<tr><td>${r}</td><td>${f2(S.pts[r])}</td><td>${f2(S.pts[r]*r)}</td></tr>`).join('')}</table>`+(ks.length==5?msg('5 组都齐了：I×R 都是 8，电压一定时，电流与电阻成反比。','ok'):''):'<div style="color:#6B7280;font-size:13px">还没有数据。把电压调到 8 V 再点“记录”。</div>';
+}
+function r6(){
+  const U=+$('i6u').value;$('v6u').textContent=U;const I=U/12,Pw=U*U/12;let h='',o,ob='';
+  if(S.m6==0){
+    h=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I)+lamp(280,90,Pw/3,'“6 V 3 W”')+batt(220,230)+tx(220,262,'可调电源 '+U+' V','style="fill:#6B7280"');
+    o=U==6?msg('正好是额定电压：实际功率 = 额定功率 3 W，正常发光。','ok'):U<6?msg('电压低于额定值：实际功率小于 3 W，灯偏暗。'):U>=8?msg('电压比额定值高太多，灯丝可能烧断！','bad'):msg('电压高于额定值：实际功率超过 3 W，灯偏亮，寿命缩短。','bad');
+  }else{
+    const ra=12,rb=6;let pa,pb;if(S.m6==1){const i=6/(ra+rb);pa=i*i*ra;pb=i*i*rb}else{pa=36/ra;pb=36/rb}
+    if(S.m6==1)h=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],6/18)+lamp(190,90,pa/3,'“6 V 3 W”  12 Ω')+lamp(370,90,pb/3,'“6 V 6 W”  6 Ω');
+    else h=wire([[70,50],[490,50],[490,230],[70,230],[70,50]])+wire([[70,140],[490,140]])+flow([[232,230],[490,230],[490,50],[70,50],[70,230],[208,230]],.5)+flow([[232,230],[490,230],[490,140],[70,140],[70,230],[208,230]],1)+lamp(280,50,pa/3,'')+tx(390,44,'“6 V 3 W”')+lamp(280,140,pb/3,'')+tx(390,134,'“6 V 6 W”')+node(70,140)+node(490,140);
+    h+=batt(220,230)+tx(220,262,'电源 6 V','style="fill:#6B7280"');
+    ob=`<div class="read" style="margin-top:8px">${rd([['3 W 灯的实际功率',f2(pa)+' W'],['6 W 灯的实际功率',f2(pb)+' W']])}</div>`+msg(S.m6==1?'串联：电流相同，电阻大的“3 W”灯反而更亮，而且两盏都没达到额定功率。':'并联：电压都是 6 V，两盏都正常发光，“6 W”灯更亮。','ok');o='';
+  }
+  $('s6').innerHTML=h;$('r6').innerHTML=rd([['电流 I',f2(I)+' A'],['实际功率 P',f2(Pw)+' W'],['额定功率','3 W']]);$('o6').innerHTML=S.m6==0?o:'';$('o6b').innerHTML=ob;
+}
+const APP=[['台灯',40],['电视',150],['电饭煲',800],['吹风机',1200],['空调',1500],['电热水壶',1800]];
+function r7(){
+  let Pt=0;APP.forEach(([n,p])=>{if(S.on7[n])Pt+=p});let I=Pt/220;
+  if(I>16&&!S.trip){S.trip=true}
+  if(S.trip){I=0}
+  $('a7').innerHTML=APP.map(([n,p])=>`<label class="${S.on7[n]?'on':''}"><span><input type="checkbox" data-a="${n}" ${S.on7[n]?'checked':''}> ${n}</span><b>${p} W</b></label>`).join('');
+  let h=wire([[40,60],[540,60]],'#D7263D')+wire([[40,230],[540,230]],'#3B5BDB')+tx(30,50,'火线','font-size="12" style="fill:#D7263D"')+tx(30,250,'零线','font-size="12" style="fill:#3B5BDB"');
+  h+=`<rect x="62" y="44" width="46" height="32" rx="6" fill="${S.trip?'#FDE8EB':'#DCF5EC'}" stroke="#2B2D42" stroke-width="2"/>`+tx(85,65,S.trip?'断开':'闭合','font-size="12" font-weight="700"')+tx(85,96,'空气开关','font-size="11"');
+  APP.forEach(([n,p],k)=>{const x=150+k*68,on=S.on7[n]&&!S.trip;h+=wire([[x,60],[x,230]])+(on?flow([[x,60],[x,230]],p/220/4+.05):'')+`<rect x="${x-26}" y="125" width="52" height="40" rx="8" fill="${on?'#FFF6D6':'#fff'}" stroke="${on?'#FFC83D':'#2B2D42'}" stroke-width="2.2"/>`+tx(x,143,n,'font-size="11"')+tx(x,158,on?f2(p/220)+' A':'关','font-size="11" font-weight="700"')+node(x,60)+node(x,230)});
+  if(!S.trip&&I>0)h+=flow([[40,60],[150,60]],I/4);
+  $('s7').innerHTML=h;
+  $('r7').innerHTML=rd([['总功率 P',(S.trip?0:Pt)+' W'],['干路电流 I',f2(I)+' A']]);
+  $('bar7').style.width=Math.min(100,I/16*100)+'%';$('bar7').style.background=I>12?'#F2643D':'#12956B';$('bar7b').style.width=Math.min(100,I*I/256*100)+'%';
+  $('rst').style.display=S.trip?'':'none';
+  $('o7').innerHTML=S.trip?msg(`跳闸了！刚才总功率 ${Pt} W，干路电流 ${f2(Pt/220)} A，超过了 16 A。先关掉几个大功率用电器，再合上开关。`,'bad'):I>12?msg('电流已经接近上限，再开一个大功率电器就会跳闸。'):msg('每多开一个用电器，就多一条支路，干路电流跟着变大。');
+}
+/* ---------- 进阶：通用电路求解（节点电压法） ---------- */
+Object.assign(S,{jia:'V',yi:'V',s8:true,strip:false,dyn:0,m1:'V',m2:'V',m3:'V',goal:0,k1:false,k2:false,k3:false,done11:{},show12:false,r13:20});
+function Rof(e){const k=e[0],o=e[3]||{};if(k=='w'||k=='A')return 1e-4;if(k=='V')return 1e7;if(k=='s')return S[o.k]?1e-4:1e12;if(k=='m')return S[o.k]=='A'?1e-4:1e7;return Math.max(o.R,1e-4)}
+function solve(def,U){
+  const names=Object.keys(def.n),bat=def.e.find(e=>e[0]=='b'),gnd=bat[2],id={},rb=1e-3;let k=0;names.forEach(n=>{if(n!=gnd)id[n]=k++});
+  const G=Array.from({length:k},(_,i)=>{const r=Array(k+1).fill(0);r[i]=1e-12;return r});
+  const add=(a,b,g)=>{const i=id[a],j=id[b];if(i!=null)G[i][i]+=g;if(j!=null)G[j][j]+=g;if(i!=null&&j!=null){G[i][j]-=g;G[j][i]-=g}};
+  def.e.forEach(e=>{if(e[0]=='b'){add(e[1],e[2],1/rb);G[id[e[1]]][k]+=U/rb}else add(e[1],e[2],1/Rof(e))});
+  for(let c=0;c<k;c++){let p=c;for(let r=c+1;r<k;r++)if(Math.abs(G[r][c])>Math.abs(G[p][c]))p=r;[G[c],G[p]]=[G[p],G[c]];
+    for(let r=0;r<k;r++)if(r!=c){const m=G[r][c]/G[c][c];if(m)for(let j=c;j<=k;j++)G[r][j]-=m*G[c][j]}}
+  const V={};names.forEach(n=>V[n]=n==gnd?0:G[id[n]][k]/G[id[n]][id[n]]);
+  const I=def.e.map(e=>e[0]=='b'?-(U-(V[e[1]]-V[e[2]]))/rb:(V[e[1]]-V[e[2]])/Rof(e));
+  const Ib=-I[def.e.indexOf(bat)];
+  return{V,I,Ib,short:Ib>60,u:(a,b)=>Math.abs(V[a]-V[b]),i:n=>Math.abs(I[n])}}
+const isV=e=>e[0]=='V'||(e[0]=='m'&&S[e[3].k]!='A'), isA=e=>e[0]=='A'||(e[0]=='m'&&S[e[3].k]=='A');
+function reading(def,sol,n){const e=def.e[n];if(isA(e))return sol.short&&sol.i(n)>60?'很大':f2(sol.i(n))+' A';return f2(sol.u(e[1],e[2]))+' V'}
+function ckt(def,sol,strip){
+  let wires='',flows='',syms='';
+  def.e.forEach((e,n)=>{const[k,a,b,o={}]=e,pts=[def.n[a],...(o.via||[]),def.n[b]],mi=Math.floor((pts.length-1)/2),p=pts[mi],q=pts[mi+1],x=(p[0]+q[0])/2,y=(p[1]+q[1])/2,v=p[0]==q[0];
+    const vm=isV(e),am=isA(e);
+    if(strip&&vm){wires+=`<polyline points="${P(pts)}" fill="none" stroke="#C9CED8" stroke-width="2" stroke-dasharray="5 5"/>`+tx(v?x+30:x,v?y+4:y-8,'擦掉','font-size="11" style="fill:#9AA0AA"');return}
+    if(k=='s'&&!S[o.k]&&strip){wires+=`<polyline points="${P(pts)}" fill="none" stroke="#C9CED8" stroke-width="2" stroke-dasharray="5 5"/>`;return}
+    wires+=wire(pts,o.c);
+    const I=sol.I[n];if(!vm&&Math.abs(I)>0.004)flows+=flow(I>0?pts:pts.slice().reverse(),Math.abs(I));
+    const rot=s=>v?`<g transform="rotate(90 ${x} ${y})">${s}</g>`:s,lab=(t,dy=0)=>t?(v?tx(x+34,y+5+dy,t):tx(x,y+28+dy,t)):'';
+    if(strip&&(am||(k=='s'&&S[o.k])))return;
+    if(k=='r')syms+=rot(res(x,y,''))+lab(o.l);
+    else if(k=='p'){syms+=rheo(x,y,o.f,o.l)}
+    else if(k=='l')syms+=lamp(x,y,o.b||0,'')+lab(o.l,6);
+    else if(k=='s')syms+=`<g class="sw" data-t="${o.k}">${rot(`<rect x="${x-26}" y="${y-20}" width="52" height="30" fill="#fff"/><circle cx="${x-20}" cy="${y}" r="4" fill="#fff" stroke="#2B2D42" stroke-width="2"/><circle cx="${x+20}" cy="${y}" r="3" fill="#2B2D42"/><path d="M${x-17} ${y-1}L${S[o.k]?x+20:x+14} ${S[o.k]?y:y-17}" stroke="#2B2D42" stroke-width="2.4"/>`)}${v?tx(x-36,y+5,o.l):tx(x,y+26,o.l)}</g>`;
+    else if(k=='b'){const L=p[0]<q[0];syms+=`<rect x="${x-13}" y="${y-16}" width="26" height="32" fill="#fff"/><path d="M${L?x-12:x+12} ${y-15}V${y+15}" stroke="#2B2D42" stroke-width="2.4"/><path d="M${L?x+12:x-12} ${y-8}V${y+8}" stroke="#2B2D42" stroke-width="5"/>`+tx(L?x-22:x+22,y-12,'+')+tx(L?x+22:x-22,y-12,'−')+tx(x,y+30,o.l||'','style="fill:#6B7280" font-size="12"')}
+    else if(k=='A'||k=='V'||k=='m'){const ch=vm?'V':'A',c=vm?'#3B5BDB':'#F2643D',rdv=reading(def,sol,n);
+      const g=`<circle cx="${x}" cy="${y}" r="16" fill="#fff" stroke="${c}" stroke-width="2.4"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="15" font-weight="700" style="fill:${c}">${ch}</text>`+(v?tx(x+50,y+12,rdv,`font-weight="700" style="fill:${c}"`)+tx(x+50,y-6,o.l||''):tx(x,y-22,(o.l?o.l+'  ':'')+rdv,`font-weight="700" style="fill:${c}"`));
+      syms+=k=='m'?`<g class="sw" data-m="${o.k}">${g}</g>`:g}
+  });
+  let dots='';(def.dots||[]).forEach(n=>dots+=node(...def.n[n]));
+  return wires+flows+syms+dots}
+function kind2(I1,I2,U1,U2,U,sh,n1='R₁',n2='R₂'){
+  if(sh)return['short','电源短路！电流不经过任何用电器。'];const a=I1>.004,b=I2>.004;
+  if(!a&&!b)return['open','断路：两个都没有电流。'];
+  if(a&&!b)return['only1',`只有 ${n1} 工作，${n2} 没有电流（被短接或所在的路不通）。`];
+  if(!a&&b)return['only2',`只有 ${n2} 工作，${n1} 没有电流（被短接或所在的路不通）。`];
+  if(Math.abs(U1-U)<.02&&Math.abs(U2-U)<.02)return['par',`${n1}、${n2} 并联：两端电压都等于电源电压。`];
+  if(Math.abs(I1-I2)<.003)return['ser',`${n1}、${n2} 串联：通过它们的电流相等。`];return['mix','混合连接。']}
+
+function r8(){
+  const a=+$('i8a').value,b=+$('i8b').value,U=10;$('v8a').textContent=a;$('v8b').textContent=b;
+  const def={n:{TL:[80,40],TR:[480,40],L:[80,130],M:[280,130],R:[480,130],BL:[80,230],BM:[280,230],BR:[480,230]},dots:['L','M','R','BM'],
+   e:[['w','TL','L'],['w','L','BL'],['w','TR','R'],['w','R','BR'],['m','TL','TR',{k:'jia',l:'甲'}],['r','L','M',{R:a,l:'R₁ = '+a+' Ω'}],['r','M','R',{R:b,l:'R₂ = '+b+' Ω'}],
+      ['m','M','BM',{k:'yi',l:'乙'}],['b','BL','BM',{l:'电源 10 V'}],['s','BM','BR',{k:'s8',l:'S'}]]};
+  const s=solve(def,U),I1=s.i(5),I2=s.i(6),U1=s.u('L','M'),U2=s.u('M','R'),[kd,ds]=kind2(I1,I2,U1,U2,U,s.short);
+  $('s8').innerHTML=ckt(def,s,S.strip);
+  const j=reading(def,s,4),y=reading(def,s,7);
+  $('r8').innerHTML=rd([['甲（'+(S.jia=='A'?'电流表':'电压表')+'）',j],['乙（'+(S.yi=='A'?'电流表':'电压表')+'）',y],['通过 R₁',s.short?'—':f2(I1)+' A'],['通过 R₂',s.short?'—':f2(I2)+' A']]);
+  let ex='';
+  if(kd=='ser'&&S.jia=='V'&&S.yi=='V'&&S.s8)ex=` 甲测总电压，乙测 R₂ 两端电压：甲 : 乙 = ${f2(s.u('TL','TR'))} : ${f2(U2)} = (R₁ + R₂) : R₂。`;
+  if(kd=='par'&&S.jia=='A'&&S.yi=='A')ex=` 甲和 R₂ 在同一条支路，测 I₂；乙在干路，测 I₁ + I₂：甲 : 乙 = ${f2(I2)} : ${f2(I1+I2)} = R₁ : (R₁ + R₂)。`;
+  $('o8').innerHTML=msg(ds+ex,kd=='short'?'bad':(kd=='ser'||kd=='par')?'ok':'');
+}
+function r9(){
+  const Rp=+$('i9p').value,U=6,R1=10;$('v9p').textContent=Rp;
+  const mk=rp=>S.dyn==0?{n:{TL:[80,50],TR:[480,50],L:[80,130],X:[190,130],R:[480,130],BL:[80,230],Y:[200,230],BR:[480,230],VA:[250,130],VB:[430,130]},dots:['L','R','VA','VB'],
+     e:[['r','TL','TR',{R:R1,l:'R₁ = 10 Ω'}],['w','TL','L'],['w','TR','R'],['A','L','X',{l:'A₁'}],['w','X','VA'],['p','VA','VB',{R:rp,f:rp/50,l:''}],['w','VB','R'],['w','L','BL'],['b','BL','Y',{l:'电源 6 V'}],['A','Y','BR',{l:'A₂'}],['w','BR','R'],
+        ['V','VA','VB',{via:[[250,185],[430,185]],c:'#3B5BDB'}]]}
+    :{n:{TL:[80,70],M:[250,70],VB:[430,70],TR:[480,70],BL:[80,230],Y:[200,230],BR:[480,230]},dots:['M','VB'],
+     e:[['r','TL','M',{R:R1,l:'R₁ = 10 Ω'}],['p','M','VB',{R:rp,f:rp/50,l:''}],['w','VB','TR'],['w','TR','BR'],['w','TL','BL'],['b','BL','Y',{l:'电源 6 V'}],['A','Y','BR',{l:'A'}],['V','M','VB',{via:[[250,130],[430,130]],c:'#3B5BDB'}]]};
+  const d=mk(Rp),s=solve(d,U),s2=solve(mk(Rp+3),U);
+  const q=S.dyn==0?z=>[['电压表 V',z.u('VA','VB'),'V','测的是电源电压'],['电流表 A₁',z.i(3),'A','测变阻器支路'],['电流表 A₂',z.i(9),'A','测干路'],['A₂ − A₁',z.i(9)-z.i(3),'A','= 通过 R₁ 的电流'],['V ÷ A₁',z.u('VA','VB')/z.i(3),'Ω','= 变阻器接入的阻值']]
+    :z=>[['电流表 A',z.i(6),'A','测整条电路的电流'],['电压表 V',z.u('M','VB'),'V','测变阻器两端'],['R₁ 两端电压',z.u('TL','M'),'V','= 6 V − 电压表示数'],['V ÷ A',z.u('M','VB')/z.i(6),'Ω','= 变阻器接入的阻值'],['R₁ 电压 ÷ A',z.u('TL','M')/z.i(6),'Ω','= R₁，定值']];
+  const A=q(s),B=q(s2),tr=(x,y)=>Math.abs(x-y)<1e-3?'<b style="color:#12956B">不变</b>':y>x?'<b style="color:#D7263D">变大 ↑</b>':'<b style="color:#3B5BDB">变小 ↓</b>';
+  $('s9').innerHTML=ckt(d,s,false);
+  $('t9').innerHTML=`<table><tr><th>量</th><th>现在</th><th>趋势</th><th>它其实是</th></tr>${A.map((r,i)=>`<tr><td>${r[0]}</td><td>${f2(r[1])} ${r[2]}</td><td>${tr(r[1],B[i][1])}</td><td style="text-align:left">${r[3]}</td></tr>`).join('')}</table>`;
+  $('o9').innerHTML=S.dyn==0?msg('对照真题四个选项：A“电压表变大”✗；B“A₂ 变大”✗；C“V 与 A₁ 示数之比不变”✗；D“A₂ 与 A₁ 示数之差不变”✓。','ok')
+   :msg('串联变形里，电压表和电流表“一个变大一个变小”。延伸：电压表变化量 ÷ 电流表变化量 = R₁，也是定值。','ok');
+}
+function r10(){
+  const U=6,def={n:{TL:[80,40],TR:[480,40],L:[80,130],J:[280,130],R:[480,130],BL:[80,230],K:[280,230],BR:[480,230]},dots:['L','J','R','K'],
+   e:[['w','TL','L'],['w','L','BL'],['w','TR','R'],['w','R','BR'],['m','TL','TR',{k:'m1'}],['l','L','J',{R:10,l:'L₂'}],['m','J','R',{k:'m2'}],['m','J','K',{k:'m3'}],['l','K','BR',{R:10,l:'L₁'}],['b','BL','K',{l:'电源 6 V'}]]};
+  let s=solve(def,U);const I2=s.i(5),I1=s.i(8),U2=s.u('L','J'),U1=s.u('K','BR'),[kd,ds]=kind2(I1,I2,U1,U2,U,s.short,'L₁','L₂');
+  def.e[5][3].b=s.short?0:I2*I2*10/6;def.e[8][3].b=s.short?0:I1*I1*10/6;
+  $('s10').innerHTML=ckt(def,s,false);
+  $('r10').innerHTML=rd([['上方的表',reading(def,s,4)],['右边的表',reading(def,s,6)],['中间的表',reading(def,s,7)],['L₁',I1>.004&&!s.short?'亮':'不亮'],['L₂',I2>.004&&!s.short?'亮':'不亮']]);
+  const want=S.goal==0?'par':'ser',ok=kd==want;
+  $('o10').innerHTML=msg(ok?'任务完成！'+ds+(S.goal==0?' 每盏灯都有自己独立的路。':' 电流只有一条路，依次经过两盏灯。'):'还没完成。现在：'+ds,ok?'ok':kd=='short'?'bad':'');
+}
+const T11=[['par','让 R₁、R₂ 并联'],['ser','让 R₁、R₂ 串联'],['only1','只让 R₁ 工作'],['short','找出会造成电源短路的组合（实验室里绝对不能这样接）']];
+function r11(){
+  const U=6,def={n:{P:[80,90],P2:[80,36],Q2:[480,36],M:[280,90],Q:[480,90],BL:[80,230],X:[170,230],MB:[280,230],QB:[480,230]},dots:['P','M','Q','MB'],
+   e:[['w','P','P2'],['s','P2','Q2',{k:'k3',l:'S₃'}],['w','Q2','Q'],['r','P','M',{R:10,l:'R₁'}],['r','M','Q',{R:20,l:'R₂'}],['s','M','MB',{k:'k1',l:'S₁'}],['s','Q','QB',{k:'k2',l:'S₂'}],['w','P','BL'],['b','BL','X',{l:'电源 6 V'}],['A','X','MB',{}],['w','MB','QB']]};
+  const s=solve(def,U),I1=s.i(3),I2=s.i(4),[kd,ds]=kind2(I1,I2,s.u('P','M'),s.u('M','Q'),U,s.short);S.done11[kd]=true;
+  $('s11').innerHTML=ckt(def,s,S.strip);
+  $('t11').innerHTML=T11.map(([k,t])=>`<div style="padding:3px 0">${S.done11[k]?'<b style="color:#12956B">✓</b>':'○'} ${t}</div>`).join('');
+  $('r11').innerHTML=rd([['电流表',reading(def,s,9)],['通过 R₁',s.short?'—':f2(I1)+' A'],['通过 R₂',s.short?'—':f2(I2)+' A']]);
+  $('o11').innerHTML=msg('现在：'+ds,kd=='short'?'bad':(kd=='par'||kd=='ser')?'ok':'');
+}
+function r12(){
+  const Rp=+$('i12p').value,U=4.5,R0=5;$('v12p').textContent=Rp;
+  const def={n:{TL:[80,70],M:[250,70],VB:[430,70],TR:[480,70],BL:[80,230],Y:[200,230],BR:[480,230]},dots:['M','VB'],
+   e:[['r','TL','M',{R:R0,l:'R₀ = 5 Ω'}],['p','M','VB',{R:Rp,f:Rp/20,l:''}],['w','VB','TR'],['w','TR','BR'],['w','TL','BL'],['b','BL','Y',{l:'电源 4.5 V'}],['A','Y','BR',{l:''}],['V','M','VB',{via:[[250,130],[430,130]],c:'#3B5BDB'}]]};
+  const s=solve(def,U),I=s.i(6),Uv=s.u('M','VB'),oa=I>.6+1e-6,ov=Uv>3+1e-6;
+  $('s12').innerHTML=ckt(def,s,false);
+  $('r12').innerHTML=rd([['电流表（量程 0.6 A）',`<span style="color:${oa?'#D7263D':'inherit'}">${f2(I)} A${oa?' 超了':''}</span>`],['电压表（量程 3 V）',`<span style="color:${ov?'#D7263D':'inherit'}">${f2(Uv)} V${ov?' 超了':''}</span>`]]);
+  $('o12').innerHTML=oa?msg('电流超过 0.6 A，电流表会被烧坏。阻值太小了。','bad'):ov?msg('电压表超过 3 V。变阻器阻值太大，分到的电压太多。','bad'):msg('两只表都在量程内，安全。','ok');
+  const X=r=>10+r/20*280;
+  $('g12').innerHTML=`<rect x="10" y="10" width="280" height="12" rx="6" fill="#EEF0F4"/>`+(S.show12?`<rect x="${X(2.5)}" y="10" width="${X(10)-X(2.5)}" height="12" rx="6" fill="#12956B"/>`+tx(X(2.5),33,'2.5 Ω','font-size="10"')+tx(X(10),33,'10 Ω','font-size="10"'):'')+`<circle cx="${X(Rp)}" cy="16" r="7" fill="${oa||ov?'#D7263D':'#3B5BDB'}" stroke="#fff" stroke-width="2"/>`;
+  if(S.show12)$('o12').innerHTML+=msg('安全范围 2.5 Ω ～ 10 Ω。最小值：4.5 V ÷ 0.6 A = 7.5 Ω，减去 R₀ 得 2.5 Ω。最大值：电压表 3 V 时 R₀ 分 1.5 V，电流 0.3 A，3 V ÷ 0.3 A = 10 Ω。');
+}
+function r13(){
+  const v=+$('i13v').value,R0=S.r13,U=30,k=4/9,I=U/(100+R0);$('v13v').textContent=v;
+  let Uv=k*I*v*v;const Um=I*100,fr=Math.min(1,Uv/Um);Uv=Math.min(Uv,Um);const over=Uv>15+1e-6;
+  const xM=430,xN=150,xP=xM-(xM-xN)*fr;
+  let h=wire([[70,150],[490,150],[490,240],[70,240],[70,150]])+flow([[232,240],[70,240],[70,150],[490,150],[490,240],[256,240]],I*3);
+  h+=`<rect x="${xN}" y="141" width="${xM-xN}" height="18" rx="3" fill="#fff" stroke="#2B2D42" stroke-width="2.2"/><rect x="${xP}" y="141" width="${xM-xP}" height="18" rx="3" fill="#FFC9B8" stroke="#2B2D42" stroke-width="2.2"/>`+tx(xN,180,'N')+tx(xM,180,'M')+tx(290,180,'电阻丝 MN 共 100 Ω','style="fill:#6B7280" font-size="12"');
+  h+=wire([[xP,139],[xP,70],[420,70]],'#3B5BDB')+wire([[452,70],[490,70],[490,150]],'#3B5BDB')+`<path d="M${xP-6} 131L${xP} 140L${xP+6} 131Z" fill="#3B5BDB"/>`+meter(436,70,'V',f2(Uv)+' V',over?'#D7263D':'#3B5BDB')+node(490,150)+tx(xP-14,128,'P','font-weight="700" style="fill:#3B5BDB"');
+  h+=`<rect x="${xP-5}" y="18" width="10" height="52" fill="#2B2D42"/>`+tx(xP-34,30,'挡风板','font-size="12"');
+  for(let i=0;i<Math.min(6,Math.ceil(v/3));i++)h+=`<path d="M${xP+60+i*4} ${24+i*8}H${xP+18}" stroke="#0FA3A3" stroke-width="2"/><path d="M${xP+24} ${20+i*8}L${xP+16} ${24+i*8}L${xP+24} ${28+i*8}Z" fill="#0FA3A3"/>`;
+  h+=res(150,240,'R₀ = '+R0+' Ω')+`<rect x="231" y="224" width="26" height="32" fill="#fff"/><path d="M232 225V255" stroke="#2B2D42" stroke-width="2.4"/><path d="M256 232V248" stroke="#2B2D42" stroke-width="5"/>`+tx(244,274,'电源 30 V','style="fill:#6B7280" font-size="12"')+meter(380,240,'A',f2(I)+' A','#F2643D');
+  $('s13').innerHTML=h;
+  $('r13').innerHTML=rd([['电流（不随风速变）',f2(I)+' A'],['电压表',f2(Uv)+' V'],['P 离 M 端',Math.round(fr*100)+'%'],['P 在 N 端时的示数',f2(Um)+' V']]);
+  $('o13').innerHTML=over?msg(`电压表超过 15 V 量程了！R₀ = 20 Ω 时，风速超过约 11.6 m/s 就不安全，所以第 (3) 问要把 R₀ 换大。`,'bad'):fr>=1?msg('滑片已经到 N 端，这是能测的最大风速。','ok'):msg(`U = kIv²，其中 k = 4/9：${f2(k)} × ${f2(I)} × ${v}² = ${f2(Uv)} V。`,'ok');
+}
+/* ===================== 电与磁（九年级第二十章） ===================== */
+const NC='#D7263D',SC='#3B5BDB',CU='#B5651D',DEG=180/Math.PI;
+Object.assign(S,{eMag:0,eLines:true,eGrid:false,cp:null,_m14:-1,
+ eOe:0,eOeI:false,eOeR:false,nd15:-90,pol15:1,wind15:0,eSl:true,q15:null,
+ eCore16:true,eRev16:false,rec16:[],
+ eMt:0,eSw17:false,eMI:false,eMB:false,x17:0,v17:0,th17:0,om17:0,eMon:false,eComm:true,
+ eGt:0,eGB:false,eGopen:false,px18:0,py18:0,pz18:0,mv18:null,d18:0,msg18:null,last18:'',th18:0,i18c:0,e18:[],eGenComm:false,
+ eRl:0,eT:20,eRun:false,pull19:false,hold19:0,
+ eSpObj:0,pol20:1,w20:0,eSpCore:true,q20:null,
+ a21:{},yn:null});
+const TK={};
+const arrowAt=(x,y,an,c,s=1)=>`<path d="M${-6*s} ${-4.5*s}L${5*s} 0L${-6*s} ${4.5*s}Z" fill="${c}" transform="translate(${(+x).toFixed(1)},${(+y).toFixed(1)}) rotate(${(+an).toFixed(1)})"/>`;
+const dirWord=a=>['右','右下','下','左下','左','左上','上','右上'][((Math.round(a/45)%8)+8)%8];
+const big=(x,y,s,c,sz=18)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${sz}" font-weight="800" style="fill:${c}">${s}</text>`;
+const seg=(a,b,c,d,col,w,dash)=>`<path d="M${a.toFixed(1)} ${b.toFixed(1)}L${c.toFixed(1)} ${d.toFixed(1)}" stroke="${col}" stroke-width="${w}" ${dash?'stroke-dasharray="3 3"':''} stroke-linecap="round"/>`;
+function Bat(ch,x,y){let bx=0,by=0;for(const c of ch){const dx=x-c[0],dy=y-c[1];let r2=dx*dx+dy*dy;if(r2<9)r2=9;const r3=r2*Math.sqrt(r2);bx+=c[2]*dx/r3;by+=c[2]*dy/r3}return[bx,by]}
+const inV=(x,y)=>x>2&&x<558&&y>2&&y<338;
+function trace(ch,x,y,dir,stop){const pts=[[x,y]];for(let i=0;i<700;i++){const b=Bat(ch,x,y),m=Math.hypot(b[0],b[1]);if(m<1e-12)break;x+=dir*3*b[0]/m;y+=dir*3*b[1]/m;pts.push([x,y]);
+ if(x<-60||x>620||y<-60||y>400)return{pts,out:true};if(stop(x,y))break;if(ch.some(c=>c[2]*dir<0&&Math.hypot(x-c[0],y-c[1])<5))break}return{pts,out:false}}
+function fline(pts,col){const iv=[];pts.forEach((p,i)=>{if(inV(p[0],p[1]))iv.push(i)});if(iv.length<6)return'';
+ const k=iv[Math.floor(iv.length/2)],a=pts[k],b=pts[Math.min(k+2,pts.length-1)];
+ return `<path d="M${pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')}" fill="none" stroke="${col}" stroke-width="1.4"/>`+arrowAt(a[0],a[1],Math.atan2(b[1]-a[1],b[0]-a[0])*DEG,col,.9)}
+function flines(ch,sn,ss,body,col='#9AA3B2'){let h='';sn=sn.filter(p=>!body(p[0],p[1]));ss=ss.filter(p=>!body(p[0],p[1]));
+ for(const s of sn)h+=fline(trace(ch,s[0],s[1],1,body).pts,col);
+ for(const s of ss){const t=trace(ch,s[0],s[1],-1,body);if(t.out){t.pts.reverse();h+=fline(t.pts,col)}}return h}
+const ring=(cx,cy,r,a0,a1,st)=>{const o=[];for(let a=a0;a<=a1+1e-6;a+=st)o.push([cx+r*Math.cos(a/DEG),cy+r*Math.sin(a/DEG)]);return o};
+const col5=(x,y0,dy,q)=>[-2,-1,0,1,2].map(i=>[x,y0+i*dy,q]);
+const needle=(x,y,an,r)=>`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${an.toFixed(1)})"><path d="M${r} 0L0 ${-r*.26}L0 ${r*.26}Z" fill="${NC}"/><path d="M${-r} 0L0 ${-r*.26}L0 ${r*.26}Z" fill="#fff" stroke="#2B2D42" stroke-width="1"/></g>`;
+const compass=(x,y,an,R=20)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${R}" fill="#fff" stroke="#2B2D42" stroke-width="2"/>`+needle(x,y,an,R-3)+`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="#2B2D42"/>`;
+const angB=(ch,x,y)=>{const b=Bat(ch,x,y);return Math.atan2(b[1],b[0])*DEG};
+function barH(x0,x1,y,h,nR){const m=(x0+x1)/2;return `<rect x="${x0}" y="${y-h/2}" width="${m-x0}" height="${h}" fill="${nR?SC:NC}"/><rect x="${m}" y="${y-h/2}" width="${x1-m}" height="${h}" fill="${nR?NC:SC}"/><rect x="${x0}" y="${y-h/2}" width="${x1-x0}" height="${h}" fill="none" stroke="#2B2D42" stroke-width="2"/>`+big((x0+m)/2,y+6,nR?'S':'N','#fff')+big((m+x1)/2,y+6,nR?'N':'S','#fff')}
+function batt3(x,y,pr){const L=pr?x+12:x-12,Sx=pr?x-12:x+12;return `<rect x="${x-13}" y="${y-16}" width="26" height="32" fill="#fff"/><path d="M${L} ${y-15}V${y+15}" stroke="#2B2D42" stroke-width="2.4"/><path d="M${Sx} ${y-8}V${y+8}" stroke="#2B2D42" stroke-width="5"/>`+tx(pr?x+22:x-22,y-12,'+')+tx(pr?x-22:x+22,y-12,'−')}
+const battV=(x,y,pt)=>`<rect x="${x-16}" y="${y-13}" width="32" height="26" fill="#fff"/><path d="M${x-15} ${pt?y-12:y+12}H${x+15}" stroke="#2B2D42" stroke-width="2.4"/><path d="M${x-8} ${pt?y+12:y-12}H${x+8}" stroke="#2B2D42" stroke-width="5"/>`+tx(x+26,pt?y-6:y+18,'+')+tx(x+26,pt?y+18:y-6,'−');
+const qbtn=(a,t)=>`<button data-act="${a}">${t}</button>`;
+
+/* ---------- 14 磁场与磁感线 ---------- */
+const M14c={};
+function cfg14(k){if(M14c[k])return M14c[k];let c;
+ if(k==0)c={ch:[...col5(372,170,7,1),...col5(188,170,7,-1)],body:(x,y)=>x>178&&x<382&&y>146&&y<194,sn:ring(372,170,32,-160,160,16),ss:ring(188,170,32,124,236,14),
+  pic:barH(180,380,170,44,1),def:[280,96],ref:[408,170],msg:'条形磁铁两端（磁极）磁性最强，磁感线最密；中间几乎没有磁性。拖动大指南针，看它的 N 极怎样顺着磁感线转。'};
+ else if(k==1)c={ch:[[206,134,1],[213,134,1],[220,134,1],[227,134,1],[234,134,1],[326,134,-1],[333,134,-1],[340,134,-1],[347,134,-1],[354,134,-1]],
+  body:(x,y)=>{if(y>128&&y<242&&((x>198&&x<242)||(x>318&&x<362)))return true;const dx=x-280,dy=y-240;return y>=240&&dx*dx/6724+dy*dy/3844<1&&dx*dx/1444+dy*dy/784>1},
+  sn:ring(220,130,24,-190,10,14),ss:ring(340,130,24,-190,10,14),
+  pic:`<defs><clipPath id="cr14"><rect x="280" y="0" width="300" height="400"/></clipPath></defs><path d="M200 130V240A80 60 0 0 0 360 240V130H320V240A40 30 0 0 1 240 240V130Z" fill="${NC}" stroke="#2B2D42" stroke-width="2"/><path d="M200 130V240A80 60 0 0 0 360 240V130H320V240A40 30 0 0 1 240 240V130Z" fill="${SC}" clip-path="url(#cr14)" stroke="#2B2D42" stroke-width="2"/>`+big(220,162,'N','#fff')+big(340,162,'S','#fff'),
+  def:[280,140],ref:[220,98],msg:'蹄形磁铁两极之间的磁感线几乎是平行的，磁场比较均匀。第 17、18 两个模块里的导体就放在这里。'};
+ else if(k==2)c={ch:[...col5(222,170,7,1),...col5(78,170,7,-1),...col5(338,170,7,1),...col5(482,170,7,-1)],body:(x,y)=>y>146&&y<194&&((x>68&&x<232)||(x>328&&x<492)),
+  sn:[...ring(222,170,30,-170,170,14),...ring(338,170,30,10,350,14)],ss:[...ring(78,170,30,120,240,12),...ring(482,170,30,-60,60,12)],
+  pic:barH(70,230,170,44,1)+barH(330,490,170,44,0),def:[280,108],ref:[258,170],msg:'同名磁极相对：磁感线互相“挤开”，正中间有一处几乎没有磁场。同名磁极相互排斥。'};
+ else if(k==3)c={ch:[...col5(222,170,7,1),...col5(78,170,7,-1),...col5(338,170,7,-1),...col5(482,170,7,1)],body:(x,y)=>y>146&&y<194&&((x>68&&x<232)||(x>328&&x<492)),
+  sn:[...ring(222,170,30,-170,170,14),...ring(482,170,30,-170,170,14)],ss:[...ring(78,170,30,120,240,12),...ring(338,170,30,10,350,14)],
+  pic:barH(70,230,170,44,1)+barH(330,490,170,44,1),def:[280,170],ref:[258,170],msg:'异名磁极相对：磁感线从 N 极直接连到 S 极。异名磁极相互吸引。'};
+ else{const s=Math.sin(11/DEG),co=Math.cos(11/DEG);
+  c={ch:[[280+28*s,172-28*co,-1],[280-28*s,172+28*co,1]],body:(x,y)=>Math.hypot(x-280,y-172)<92,sn:ring(280,172,94,8,172,14),ss:[],
+  pre:`<circle cx="280" cy="172" r="92" fill="#DCEBFF" stroke="#2B2D42" stroke-width="2"/><path d="M188 172H372" stroke="#9AA3B2" stroke-dasharray="4 4"/>`,
+  pic:`<path d="M280 66V278" stroke="#2B2D42" stroke-width="1.5" stroke-dasharray="6 4"/><path d="M${280+104*s} ${172-104*co}L${280-104*s} ${172+104*co}" stroke="${NC}" stroke-width="1.5" stroke-dasharray="3 3"/>`+tx(280,58,'地理北极','font-weight="700"')+tx(280,296,'地理南极','font-weight="700"')+tx(330,142,'地磁南极','font-size="12" style="fill:'+SC+'"')+tx(232,214,'地磁北极','font-size="12" style="fill:'+NC+'"'),
+  def:[420,172],ref:[280,268],msg:'地磁场：地磁北极在地理南极附近，地磁南极在地理北极附近，两者并不重合。最早记述这一现象的是我国宋代的沈括。所以指南针的 N 极指向地理北方。'}}
+ return M14c[k]=c}
+function r14(){const k=S.eMag,c=cfg14(k);if(S._m14!==k){S._m14=k;S.cp=c.def.slice()}
+ if(c.L===undefined)c.L=flines(c.ch,c.sn,c.ss,c.body);
+ if(c.G===undefined){let g='';for(let x=24;x<560;x+=34)for(let y=22;y<340;y+=34){if(c.body(x,y)||c.ch.some(q=>Math.hypot(x-q[0],y-q[1])<14))continue;g+=needle(x,y,angB(c.ch,x,y),8)}c.G=g}
+ const[x,y]=S.cp,b=Bat(c.ch,x,y),an=Math.atan2(b[1],b[0])*DEG,rb=Bat(c.ch,c.ref[0],c.ref[1]),rel=Math.hypot(b[0],b[1])/Math.hypot(rb[0],rb[1]);
+ $('s14').innerHTML=(c.pre||'')+(S.eLines?c.L:'')+(S.eGrid?c.G:'')+c.pic+compass(x,y,an,22)+tx(x,y+38,'拖我','font-size="11" style="fill:#6B7280"');
+ const w=rel>.5?'很强':rel>.15?'较强':rel>.03?'较弱':'很弱',d=dirWord(an);
+ $('r14').innerHTML=rd([['小磁针 N 极指向（就是磁场方向）',k==4&&d=='上'?'地理北方':'向'+d],['磁场强弱',w]])+`<div class="bar" style="margin-top:8px;grid-column:1/-1"><i style="width:${Math.min(100,Math.sqrt(rel)*100).toFixed(0)}%"></i></div>`;
+ $('o14').innerHTML=msg(c.msg,'ok')}
+(function(){const sv=$('s14');let dr=false;sv.style.touchAction='none';sv.style.cursor='grab';
+ const pt=e=>{const q=svgPt(sv,e);return[Math.max(24,Math.min(536,q[0])),Math.max(24,Math.min(316,q[1]))]};
+ const mv=e=>{const q=pt(e),c=cfg14(S.eMag);if(!c.body(q[0],q[1])){S.cp=q;r14()}};
+ sv.addEventListener('pointerdown',e=>{dr=true;try{sv.setPointerCapture(e.pointerId)}catch(_){}mv(e)});
+ sv.addEventListener('pointermove',e=>{if(dr)mv(e)});
+ sv.addEventListener('pointerup',()=>dr=false);sv.addEventListener('pointercancel',()=>dr=false)})();
+
+/* ---------- 15 电生磁 ---------- */
+function sol15(){const LtoR=S.pol15==1,fu=(S.wind15==0)==LtoR;return{LtoR,fu,NL:fu}}
+const F15={};
+function cfg15(NL){if(F15[NL])return F15[NL];const Nx=NL?170:390,Sx=NL?390:170,body=(x,y)=>x>169&&x<391&&y>87&&y<173;
+ const ch=[...col5(Nx,130,14,1),...col5(Sx,130,14,-1)];
+ return F15[NL]={ch,body,L:flines(ch,ring(Nx,130,48,NL?100:-80,NL?260:80,16),ring(Sx,130,48,NL?-80:100,NL?80:260,16),body)}}
+function explain15(t){const{LtoR,fu,NL}=sol15(),f=fu?'上':'下',e=NL?'左':'右';
+ if(t=='N')return `① 电流从电源正极出发，从螺线管${LtoR?'左':'右'}端流进去；② 正面（实线）导线里的电流向${f}；③ 右手握住螺线管，四指在正面指向${f}，大拇指指向${e}端，所以${e}端是 N 极。`;
+ return `① 右边小磁针的 N 极指向${NL?'左（指向螺线管）':'右（背离螺线管）'}，所以螺线管右端是 ${NL?'S':'N'} 极，也就是${e}端是 N 极；② 右手大拇指指向${e}端，四指在正面指向${f}；③ 按这种绕法，正面电流向${f}，说明电流从${LtoR?'左':'右'}端流进，所以电源${LtoR?'左':'右'}端是正极。`}
+function compassBig(cx,cy,an){let h=`<circle cx="${cx}" cy="${cy}" r="64" fill="#fff" stroke="#2B2D42" stroke-width="2.4"/>`;
+ for(let i=0;i<24;i++){const a=i*15/DEG;h+=seg(cx+58*Math.cos(a),cy+58*Math.sin(a),cx+(i%6?54:50)*Math.cos(a),cy+(i%6?54:50)*Math.sin(a),'#9AA3B2',1.3)}
+ h+=tx(cx,cy-36,'北','font-size="12" style="fill:#6B7280"')+tx(cx,cy+46,'南','font-size="12" style="fill:#6B7280"')+tx(cx+41,cy+5,'东','font-size="12" style="fill:#6B7280"')+tx(cx-41,cy+5,'西','font-size="12" style="fill:#6B7280"');
+ return h+needle(cx,cy,an,48)+`<circle cx="${cx}" cy="${cy}" r="3.5" fill="#2B2D42"/>`}
+function r15(){$('p15a').style.display=S.eOe?'none':'';$('p15b').style.display=S.eOe?'':'none';let h='',o='';
+ if(!S.eOe){const on=S.eOeI,cx=300,cy=172;
+  h+=`<path d="M40 74V36" stroke="#6B7280" stroke-width="2"/>`+arrowAt(40,34,-90,'#6B7280',1.2)+tx(40,92,'北','style="fill:#6B7280"');
+  h+=wire([[cx,44],[480,44],[480,300],[cx,300]])+battV(480,172,S.eOeR)+sw(390,300,on,'eOeI','S');
+  h+=compassBig(cx,cy,S.nd15)+`<path d="M${cx} 44V300" stroke="${CU}" stroke-width="7" opacity=".85" stroke-linecap="round"/>`+tx(392,32,'导线南北放置，在小磁针正上方','font-size="12" style="fill:#6B7280"');
+  if(on)h+=arrowAt(cx,84,S.eOeR?90:-90,'#F2643D',1.4)+arrowAt(cx,264,S.eOeR?90:-90,'#F2643D',1.4);
+  h+=`<rect x="26" y="150" width="150" height="160" rx="10" fill="#F6F7FB" stroke="#E3E6EC"/>`+tx(101,170,'拓展：从南往北看导线','font-size="12" style="fill:#6B7280"');
+  if(on){const cw=!S.eOeR;for(const r of [18,32,46])h+=`<circle cx="101" cy="232" r="${r}" fill="none" stroke="#9AA3B2" stroke-width="1.3"/>`+arrowAt(101,232-r,cw?0:180,'#9AA3B2',.9)+arrowAt(101,232+r,cw?180:0,'#9AA3B2',.9);
+   h+=`<circle cx="101" cy="232" r="8" fill="#fff" stroke="${CU}" stroke-width="2.4"/>`+(cw?seg(96,227,106,237,CU,2)+seg(96,237,106,227,CU,2):`<circle cx="101" cy="232" r="2.6" fill="${CU}"/>`)+tx(101,302,'磁感线是一圈圈的圆','font-size="12"')}
+  else h+=`<circle cx="101" cy="232" r="8" fill="#fff" stroke="${CU}" stroke-width="2.4"/>`+tx(101,270,'没有电流，就没有磁场','font-size="12" style="fill:#6B7280"');
+  o=on?msg('通电后小磁针偏转了：电流周围存在磁场。'+(S.eOeR?'电流反向后，小磁针向另一边偏：磁场方向跟电流方向有关。':'试试“电流反向”。'),'ok'):msg('开关断开：没有电流，小磁针在地磁场的作用下指南北。导线要南北方向放在小磁针正上方，偏转才明显。');
+  $('s15').innerHTML=h;$('o15').innerHTML=o;$('q15b').innerHTML='';return}
+ const{LtoR,fu,NL}=sol15(),q=S.q15,qa=q&&!q.done,hideN=qa&&q.type=='N',showArr=!qa;
+ const x0=170,x1=390,yT=88,yB=172,n=7,p=(x1-x0)/n,cf=cfg15(NL);
+ if(S.eSl&&!hideN)h+=cf.L;
+ h+=`<rect x="${x0}" y="${yT}" width="${x1-x0}" height="${yB-yT}" rx="6" fill="#F4EFE7"/>`;
+ if(S.eSl&&!hideN)for(const y of [108,130,152])h+=`<path d="M${x0+6} ${y}H${x1-6}" stroke="#9AA3B2" stroke-width="1.4"/>`+arrowAt(280,y,NL?180:0,'#9AA3B2',.9);
+ let bk='',fr='';const sg=[];
+ for(let i=0;i<n;i++){const a=x0+i*p,b=a+p/2,c=a+p;
+  if(S.wind15==0){fr+=seg(a,yB,b,yT,CU,3);bk+=seg(b,yT,c,yB,'#D9B38C',2,1);sg.push([a,yB,b,yT])}
+  else{bk+=seg(a,yB,b,yT,'#D9B38C',2,1);fr+=seg(b,yT,c,yB,CU,3);sg.push([b,yT,c,yB])}}
+ h+=bk+fr;
+ if(showArr)for(let i=1;i<n;i+=2){const s=sg[i];let an=Math.atan2(s[3]-s[1],s[2]-s[0])*DEG;if(!LtoR)an+=180;h+=arrowAt((s[0]+s[2])/2,(s[1]+s[3])/2,an,'#F2643D',1.15)}
+ h+=wire([[x0,yB],[x0,262],[267,262]])+wire([[x1,yB],[x1,262],[293,262]]);
+ if(showArr)h+=arrowAt(x0,222,LtoR?-90:90,'#F2643D')+arrowAt(x1,222,LtoR?90:-90,'#F2643D');
+ h+=(qa&&q.type=='P')?`<rect x="248" y="248" width="64" height="28" rx="6" fill="#fff" stroke="#2B2D42" stroke-width="2"/>`+tx(280,267,'电源')+big(232,258,'?','#F2643D',16)+big(328,258,'?','#F2643D',16):batt3(280,262,!LtoR);
+ h+=hideN?big(x0-22,136,'?','#F2643D')+big(x1+22,136,'?','#F2643D'):big(x0-22,136,NL?'N':'S',NL?NC:SC)+big(x1+22,136,NL?'S':'N',NL?SC:NC);
+ if(!hideN)for(const[cx,cy]of[[95,130],[465,130],[280,40]])h+=compass(cx,cy,angB(cf.ch,cx,cy),17);
+ h+=tx(280,300,'实线是螺线管正面（朝着你）的导线，虚线是背面的导线','font-size="12" style="fill:#6B7280"');
+ $('s15').innerHTML=h;
+ $('q15b').innerHTML=qa?(q.type=='N'?qbtn('a15:N','左端是 N 极')+qbtn('a15:S','左端是 S 极'):qbtn('a15:L','电源左端是正极')+qbtn('a15:R','电源右端是正极')):'';
+ if(qa)o=msg(q.type=='N'?'考考你：螺线管左端是 N 极还是 S 极？先看电流从哪端流进，再看正面导线里电流朝哪。':'考考你：电源被遮住了。根据小磁针的指向，电源哪一端是正极？');
+ else if(q)o=msg((q.right?'答对了！':'再想想：')+explain15(q.type),q.right?'ok':'bad');
+ else o=msg(explain15('N'),'ok')+msg('小磁针 N 极的指向和磁感线方向一致：外部从 N 极出来，回到 S 极；内部从 S 极指向 N 极。');
+ $('o15').innerHTML=o}
+TK.m15=dt=>{if(S.eOe)return false;const t=S.eOeI?(S.eOeR?-18.4:-161.6):-90,d=t-S.nd15;if(Math.abs(d)<.3){if(S.nd15!==t){S.nd15=t;return true}return false}S.nd15+=d*Math.min(1,dt*5);return true};
+
+/* ---------- 16 电磁铁 ---------- */
+function coilV(x,y0,y1,n,right){let h='';const p=(y1-y0)/n;for(let i=0;i<n;i++){const y=y0+i*p;h+=seg(x+16,y+3,x-16,y+p,'#D9B38C',1.8,1)}
+ for(let i=0;i<n;i++){const y=y0+i*p;h+=seg(x-16,y,x+16,y+3,CU,2.6)}const ym=y0+Math.floor(n/2)*p+1.5;return h+arrowAt(x,ym,right?5:185,'#F2643D',1.1)}
+function pins(x,y,n){let h='';for(let i=0;i<n;i++){const c=i%4,r=Math.floor(i/4),px=x-13+c*9,py=y+r*17,dx=(c-1.5)*2.2;h+=seg(px,py,px+dx,py+15,'#7C828C',2)+`<circle cx="${(px+dx).toFixed(1)}" cy="${py+15}" r="2" fill="#7C828C"/>`}return h}
+function r16(){const R=+$('i16').value;$('v16').textContent=R;const I=6/(5+R),c=S.eCore16?1:.12,rt=!S.eRev16;
+ const nA=Math.min(12,Math.floor(50*I*c/10+1e-9)),nB=Math.min(12,Math.floor(100*I*c/10+1e-9));
+ let h=wire([[284,84],[284,50],[40,50],[40,286],[520,286],[520,50],[458,50],[458,160],[446,160]])+wire([[414,84],[414,50],[328,50],[328,160],[316,160]]);
+ h+=batt3(100,50,rt)+rheo(200,50,R/25,'')+tx(200,78,'变阻器 '+R+' Ω','font-size="12"');
+ for(const[x,n,lab,t,np]of[[300,5,'A','50 匝',nA],[430,10,'B','100 匝',nB]]){
+  h+=S.eCore16?`<rect x="${x-9}" y="76" width="18" height="102" fill="#A7AEB9" stroke="#6B7280"/>`:`<rect x="${x-9}" y="76" width="18" height="102" fill="none" stroke="#9AA3B2" stroke-dasharray="3 3"/>`;
+  h+=coilV(x,84,160,n,rt)+big(x-48,122,lab,'#2B2D42',20)+tx(x-48,142,t,'font-size="12"')+tx(x-24,190,rt?'S':'N',`font-weight="800" style="fill:${rt?SC:NC}"`);
+  h+=pins(x,180,np)+`<ellipse cx="${x}" cy="262" rx="42" ry="9" fill="#EEF0F4" stroke="#C9CED8"/>`;
+  for(let j=0;j<7;j++)h+=seg(x-30+j*9,262-(j%2)*3,x-20+j*9,258+(j%3)*2,'#7C828C',2)}
+ if(!S.eCore16)h+=tx(365,215,'铁芯已拔出','font-size="12" style="fill:#D7263D"');
+ $('s16').innerHTML=h;
+ $('r16').innerHTML=rd([['电流 I',f2(I)+' A'],['A（50 匝）吸起',nA+' 枚'],['B（100 匝）吸起',nB+' 枚'],['电磁铁下端',rt?'S 极':'N 极']]);
+ const t=S.rec16;$('t16').innerHTML=t.length?`<table style="margin-top:8px;font-size:13px"><tr><th>电流</th><th>铁芯</th><th>A 50匝</th><th>B 100匝</th></tr>${t.map(r=>`<tr><td>${r[0]} A</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</table>`:'';
+ let o=[];o.push(`电流相同时，B 比 A 多吸 ${nB-nA} 枚：线圈匝数越多，磁性越强。`);
+ if(!S.eCore16)o.push('没有铁芯，磁性弱多了：铁芯被磁化后会大大增强磁性。');
+ if(S.eRev16)o.push('电流反向后，磁极对调了（下端变成 N 极），吸起的数量没变。');
+ o.push('把变阻器阻值调小，电流变大，两个电磁铁都吸得更多。');
+ $('o16').innerHTML=msg(o.join(''),'ok')}
+
+/* ---------- 17 电动机 ---------- */
+function slab(x0,x1,y,th,col,lab){const dx=40,dy=-28;return `<path d="M${x0} ${y}L${x0+dx} ${y+dy}L${x1+dx} ${y+dy}L${x1} ${y}Z" fill="${col}" opacity=".55" stroke="#2B2D42" stroke-width="1.5"/><path d="M${x1} ${y}L${x1+dx} ${y+dy}L${x1+dx} ${y+dy+th}L${x1} ${y+th}Z" fill="${col}" opacity=".8" stroke="#2B2D42" stroke-width="1.5"/><rect x="${x0}" y="${y}" width="${x1-x0}" height="${th}" fill="${col}" stroke="#2B2D42" stroke-width="1.5"/>`+big((x0+x1)/2,y+th/2+7,lab,'#fff')}
+function fieldV(x0,x1,yA,yB,down){let h='';for(const d of [1,0])for(let x=x0;x<=x1;x+=34){const ox=d*20,oy=-d*14;h+=`<path d="M${x+ox} ${yA+oy}V${yB+oy}" stroke="#9AA3B2" stroke-width="1.3" stroke-dasharray="4 4" opacity="${d?.55:1}"/>`+arrowAt(x+ox,(yA+yB)/2+oy+(d?-20:20),down?90:-90,'#9AA3B2',.9)}return h}
+function fieldH(x0,x1,ys){let h='';for(const y of ys)h+=`<path d="M${x0} ${y}H${x1}" stroke="#9AA3B2" stroke-width="1.3" stroke-dasharray="4 4"/>`+arrowAt(x0+26,y,0,'#9AA3B2',.9)+arrowAt(x1-26,y,0,'#9AA3B2',.9);return h}
+const sideMark=(x,y,into,c=CU)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="12" fill="#fff" stroke="${c}" stroke-width="2.6"/>`+(into===null?'':into?seg(x-6,y-6,x+6,y+6,c,2.4)+seg(x-6,y+6,x+6,y-6,c,2.4):`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="${c}"/>`);
+function r17(){$('p17a').style.display=S.eMt?'none':'';$('p17b').style.display=S.eMt?'':'none';let h='',o;
+ if(!S.eMt){const lev=+$('i17').value;$('v17').textContent=lev;const on=S.eSw17,dn=!S.eMB,x=300+S.x17,inF=x>200&&x<400,dirF=(S.eMI!=S.eMB)?1:-1,F=on&&inF;
+  h+=slab(200,400,262,26,dn?SC:NC,dn?'S':'N')+fieldV(215,385,122,262,dn);
+  h+=`<path d="M100 230H460" stroke="#8A8F98" stroke-width="5" stroke-linecap="round"/><path d="M140 202H500" stroke="#8A8F98" stroke-width="5" stroke-linecap="round"/>`+tx(526,200,'导轨','font-size="12" style="fill:#6B7280"');
+  h+=wire([[140,202],[60,202],[60,310],[460,310],[460,230]])+batt3(150,310,!S.eMI)+sw(300,310,on,'eSw17','S');
+  if(on)h+=arrowAt(400,310,S.eMI?180:0,'#F2643D',1.2);
+  h+=`<path d="M${x-6} 234.2L${x+46} 197.8" stroke="${CU}" stroke-width="8" stroke-linecap="round"/>`+tx(x-18,250,'a','font-weight="700"')+tx(x+58,194,'b','font-weight="700"');
+  if(on)h+=arrowAt(x+20,216,S.eMI?145:-35,'#fff',1.1);
+  if(F){const L=18+10*lev;h+=`<path d="M${x+20} 216H${x+20+dirF*L}" stroke="#F2643D" stroke-width="4"/>`+arrowAt(x+20+dirF*(L+4),216,dirF>0?0:180,'#F2643D',1.5)+tx(x+20+dirF*(L+18),211,'F','style="fill:#F2643D" font-weight="800"')}
+  h+=slab(200,400,96,26,dn?NC:SC,dn?'N':'S')+tx(110,110,'U 形磁体的两极','font-size="12" style="fill:#6B7280"');
+  $('s17').innerHTML=h;
+  $('r17').innerHTML=rd([['导体中电流',on?(S.eMI?'b → a':'a → b'):'无'],['磁场方向',dn?'向下':'向上'],['导体受力',!on?'不受力':!inF?'离开磁场，不受力':(dirF<0?'向左':'向右')]]);
+  const ch=(S.eMI?1:0)+(S.eMB?1:0);
+  o=!on?msg('闭合开关 S，看导体 ab 往哪边滚。'):!inF?msg('导体已经离开两极之间的磁场，不再受力，慢慢停下。点“把导体放回中间”再试。'):
+   msg(['电流 a → b、磁场向下：导体向左运动。现在试试只改变电流方向，或者只翻转磁体。','只改变了'+(S.eMI?'电流方向':'磁场方向')+'：受力方向反过来了。','电流方向和磁场方向都改变了：受力方向和原来一样。'][ch]+(lev>1?' 电流越大，受力越大，滚得越快。':''),'ok');
+  $('o17').innerHTML=o;return}
+ const cx=280,cy=160,r=86,th=S.th17,cs=Math.cos(th),on=S.eMon;
+ h+=`<rect x="40" y="70" width="100" height="180" rx="6" fill="${NC}" stroke="#2B2D42" stroke-width="2"/><rect x="420" y="70" width="100" height="180" rx="6" fill="${SC}" stroke="#2B2D42" stroke-width="2"/>`+big(90,168,'N','#fff',30)+big(470,168,'S','#fff',30);
+ h+=fieldH(140,420,[88,124,196,232])+`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#C9CED8" stroke-dasharray="3 5"/>`;
+ const s1=[cx+r*cs,cy-r*Math.sin(th)],s2=[cx-r*cs,cy+r*Math.sin(th)];
+ const into1=on?(S.eComm?cs>=0:true):null;
+ h+=seg(s1[0],s1[1],s2[0],s2[1],CU,6);
+ if(S.eComm){const a0=-th*DEG;for(const[k,colr]of[[0,'#E0A060'],[180,'#B87333']]){const A=(a0+k-78)/DEG,B=(a0+k+78)/DEG;h+=`<path d="M${(cx+20*Math.cos(A)).toFixed(1)} ${(cy+20*Math.sin(A)).toFixed(1)}A20 20 0 0 1 ${(cx+20*Math.cos(B)).toFixed(1)} ${(cy+20*Math.sin(B)).toFixed(1)}" fill="none" stroke="${colr}" stroke-width="7"/>`}}
+ else h+=`<circle cx="${cx}" cy="${cy}" r="14" fill="none" stroke="#E0A060" stroke-width="4"/><circle cx="${cx}" cy="${cy}" r="21" fill="none" stroke="#B87333" stroke-width="4"/>`;
+ h+=`<rect x="${cx+25}" y="${cy-6}" width="12" height="12" fill="#2B2D42"/><rect x="${cx-37}" y="${cy-6}" width="12" height="12" fill="#2B2D42"/>`+tx(cx+48,cy-8,'+','font-weight="800"')+tx(cx-48,cy-8,'−','font-weight="800"');
+ h+=sideMark(s1[0],s1[1],into1)+sideMark(s2[0],s2[1],into1===null?null:!into1)+tx(s1[0],s1[1]-18,'ab','font-size="12" font-weight="700"')+tx(s2[0],s2[1]-18,'cd','font-size="12" font-weight="700"');
+ if(on)for(const[s,dn]of[[s1,into1],[s2,!into1]]){const d=dn?1:-1;h+=`<path d="M${s[0].toFixed(1)} ${(s[1]+d*14).toFixed(1)}V${(s[1]+d*40).toFixed(1)}" stroke="#F2643D" stroke-width="3.5"/>`+arrowAt(s[0],s[1]+d*44,d>0?90:-90,'#F2643D',1.3)}
+ h+=tx(280,22,'从转轴方向看过去（线圈是侧着的）','font-size="12" style="fill:#6B7280"')+tx(280,296,'⊗ 电流流进纸面　⊙ 电流从纸面流出来　'+(S.eComm?'中间是换向器':'中间是两个铜环（没有换向器）'),'font-size="12" style="fill:#6B7280"');
+ $('s17').innerHTML=h;
+ const a=((th%Math.PI)+Math.PI)%Math.PI,phi=Math.round((a<=Math.PI/2?a:Math.PI-a)*DEG);
+ $('r17').innerHTML=rd([['转速',f2(Math.abs(S.om17)/(2*Math.PI))+' 圈/秒'],['线圈平面与磁感线的夹角',phi+'°'],['位置',phi>=87?'平衡位置':'不在平衡位置']]);
+ o=!on?msg(Math.abs(S.om17)>.05?'断开电源后，线圈靠惯性转，慢慢停下来。':'点“通电”。线圈两边的电流方向相反，受力方向也相反，所以线圈会转。'):
+  S.eComm&&S.om17==0&&phi>=87?msg('线圈正好停在平衡位置：两边受力一上一下，在同一条直线上，转不起来。有的电动机通电后不转，原因之一就是这个。用手拨一下就好了。','bad'):
+  S.eComm?msg('换向器每转到平衡位置就改变一次线圈中的电流方向，线圈就能一直朝同一个方向转。电动机把电能转化为机械能。','ok'):
+  msg('没有换向器：转过平衡位置后，受力会把线圈往回拉，线圈来回摆几下，最后停在平衡位置。','bad');
+ $('o17').innerHTML=o}
+TK.m17=dt=>{if(!S.eMt){const x=300+S.x17,inF=x>200&&x<400,dirF=(S.eMI!=S.eMB)?1:-1,lev=+$('i17').value,F=S.eSw17&&inF?dirF*lev:0;
+  if(!F&&Math.abs(S.v17)<.3){if(S.v17){S.v17=0;return true}return false}
+  S.v17+=(F*90-2.5*S.v17)*dt;S.x17+=S.v17*dt;if(S.x17<-150){S.x17=-150;S.v17=0}if(S.x17>150){S.x17=150;S.v17=0}return true}
+ let mv=false;for(let i=0;i<5;i++){const hh=dt/5;let tau=0;if(S.eMon){const cs=Math.cos(S.th17);tau=-12*cs*(S.eComm?(cs>=0?1:-1):1)}
+  S.om17+=(tau-1.5*S.om17)*hh;if(Math.abs(S.om17)<.05&&Math.abs(tau)<.4)S.om17=0;S.th17+=S.om17*hh;if(S.om17)mv=true}
+ if(!mv&&S._w17){S._w17=false;return true}S._w17=mv;return mv};
+
+/* ---------- 18 磁生电 ---------- */
+const U18={L:[-1,0,0],R:[1,0,0],U:[0,1,0],D:[0,-1,0],F:[0,0,1],K:[0,0,-1],X:[.707,.707,0]},D18={L:50,R:50,U:20,D:20,F:16,K:16,X:36},
+ NM18={L:'向左',R:'向右',U:'向上',D:'向下',F:'向前（沿导体）',K:'向后（沿导体）',X:'斜向右上'};
+function galv(x,y,d){const R=46,A=.8;let h=`<rect x="${x-58}" y="${y-62}" width="116" height="80" rx="10" fill="#fff" stroke="#2B2D42" stroke-width="2"/><path d="M${(x-R*Math.sin(A)).toFixed(1)} ${(y-R*Math.cos(A)).toFixed(1)}A${R} ${R} 0 0 1 ${(x+R*Math.sin(A)).toFixed(1)} ${(y-R*Math.cos(A)).toFixed(1)}" fill="none" stroke="#2B2D42" stroke-width="1.4"/>`;
+ for(let i=-4;i<=4;i++){const a=i*.2,l=i?5:10;h+=seg(x+R*Math.sin(a),y-R*Math.cos(a),x+(R-l)*Math.sin(a),y-(R-l)*Math.cos(a),'#2B2D42',1.3)}
+ const a=Math.max(-1,Math.min(1,d))*.75;return h+tx(x,y-50,'0','font-size="10"')+tx(x,y+12,'G','font-weight="800" font-size="12"')+seg(x,y,x+(R-4)*Math.sin(a),y-(R-4)*Math.cos(a),NC,2.4)+`<circle cx="${x}" cy="${y}" r="3" fill="#2B2D42"/>`}
+function r18(){$('p18a').style.display=S.eGt?'none':'';$('p18b').style.display=S.eGt?'':'none';let h='';
+ if(!S.eGt){const lev=+$('i18').value;$('v18').textContent=lev;const dn=!S.eGB,bx=280+S.px18-.5*S.pz18,by=214-S.py18+.35*S.pz18,fx=bx-5,fy=by+3.5,kx=bx+45,ky=by-31.5;
+  h+=`<path d="M${fx} ${fy}C${fx-60} ${fy+20} 140 300 240 312L420 312L420 250L432 250" fill="none" stroke="#2B2D42" stroke-width="1.8"/>`;
+  h+=slab(200,400,262,26,dn?SC:NC,dn?'S':'N')+fieldV(215,385,122,262,dn);
+  h+=`<path d="M${kx} ${ky}C${kx+20} ${ky-70} 420 50 470 60" fill="none" stroke="#2B2D42" stroke-width="1.8"/>`+sw(490,60,!S.eGopen,'eGopen','开关')+wire([[510,60],[552,60],[552,250],[548,250]]);
+  h+=`<path d="M${fx} ${fy}L${kx} ${ky}" stroke="${CU}" stroke-width="8" stroke-linecap="round"/>`+tx(fx-12,fy+16,'a','font-weight="700"')+tx(kx+12,ky-4,'b','font-weight="700"');
+  if(S.mv18){const u=S.mv18.u,vx=u[0]-.5*u[2],vy=-u[1]+.35*u[2],m=Math.hypot(vx,vy),mx=bx+20,my=by-14;h+=`<path d="M${mx} ${my}L${(mx+vx/m*30).toFixed(1)} ${(my+vy/m*30).toFixed(1)}" stroke="#0FA3A3" stroke-width="3.5"/>`+arrowAt(mx+vx/m*34,my+vy/m*34,Math.atan2(vy,vx)*DEG,'#0FA3A3',1.4)}
+  if(Math.abs(S.d18)>.03)h+=arrowAt(bx+20,by-14,S.d18>0?-35:145,'#fff',1);
+  h+=slab(200,400,96,26,dn?NC:SC,dn?'N':'S')+galv(490,250,S.d18)+tx(490,290,'灵敏电流计','font-size="12"');
+  $('s18').innerHTML=h;const k=S.last18,u=k?U18[k]:null,cut=u&&u[0]!=0;
+  $('r18').innerHTML=rd([['刚才的运动',k?NM18[k]:'—'],['切割磁感线',!k?'—':cut?'是':'否'],['感应电流',Math.abs(S.d18)>.03?(S.d18>0?'a → b':'b → a'):'无'],['指针',Math.abs(S.d18)>.03?(S.d18>0?'向右偏':'向左偏'):'在中间']]);
+  $('o18').innerHTML=S.msg18?msg(S.msg18[0],S.msg18[1]):msg('点上面的方向按钮，让导体 ab 在磁场里动一下，盯住电流计的指针。');return}
+ const rps=+$('i18g').value;$('v18g').textContent=rps;const cx=280,cy=150,r=78,th=S.th18,i=S.i18c,ext=S.eGenComm?Math.abs(i):i;
+ h+=`<rect x="40" y="60" width="90" height="180" rx="6" fill="${NC}" stroke="#2B2D42" stroke-width="2"/><rect x="430" y="60" width="90" height="180" rx="6" fill="${SC}" stroke="#2B2D42" stroke-width="2"/>`+big(85,158,'N','#fff',30)+big(475,158,'S','#fff',30);
+ h+=fieldH(130,430,[80,115,185,220])+`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#C9CED8" stroke-dasharray="3 5"/>`;
+ const s1=[cx+r*Math.cos(th),cy-r*Math.sin(th)],s2=[2*cx-s1[0],2*cy-s1[1]],big1=Math.abs(i)>.03;
+ h+=seg(s1[0],s1[1],s2[0],s2[1],CU,6);
+ h+=wire([[cx-10,cy+28],[cx-10,286],[186,286]])+wire([[154,286],[110,286],[110,314],[450,314],[450,286],[428,286]])+wire([[392,286],[cx+10,286],[cx+10,cy+28]]);
+ if(S.eGenComm){const a0=-th*DEG;for(const[k,c]of[[0,'#E0A060'],[180,'#B87333']]){const A=(a0+k-78)/DEG,B=(a0+k+78)/DEG;h+=`<path d="M${(cx+18*Math.cos(A)).toFixed(1)} ${(cy+18*Math.sin(A)).toFixed(1)}A18 18 0 0 1 ${(cx+18*Math.cos(B)).toFixed(1)} ${(cy+18*Math.sin(B)).toFixed(1)}" fill="none" stroke="${c}" stroke-width="7"/>`}}
+ else h+=`<circle cx="${cx}" cy="${cy}" r="12" fill="none" stroke="#E0A060" stroke-width="4"/><circle cx="${cx}" cy="${cy}" r="19" fill="none" stroke="#B87333" stroke-width="4"/>`;
+ h+=`<rect x="${cx-15}" y="${cy+20}" width="10" height="10" fill="#2B2D42"/><rect x="${cx+5}" y="${cy+20}" width="10" height="10" fill="#2B2D42"/>`;
+ h+=sideMark(s1[0],s1[1],big1?i>0:null)+sideMark(s2[0],s2[1],big1?i<0:null);
+ if(rps>0)for(const s of[s1,s2]){const sg=s===s1?1:-1,vx=-Math.sin(th)*sg,vy=-Math.cos(th)*sg;h+=seg(s[0]+vx*15,s[1]+vy*15,s[0]+vx*34,s[1]+vy*34,'#0FA3A3',3)+arrowAt(s[0]+vx*37,s[1]+vy*37,Math.atan2(vy,vx)*DEG,'#0FA3A3',1.1)}
+ h+=lamp(170,286,Math.abs(ext)*1.3,'')+tx(130,272,'小灯泡','font-size="11"');
+ const ga=Math.max(-1,Math.min(1,ext))*55/DEG;h+=`<circle cx="410" cy="286" r="18" fill="#fff" stroke="#2B2D42" stroke-width="2"/>`+seg(410,294,410+20*Math.sin(ga),294-20*Math.cos(ga),NC,2.2)+tx(410,306,'G','font-size="9" font-weight="700"')+tx(470,272,'电流计','font-size="11"');
+ h+=tx(280,22,'从转轴方向看过去，手摇转动线圈','font-size="12" style="fill:#6B7280"');
+ $('s18').innerHTML=h;
+ let g=`<path d="M30 60H292M30 8V112" stroke="#C9CED8" stroke-width="1.2"/>`+tx(272,76,'时间','font-size="11" style="fill:#6B7280"')+tx(52,16,'电流','font-size="11" style="fill:#6B7280"');
+ if(S.e18.length>1)g+=`<polyline fill="none" stroke="${NC}" stroke-width="2" points="${S.e18.map((v,j)=>(30+j*262/149).toFixed(1)+','+(60-v*46).toFixed(1)).join(' ')}"/>`;
+ $('g18').innerHTML=g;
+ $('r18').innerHTML=rd([['转速',rps+' 圈/秒'],['交流电频率',S.eGenComm?'—':rps+' Hz'],['外电路电流方向每秒改变',S.eGenComm?'不改变':2*rps+' 次'],['此刻电流（相对大小）',Math.round(Math.abs(ext)*100)+'%']]);
+ $('o18').innerHTML=rps==0?msg('拖动“手摇转速”，转动发电机的线圈。'):S.eGenComm?msg('换成换向器后，外电路里的电流方向不再改变（大小仍在变），这就是直流发电机。这是拓展内容，课本主要讲交流发电机。','ok'):
+  msg('线圈每转一圈，电流方向改变两次（经过平衡位置时改变）：这就是交流电。转得越快，电流越大，方向变化也越快。我国电网交流电的频率是 50 Hz，电流方向每秒改变 100 次。发电机把机械能转化为电能。','ok')}
+TK.m18=dt=>{if(!S.eGt){let ch=false;if(S.mv18){const m=S.mv18,st=Math.min(dt,m.T-m.t);m.t+=st;S.px18+=m.u[0]*m.sp*st;S.py18+=m.u[1]*m.sp*st;S.pz18+=m.u[2]*m.sp*st;
+   S.d18=S.eGopen?0:(S.eGB?-1:1)*m.u[0]*m.sp/96;if(m.t>=m.T-1e-9)S.mv18=null;ch=true}
+  else if(S.d18){S.d18*=Math.pow(.03,dt);if(Math.abs(S.d18)<.01)S.d18=0;ch=true}return ch}
+ const rps=+$('i18g').value,w=rps*2*Math.PI;S.th18+=w*dt;const i=w/(4*Math.PI)*Math.cos(S.th18);S.i18c=i;S.e18.push(S.eGenComm?Math.abs(i):i);if(S.e18.length>150)S.e18.shift();return true};
+function move18(k){const u=U18[k],lev=+$('i18').value,sp=30*lev,P=[S.px18,S.py18,S.pz18],lim=[85,22,16];let T=D18[k]/sp;
+ for(let i=0;i<3;i++){if(!u[i])continue;const room=u[i]>0?lim[i]-P[i]:lim[i]+P[i];T=Math.min(T,room/(Math.abs(u[i])*sp))}
+ if(T<.05){S.msg18=['到头了，先点“放回中间”再动。',''];return}
+ S.mv18={u,sp,T,t:0};S.last18=k;
+ if(!u[0])S.msg18=[`${NM18[k]}运动：${u[1]?'顺着磁感线（上下）运动':'沿着导体自身的方向运动'}，没有切割磁感线，指针不动。`,''];
+ else if(S.eGopen)S.msg18=['开关断开，电路不闭合：导体虽然切割了磁感线，但没有感应电流。','bad'];
+ else{const g=Math.sign(u[0])*(S.eGB?-1:1);S.msg18=[`${NM18[k]}运动：切割磁感线，产生感应电流，指针向${g>0?'右':'左'}偏。`+(k=='X'?'斜着运动时，水平方向的“分运动”在切割磁感线，所以也有电流，只是比同样快慢的水平运动小。':'')+(S.eGB?'（磁体翻转后磁场方向反了，偏转方向也跟着反了。）':'')+(lev>1?'运动越快，电流越大。':''),'ok']}}
+
+/* ---------- 19 电磁继电器 ---------- */
+const R1T=T=>250*Math.exp(2764*(1/(T+273.15)-1/323.15)),TofR=R=>1/(1/323.15+Math.log(R/250)/2764)-273.15;
+function st19(){if(S.eRl){const m=+$('i19m').value,F=10*m,R2=600-.05*F;return{m,F,R2,I:6/(100+R2)}}
+ const U=+$('i19u').value,Rp=+$('i19r').value,R1=R1T(S.eT);return{U,Rp,R1,I:U/(50+Rp+R1),Rth:U/.02-50-Rp}}
+function r19(){const sc=S.eRl;$('p19a').style.display=sc?'none':'';$('p19b').style.display=sc?'':'none';const st=st19();
+ if(sc){$('v19m').textContent=st.m}else{$('v19u').textContent=st.U;$('v19r').textContent=st.Rp}
+ if(sc||!S.eRun)S.pull19=st.I>=.02;const pl=S.pull19,tipY=pl?162:134,ly=x=>150+(tipY-150)*(x-120)/168;
+ let h='';
+ h+=wire([[120,150],[96,150],[96,30],[530,30],[530,sc?162:134]])+`<circle cx="300" cy="30" r="13" fill="#fff" stroke="#2B2D42" stroke-width="2"/>`+tx(300,35,'~','font-size="18" font-weight="700"')+tx(300,62,'工作电路电源','font-size="12" style="fill:#6B7280"');
+ const on1=sc?!pl:!pl,on2=pl,cA=on1?'#F2643D':'#2B2D42',cB=on2?'#F2643D':'#2B2D42';
+ if(!sc){h+=`<rect x="400" y="108" width="148" height="210" rx="10" fill="${S.eT>45?'#FFF1EC':'#F6F7FB'}" stroke="#9AA3B2" stroke-dasharray="5 4"/>`+tx(474,262,'恒温箱','font-size="12" font-weight="700" style="fill:#6B7280"');
+  if(!pl)h+=`<rect x="436" y="120" width="58" height="28" rx="8" fill="#F2643D" opacity=".25"/>`;
+  h+=wire([[300,134],[441,134]],cA)+wire([[489,134],[530,134]],cA)+res(465,134,'')+tx(465,162,'加热器 R₂','font-size="12"')+wire([[300,162],[330,162]])+tx(350,166,'空','font-size="12" style="fill:#6B7280"');
+  h+=tx(474,202,'箱内温度','font-size="12" style="fill:#6B7280"')+big(474,228,S.eT.toFixed(1)+' ℃',S.eT>45?'#D7263D':'#2B2D42',20)}
+ else{h+=wire([[300,134],[425,134]],cA)+wire([[455,134],[530,134]],cA)+`<circle cx="440" cy="134" r="15" fill="${on1?'#FFEDE6':'#fff'}" stroke="#2B2D42" stroke-width="2"/>`+tx(440,139,'M','font-weight="800"')+tx(484,124,'电动机','font-size="12"');
+  h+=wire([[300,162],[426,162]],cB)+wire([[454,162],[530,162]],cB)+`<path d="M426 170A14 14 0 0 1 454 170Z" fill="${on2?'#FFC83D':'#fff'}" stroke="#2B2D42" stroke-width="2"/><circle cx="440" cy="172" r="3" fill="#2B2D42"/>`+tx(484,182,'电铃','font-size="12"');
+  if(on2)h+=`<path d="M462 152q6 8 0 16M468 148q9 12 0 24" fill="none" stroke="#F2643D" stroke-width="2"/>`;
+  h+=`<rect x="400" y="196" width="145" height="96" rx="6" fill="#F6F7FB" stroke="#2B2D42" stroke-width="2"/>`+tx(472,212,'电梯轿厢','font-size="12" style="fill:#6B7280"');
+  const np=Math.round(st.m/75);for(let i=0;i<np;i++){const c=i%6,rw=Math.floor(i/6),px=414+c*23,py=288-rw*26;h+=`<circle cx="${px}" cy="${py-20}" r="5" fill="#6B7280"/><rect x="${px-5}" y="${py-14}" width="10" height="14" rx="3" fill="#6B7280"/>`}}
+ h+=`<path d="M132 96H176" stroke="#2B2D42" stroke-width="2.5"/>`;for(let x=136;x<=176;x+=8)h+=seg(x,96,x-6,90,'#2B2D42',1.4);
+ {const y0=ly(154);let d=`M154 ${y0.toFixed(1)}`;const L=y0-100,n=8;for(let i=0;i<n;i++)d+=`L${154+(i%2?-6:6)} ${(y0-L*(i+.5)/n).toFixed(1)}`;d+=`L154 100L154 96`;h+=`<path d="${d}" fill="none" stroke="#2B2D42" stroke-width="1.8"/>`}
+ h+=`<rect x="190" y="164" width="20" height="76" fill="#A7AEB9" stroke="#6B7280"/>`+coilV(200,172,226,8,true).replace(/<path d="M[^"]*" fill="#F2643D"[^>]*\/>$/,'')+wire([[184,230],[184,336],[552,336],[552,305],[496,305]])+wire([[448,305],[380,305],[380,240],[375,240]])+wire([[285,240],[268,240]])+wire([[242,240],[216,240],[216,229]]);
+ h+=`<path d="M120 150L${288} ${tipY}" stroke="#6B7280" stroke-width="7" stroke-linecap="round"/><circle cx="120" cy="150" r="5" fill="#fff" stroke="#2B2D42" stroke-width="2"/><circle cx="288" cy="${tipY}" r="4.5" fill="#2B2D42"/>`;
+ h+=`<rect x="292" y="129" width="8" height="10" fill="#2B2D42"/><rect x="292" y="157" width="8" height="10" fill="#2B2D42"/>`+tx(310,124,'A','font-size="12" font-weight="700"')+tx(310,180,'B','font-size="12" font-weight="700"')+tx(272,tipY+(pl?16:-10),'K','font-size="12" font-weight="700"')+tx(76,150,'衔铁','font-size="12" style="fill:#6B7280"');
+ h+=batt(255,240)+tx(255,266,sc?'U = 6 V':'U₁ = '+st.U+' V','font-size="12"');
+ h+=sc?res(330,240,'R₁ = 100 Ω'):rheo(330,240,st.Rp/200,'R′ = '+st.Rp+' Ω');
+ h+=res(472,305,'')+(sc?tx(472,326,'压敏电阻 R₂','font-size="12"'):seg(456,316,488,294,'#2B2D42',1.6)+tx(472,290,'热敏电阻 R₁','font-size="12"'));
+ h+=tx(140,252,'控制电路','font-size="12" font-weight="700" style="fill:'+SC+'"')+tx(214,14,'工作电路','font-size="12" font-weight="700" style="fill:#F2643D"');
+ h+=tx(126,282,'线圈电流','font-size="12" style="fill:#6B7280"')+big(126,304,(st.I*1000).toFixed(1)+' mA',st.I>=.02?'#D7263D':'#12956B',16);
+ $('s19').innerHTML=h;
+ let g=`<path d="M40 10V130H290" fill="none" stroke="#C9CED8" stroke-width="1.2"/>`,o;
+ if(!sc){const X=T=>40+(T-20)/80*250,Y=R=>130-R/650*120;let pts=[];for(let T=20;T<=100;T+=2)pts.push(X(T).toFixed(1)+','+Y(R1T(T)).toFixed(1));
+  g+=`<polyline fill="none" stroke="${SC}" stroke-width="2" points="${pts.join(' ')}"/>`;for(const T of[20,40,60,80,100])g+=tx(X(T),144,T,'font-size="10"');for(const R of[0,200,400,600])g+=tx(26,Y(R)+4,R,'font-size="10"');
+  g+=tx(270,156,'温度/℃','font-size="10" style="fill:#6B7280"')+tx(70,10,'R₁/Ω','font-size="10" style="fill:#6B7280"');
+  const Tset=st.Rth>0?TofR(st.Rth):999;
+  if(st.Rth>0&&st.Rth<650){g+=`<path d="M40 ${Y(st.Rth).toFixed(1)}H290" stroke="#F2643D" stroke-dasharray="4 3"/>`+tx(230,Y(st.Rth)-4,'20 mA 对应 '+Math.round(st.Rth)+' Ω','font-size="10" style="fill:#F2643D"');
+   if(Tset<=100)g+=`<path d="M${X(Tset).toFixed(1)} 130V${Y(st.Rth).toFixed(1)}" stroke="#F2643D" stroke-dasharray="4 3"/>`}
+  g+=`<circle cx="${X(Math.min(100,S.eT)).toFixed(1)}" cy="${Y(st.R1).toFixed(1)}" r="4.5" fill="${NC}"/>`;
+  $('r19').innerHTML=rd([['箱内温度',S.eT.toFixed(1)+' ℃'],['R₁',Math.round(st.R1)+' Ω'],['线圈电流',(st.I*1000).toFixed(1)+' mA'],['衔铁',pl?'被吸下':'弹起'],['加热器',pl?'停止':'加热中'],['设定温度',Tset>200?'—':Tset.toFixed(1)+' ℃']]);
+  o=st.Rth<=0?msg('R′ 太大了：就算 R₁ 变成 0，电流也到不了 20 mA，衔铁永远吸不下，加热器停不下来，很危险！','bad'):
+   st.Rth>R1T(20)?msg('室温下线圈电流就超过 20 mA 了，衔铁一直被吸下，加热器根本不工作。','bad'):
+   msg((st.U==6&&st.Rp==0?'这就是原题：R 总 = 6 V ÷ 0.02 A = 300 Ω，R₁ = 300 Ω − 50 Ω = 250 Ω，由图像对应 50 ℃。':'')+`温度升高 → R₁ 变小 → 电流变大。R₁ 降到 ${Math.round(st.Rth)} Ω 时电流达到 20 mA，衔铁被吸下，加热器断开，所以设定温度约 ${Tset>100?'超过 100':Tset.toFixed(0)} ℃。想把温度设高一点，要让 R₁ 更小时才达到 20 mA：减小 U₁ 或增大 R′。`+(S.eRun?'':' 点“开始加热”看看箱内温度怎么变。'),'ok')}
+ else{const X=m=>40+m/1200*250,Y=R=>130-R/650*120;g+=`<path d="M${X(0)} ${Y(600)}L${X(1150)} ${Y(25)}" stroke="${SC}" stroke-width="2"/>`;for(const m of[0,400,800,1200])g+=tx(X(m),144,m,'font-size="10"');for(const R of[0,200,400,600])g+=tx(26,Y(R)+4,R,'font-size="10"');
+  g+=tx(268,156,'质量/kg','font-size="10" style="fill:#6B7280"')+tx(70,10,'R₂/Ω','font-size="10" style="fill:#6B7280"')+`<path d="M40 ${Y(200)}H290" stroke="#F2643D" stroke-dasharray="4 3"/><path d="M${X(800)} 130V${Y(200)}" stroke="#F2643D" stroke-dasharray="4 3"/>`+tx(250,Y(200)-4,'20 mA 对应 200 Ω','font-size="10" style="fill:#F2643D"');
+  g+=`<circle cx="${X(st.m).toFixed(1)}" cy="${Y(st.R2).toFixed(1)}" r="4.5" fill="${NC}"/>`;
+  $('r19').innerHTML=rd([['乘客质量 m',st.m+' kg'],['压力 F = mg',st.F+' N'],['R₂',Math.round(st.R2)+' Ω'],['线圈电流',(st.I*1000).toFixed(1)+' mA'],['衔铁',pl?'被吸下（K 接 B）':'弹起（K 接 A）'],['工作电路',pl?'电铃报警':'电动机运转']]);
+  o=msg(`I = U ÷ (R₁ + R₂) = 6 V ÷ (100 Ω + ${Math.round(st.R2)} Ω) = ${(st.I*1000).toFixed(1)} mA ${pl?'≥':'<'} 20 mA，${pl?'超载！衔铁被吸下，K 与 B 接触，电铃响，电动机停。':'没有超载，衔铁在弹簧拉力下弹起，K 与 A 接触，电动机正常工作。'} 临界：R 总 = 6 V ÷ 0.02 A = 300 Ω，R₂ = 200 Ω，由图像知最多载 800 kg。`,pl?'bad':'ok')}
+ $('g19').innerHTML=g;$('o19').innerHTML=o;
+ $('tag19').textContent=sc?'原题数据：U = 6 V，R₁ = 100 Ω，吸合电流 20 mA；载重 1000 kg 时 I = 30 mA，电铃报警。图像是按这组数据配的。':'常见题数据：U₁ = 6 V，线圈电阻 50 Ω，吸合电流 20 mA，R₁ = 250 Ω 时为 50 ℃。热敏电阻曲线是示意。'}
+TK.m19=dt=>{if(S.eRl||!S.eRun)return false;const st=st19();S.hold19-=dt;const want=st.I>=.02;if(want!=S.pull19&&S.hold19<=0){S.pull19=want;S.hold19=.5}
+ S.eT+=((S.pull19?0:3)-.03*(S.eT-20))*dt;return true};
+
+/* ---------- 20 弹簧与电磁铁 ---------- */
+function st20(){const fr=+$('i20').value,R=25*fr,I=6/(5+R),rt=(S.w20==0)==(S.pol20==1),topN=rt,iron=S.eSpObj==2,bot=S.eSpObj==0?'N':'S',att=iron||(bot!=(topN?'N':'S')),c=S.eSpCore?1:.35,F=22*I/1.2*c*(iron?.8:1);
+ return{fr,R,I,rt,topN,iron,bot,att,F,L:104+(att?F:-F)}}
+function spring(x,y0,y1,n=12,a=9){const s=(y1-y0)/(n+1);let d=`M${x} ${y0}L${x} ${(y0+s/2).toFixed(1)}`;for(let i=0;i<n;i++)d+=`L${x+(i%2?-a:a)} ${(y0+s/2+s*(i+.5)).toFixed(1)}`;return `<path d="${d}L${x} ${(y1-s/2).toFixed(1)}L${x} ${y1}" fill="none" stroke="#2B2D42" stroke-width="2"/>`}
+function explain20(t){const{rt,topN,iron,bot,att}=t,f=rt?'右':'左';
+ return `① 安培定则：正面电流向${f}，右手四指顺着它握住螺线管，大拇指向${topN?'上':'下'}，所以螺线管上端是 ${topN?'N':'S'} 极；② ${iron?'铁块总是被电磁铁吸引':`磁铁下端是 ${bot} 极，与螺线管上端${att?'异名，相互吸引':'同名，相互排斥'}`}；③ 滑片 P 向右移 → 接入电阻变大 → 电流变小 → 磁性变弱 → ${att?'吸引力变小，弹簧变短':'排斥力变小，弹簧变长'}。`}
+function r20(){const t=st20(),q=S.q20,qa=q&&!q.done,x=280,yh=24+t.L;let h='';
+ h+=`<path d="M230 20H330" stroke="#2B2D42" stroke-width="3"/>`;for(let xx=234;xx<=330;xx+=10)h+=seg(xx,20,xx-7,13,'#2B2D42',1.4);
+ h+=spring(x,20,yh)+`<path d="M${x} ${yh}V${yh+6}" stroke="#2B2D42" stroke-width="2"/>`;const yo=yh+6;
+ if(t.iron)h+=`<rect x="${x-18}" y="${yo}" width="36" height="56" rx="4" fill="#8A8F98" stroke="#2B2D42" stroke-width="2"/>`+tx(x,yo+33,'铁块','font-size="12" style="fill:#fff" font-weight="700"');
+ else{const bN=t.bot=='N';h+=`<rect x="${x-15}" y="${yo}" width="30" height="28" fill="${bN?SC:NC}"/><rect x="${x-15}" y="${yo+28}" width="30" height="28" fill="${bN?NC:SC}"/><rect x="${x-15}" y="${yo}" width="30" height="56" fill="none" stroke="#2B2D42" stroke-width="2"/>`+big(x,yo+21,bN?'S':'N','#fff',15)+big(x,yo+49,bN?'N':'S','#fff',15)}
+ h+=`<path d="M350 24V194" stroke="#2B2D42" stroke-width="1.5"/>`;for(let y=24;y<=194;y+=10)h+=seg(350,y,(y-24)%50?356:362,y,'#2B2D42',1.2);for(let k=0;k<=3;k++)h+=tx(376,28+k*50,k*5,'font-size="10" style="fill:#6B7280"');
+ h+=tx(392,14,'厘米','font-size="10" style="fill:#6B7280"')+`<path d="M${x+12} ${yh}H346" stroke="#F2643D" stroke-dasharray="3 3"/>`+`<path d="M346 ${yh}l-8 -5v10z" fill="#F2643D"/>`;
+ h+=S.eSpCore?`<rect x="270" y="224" width="20" height="82" fill="#A7AEB9" stroke="#6B7280"/>`:`<rect x="270" y="224" width="20" height="82" fill="none" stroke="#9AA3B2" stroke-dasharray="3 3"/>`;
+ {const n=8,y0=300,p=8;let bk='',fr='';for(let i=0;i<n;i++){const y=y0-i*p;if(S.w20==0){fr+=seg(258,y,302,y-4,CU,2.6);bk+=seg(302,y-4,258,y-8,'#D9B38C',1.8,1)}else{bk+=seg(258,y,302,y-4,'#D9B38C',1.8,1);fr+=seg(302,y-4,258,y-8,CU,2.6)}}
+  bk+=seg(258,y0-n*p,302,y0-n*p-4,'#D9B38C',1.8,1);h+=bk+fr;if(!qa)h+=arrowAt(280,y0-4*p-2,t.rt?-5:175,'#F2643D',1.15)}
+ h+=wire([[258,300],[258,322],[540,322],[540,202]])+wire([[302,232],[375,232]])+`<path d="M${375+90*t.fr} 202H540V214" fill="none" stroke="#2B2D42" stroke-width="2.2"/>`+rheo(420,232,t.fr,'')+tx(470,262,'接入 '+f2(t.R)+' Ω','font-size="12"');
+ h+=batt3(410,322,S.pol20!=1);
+ if(!qa)h+=arrowAt(330,322,S.pol20==1?180:0,'#F2643D',1.1);
+ h+=qa?big(238,236,'?','#F2643D')+big(238,306,'?','#F2643D'):big(238,236,t.topN?'N':'S',t.topN?NC:SC)+big(238,306,t.topN?'S':'N',t.topN?SC:NC);
+ if(!qa)h+=tx(x-78,yo+40,t.att?'相互吸引':'相互排斥','font-size="13" font-weight="700" style="fill:#F2643D"');
+ $('s20').innerHTML=h;
+ $('r20').innerHTML=rd([['电流 I',f2(t.I)+' A'],['螺线管上端',qa?'?':t.topN?'N 极':'S 极'],['相互作用',qa?'?':t.att?'吸引':'排斥'],['弹簧长度',(t.L/10).toFixed(1)+' cm']]);
+ $('q20b').innerHTML=qa?qbtn('a20:L','弹簧变长')+qbtn('a20:S','弹簧变短')+qbtn('a20:N','长度不变'):'';
+ $('o20').innerHTML=qa?msg('考考你：闭合开关后，把滑片 P 向右移动，弹簧长度会怎样变化？'):q?msg((q.right?'答对了！':'再想想：')+explain20(t)+' 现在拖动滑片验证一下。',q.right?'ok':'bad'):msg(explain20(t),'ok')}
+
+/* ---------- 21 原理辨析 ---------- */
+const PR21=['电流的磁效应','磁场对电流的作用（电动机）','电磁感应（发电机）'];
+const IT21=[['电磁起重机',0,'通电后电磁铁有磁性，吸起钢铁；断电后磁性消失，钢铁就放下了。'],
+ ['扬声器（喇叭）',1,'线圈中通过随声音变化的电流，在永磁体的磁场里受力振动，带动纸盆发声。'],
+ ['动圈式话筒',2,'声音使膜片振动，带动线圈在磁场中切割磁感线，产生随声音变化的电流。和扬声器正好反过来！'],
+ ['电铃',0,'电磁铁通电吸引衔铁，小锤敲铃；衔铁被吸下后电路断开，弹簧又把它拉回来，如此反复。'],
+ ['电风扇、电动自行车',1,'里面都是电动机：通电线圈在磁场中受力转动。'],
+ ['POS 机刷卡',2,'带磁条的卡划过刷卡槽，检测头的线圈中产生感应电流，读出信息。'],
+ ['航母上的电磁弹射器',1,'弹射车里的导体通入强大电流，在磁场中受到很大的力，推动舰载机加速。'],
+ ['手机无线充电（手机里的接收线圈）',2,'充电座的线圈产生变化的磁场，手机里的线圈中就产生感应电流。'],
+ ['电磁继电器',0,'控制电路的电磁铁吸引衔铁，从而接通或断开工作电路。'],
+ ['风力发电机',2,'风带动线圈在磁场中转动，产生电流：机械能转化为电能。'],
+ ['奥斯特实验',0,'通电导线使旁边的小磁针偏转：电流周围存在磁场。'],
+ ['实验图：电路里有电源，导体放在磁场中，通电后动了起来',1,'有电源 → 研究磁场对电流的作用，这是电动机的原理。'],
+ ['实验图：电路里没有电源，只有灵敏电流计，导体切割磁感线时指针偏转',2,'没有电源、有电流计 → 研究电磁感应，这是发电机的原理。'],
+ ['手摇式手电筒（摇一摇就亮）',2,'摇动时磁体和线圈相对运动，线圈中产生感应电流，灯就亮了。']];
+const YN=[['A','同名磁极靠近时会相互吸引',0,'错：同名磁极相互排斥，异名磁极才相互吸引。'],['B','奥斯特实验证实了电流周围存在磁场',1,'对：这正是奥斯特实验的结论（电流的磁效应）。'],
+ ['C','通电螺线管中的电流越大，磁性越弱',0,'错：其他条件相同时，电流越大，磁性越强。'],['D','发电机工作时把电能转化为内能',0,'错：发电机把机械能转化为电能；把电能转化为机械能的是电动机。']];
+function r21(){const A=S.a21;let ok=0,n=0,h=`<div style="font-weight:700;margin-bottom:4px">下面每一项用的是哪个原理？点一下你的答案。</div>`;
+ IT21.forEach((it,i)=>{const a=A[i],done=a!==undefined,right=done&&a==it[1];if(done){n++;if(right)ok++}
+  h+=`<div class="it21 ${done?(right?'ok':'bad'):''}"><b>${i+1}. ${it[0]}</b><div class="btns" style="margin-top:4px">${PR21.map((p,k)=>`<button data-act="a21:${i}:${k}" class="${done&&k==it[1]?'on':''}" ${done?'disabled':''}>${p}</button>`).join('')}</div>${done?`<div style="font-size:13px;margin-top:4px">${right?'✓ 对。':'✗ 你选了“'+PR21[a]+'”。正确答案：'+PR21[it[1]]+'。'}${it[2]}</div>`:''}</div>`});
+ h+=`<div class="it21" style="border-color:#7A36A6"><span class="tag" style="background:#F1E6F8;color:#7A36A6">2024 云南中考 第 4 题</span><div style="margin:6px 0"><b>下列说法正确的是（　）</b></div>`+
+  YN.map(o=>`<div class="btns" style="margin:4px 0"><button data-act="yn:${o[0]}" class="${S.yn&&o[2]?'on':''}" ${S.yn?'disabled':''}>${o[0]}. ${o[1]}</button></div>`).join('')+
+  (S.yn?`<div style="font-size:13px;margin-top:6px">${S.yn=='B'?'✓ 答对了！':'✗ 你选了 '+S.yn+'。正确答案是 B。'}<br>${YN.map(o=>o[0]+'：'+o[3]).join('<br>')}</div>`:'')+`</div>`;
+ h+=`<div class="btns" style="margin-top:10px"><button data-act="r21">全部重做</button></div>`;
+ $('s21').innerHTML=h;
+ $('r21').innerHTML=rd([['已作答',n+' / '+IT21.length],['答对',ok+' 题'],['真题',S.yn?(S.yn=='B'?'答对':'答错'):'未作答']])}
+
+/* ---------- 电与磁：按钮动作 ---------- */
+function ACT(a){const p=a.split(':'),k=p[0],rnd=n=>Math.floor(Math.random()*n);
+ if(k=='pol15'){S.pol15*=-1;S.q15=null}else if(k=='wind15'){S.wind15^=1;S.q15=null}
+ else if(k=='q15'){S.eOe=1;S.pol15=rnd(2)?1:-1;S.wind15=rnd(2);S.q15={type:rnd(2)?'N':'P',done:false}}
+ else if(k=='a15'){const q=S.q15;if(!q||q.done)return;const{LtoR,NL}=sol15(),v=p[1];q.done=true;q.right=v=='N'?NL:v=='S'?!NL:v=='L'?LtoR:!LtoR}
+ else if(k=='rec16'){const R=+$('i16').value,I=6/(5+R),c=S.eCore16?1:.12;S.rec16.push([f2(I),S.eCore16?'有':'无',Math.min(12,Math.floor(50*I*c/10+1e-9)),Math.min(12,Math.floor(100*I*c/10+1e-9))]);if(S.rec16.length>8)S.rec16.shift()}
+ else if(k=='clr16'){S.rec16=[]}
+ else if(k=='rst17'){S.x17=0;S.v17=0}else if(k=='bal17'){S.th17=-Math.PI/2;S.om17=0}else if(k=='push17'){S.om17-=4}
+ else if(k=='mv'){move18(p[1])}else if(k=='ctr18'){S.px18=S.py18=S.pz18=0;S.mv18=null;S.d18=0;S.msg18=null;S.last18=''}
+ else if(k=='rst19'){S.eT=20;S.eRun=false;S.hold19=0}
+ else if(k=='pol20'){S.pol20*=-1;S.q20=null}else if(k=='w20'){S.w20^=1;S.q20=null}
+ else if(k=='q20'){S.eSpObj=rnd(3);S.pol20=rnd(2)?1:-1;S.w20=rnd(2);$('i20').value=[.2,.3,.4,.5][rnd(4)];S.q20={done:false}}
+ else if(k=='a20'){const q=S.q20;if(!q||q.done)return;const t=st20();q.done=true;q.right=p[1]==(t.att?'S':'L')}
+ else if(k=='a21'){S.a21[+p[1]]=+p[2]}else if(k=='r21'){S.a21={};S.yn=null}else if(k=='yn'){if(!S.yn)S.yn=p[1]}
+ else return}
+
+const MODS=[['m1','通路·断路·短路',0,r1],['m2','串联和并联',0,r2],['m3','变阻器与图像',0,r3],['m4','故障侦探',0,r4],['m5','探究实验',0,r5],['m6','电功率',1,r6],['m7','家庭电路',1,r7],['m8','去表法',2,r8],['m9','动态电路',2,r9],['m10','填电表挑战',2,r10],['m11','开关组合',2,r11],['m12','电路安全',2,r12],['m13','风速仪',2,r13],['m14','磁场与磁感线',1,r14],['m15','电生磁',1,r15],['m16','电磁铁',1,r16],['m17','电动机',1,r17],['m18','磁生电',1,r18],['m19','电磁继电器',2,r19],['m20','弹簧与电磁铁',2,r20],['m21','原理辨析',2,r21]];
+let cur=0;
+function draw(){MODS[cur][3]();document.querySelectorAll('[data-t]').forEach(b=>{if(b.tagName=='BUTTON')b.classList.toggle('on',!!S[b.dataset.t])});
+  document.querySelectorAll('[data-set]').forEach(b=>{const[k,v]=b.dataset.set.split(':');b.classList.toggle('on',S[k]==v)});
+  document.querySelectorAll('[data-f]').forEach(b=>b.classList.toggle('on',!S.q&&S.f==b.dataset.f))}
+
+const GRP=i=>i<13?0:1,LAST=[0,13];
+$('chips').innerHTML=MODS.map((m,k)=>`<button class="${['','pre','adv'][m[2]]} g${GRP(k)}" onclick="go(${k})"><small>${['已学','预习','进阶'][m[2]]}</small>${k+1} ${m[1]}</button>`).join('');
+$('msel').innerHTML=['电路','电与磁'].map((g,G)=>`<optgroup label="${g}">`+MODS.map((m,k)=>GRP(k)==G?`<option value="${k}">${k+1} ${m[1]}（${['已学','预习','进阶'][m[2]]}）</option>`:'').join('')+'</optgroup>').join('');
+$('msel').addEventListener('change',e=>go(+e.target.value));
+document.querySelectorAll('#tabs button').forEach(b=>b.addEventListener('click',()=>go(LAST[+b.dataset.g])));
+MODS.forEach((m,k)=>{const d=document.createElement('div');d.className='pager';
+ d.innerHTML=(k>0?`<button onclick="go(${k-1})">‹ ${k} ${MODS[k-1][1]}</button>`:'')+(k<MODS.length-1?`<button class="nx" onclick="go(${k+1})">${k+2} ${MODS[k+1][1]} ›</button>`:'');$(m[0]).appendChild(d)});
+document.querySelectorAll('.stage').forEach(st=>{if(!st.querySelector('svg'))return;const b=document.createElement('button');b.className='zbtn';b.type='button';b.textContent='⤢ 放大';b.onclick=()=>zoomOpen(st);st.appendChild(b);});
+function go(i){i=Math.max(0,Math.min(MODS.length-1,i));if(Z.svg)zoomClose();cur=i;const g=GRP(i);LAST[g]=i;
+ MODS.forEach((m,k)=>$(m[0]).classList.toggle('on',k==i));
+ const cb=document.querySelectorAll('#chips button');cb.forEach((b,k)=>b.classList.toggle('on',k==i));
+ $('nav').dataset.g=g;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.g==g));$('msel').value=i;
+ try{localStorage.setItem('mx_lab_cur',i)}catch(e){}try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+ draw();navH();window.scrollTo(0,0)}
+function navH(){document.documentElement.style.setProperty('--navh',$('nav').offsetHeight+'px')}
+addEventListener('resize',()=>{navH();zoomFit()});
+try{new ResizeObserver(navH).observe($('nav'))}catch(e){}
+/* 放大看图 */
+const Z={svg:null,home:null,rot:false};
+function zoomOpen(st){const sv=st.querySelector('svg');if(!sv)return;Z.svg=sv;Z.home=st;$('zbox').appendChild(sv);$('ztitle').textContent=(cur+1)+' · '+MODS[cur][1];$('zoom').hidden=false;document.body.style.overflow='hidden';zoomFit()}
+function zoomFit(){const sv=Z.svg;if(!sv)return;const vb=sv.viewBox.baseVal,ar=vb.width/vb.height,wr=$('zwrap').getBoundingClientRect(),W=wr.width-16,H=wr.height-16,
+ rot=W<700&&H>W*1.1;Z.rot=rot;let w=rot?Math.min(H,W*ar):Math.min(W,H*ar);w-=12;const h=w/ar;
+ sv.style.width=w+'px';sv.style.height=h+'px';sv.style.maxHeight='none';$('zbox').style.transform=rot?'rotate(90deg)':''}
+function zoomClose(){const sv=Z.svg;if(!sv)return;sv.style.width=sv.style.height=sv.style.maxHeight='';Z.home.insertBefore(sv,Z.home.firstChild);Z.svg=null;Z.rot=false;$('zbox').style.transform='';$('zoom').hidden=true;document.body.style.overflow=''}
+addEventListener('keydown',e=>{if(e.key=='Escape')zoomClose();else if(!Z.svg&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key=='ArrowRight'&&e.altKey)go(cur+1);if(e.key=='ArrowLeft'&&e.altKey)go(cur-1)}});
+function svgPt(sv,e){const vb=sv.viewBox.baseVal;if(Z.rot&&Z.svg===sv){const r=sv.getBoundingClientRect();return[(e.clientY-r.top)/r.height*vb.width,(r.right-e.clientX)/r.width*vb.height]}
+ const p=sv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(sv.getScreenCTM().inverse());return[q.x,q.y]}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-t]'),s=e.target.closest('[data-set]'),f=e.target.closest('[data-f]'),r=e.target.closest('[data-r]');
+  const mm=e.target.closest('[data-m]'),pre=e.target.closest('[data-pre]'),act=e.target.closest('[data-act]');
+  if(mm){const k=mm.dataset.m;S[k]=S[k]=='A'?'V':'A'}
+  else if(pre){if(pre.dataset.pre=='1'){S.jia='V';S.yi='V';S.s8=true}else{S.jia='A';S.yi='A';S.s8=false}}
+  else if(t){const k=t.dataset.t;S[k]=!S[k];if(k=='sp'&&S.sp)S.sl=false;if(k=='sl'&&S.sl)S.sp=false}
+  else if(s){const[k,v]=s.dataset.set.split(':');S[k]=+v}
+  else if(f){if(S.q&&!S.q.done){S.q.done=true;S.q.right=f.dataset.f==S.q.f}else{S.q=null;S.f=f.dataset.f}}
+  else if(r){S.R5=+r.dataset.r}
+  else if(act){if(act.disabled)return;ACT(act.dataset.act)}
+  else if(e.target.id=='quiz'){const a=['Lo','Ls','Ro','Rs'];S.q={f:a[Math.floor(Math.random()*4)],done:false}}
+  else if(e.target.id=='rec'){const R=S.R5;S.pts[R]=10/(R+ +$('i5p').value)}
+  else if(e.target.id=='clr'){S.pts={}}
+  else if(e.target.id=='rst'){S.trip=false;S.on7={}}
+  else return;
+  draw()});
+document.addEventListener('input',e=>{if(e.target.dataset.a){if(S.trip){e.target.checked=false;return}S.on7[e.target.dataset.a]=e.target.checked}draw()});
+{try{history.scrollRestoration='manual'}catch(e){}let s=0;const h=location.hash.replace(/^#m?/,''),k=/^\d+$/.test(h)?+h-1:-1;if(k>=0&&k<MODS.length)s=k;else{try{const v=+localStorage.getItem('mx_lab_cur');if(v>=0&&v<MODS.length)s=v}catch(e){}}go(s)}
+let _lt=performance.now();setInterval(()=>{const n=performance.now(),dt=Math.min(.1,(n-_lt)/1000);_lt=n;if(document.hidden)return;const f=TK[MODS[cur][0]];if(f&&f(dt))MODS[cur][3]()},40);
+</script>
+</body>
+</html>

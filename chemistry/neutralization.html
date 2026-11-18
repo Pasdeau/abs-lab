@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>高中双语化学：酸碱中和滴定与微观离子反应 · ABS Lab</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <script src="../shared/auth.js"></script>
+</head>
+<body class="lang-bilingual">
+  <script src="../shared/topbar.js" data-root=".." data-page="neutralization" data-bilingual="true"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>酸碱中和滴定与微观离子变化 <span class="en-sub">Acid-Base Neutralization &amp; Titration Lab</span></h1>
+        <p>向 20.0 mL 0.10 mol/L 稀盐酸中逐滴加入 0.10 mol/L NaOH，同步观察指示剂变色、pH 突跃与微观离子中和。</p>
+      </div>
+      <a class="hero-pill-btn" href="../index.html">← 返回数理化生门户</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">已滴入 NaOH 体积 <span class="en-inline">Volume Added</span></div>
+        <div class="metric-value accent-blue" id="chem-vol">0.0 mL</div>
+        <div class="metric-sub">等当点 (Equivalence): 20.0 mL</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">溶液实时 pH <span class="en-inline">Solution pH</span></div>
+        <div class="metric-value" id="chem-ph">1.00</div>
+        <div class="metric-sub" id="chem-nature">强酸性 (Strongly Acidic)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">指示剂颜色 <span class="en-inline">Indicator Color</span></div>
+        <div class="metric-value" id="chem-color-text">无色 (Colorless)</div>
+        <div class="metric-sub" id="chem-indicator-name">酚酞 Phenolphthalein</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">反应实质 <span class="en-inline">Net Ionic Eq.</span></div>
+        <div class="metric-value formula-val">H⁺ + OH⁻ → H₂O</div>
+        <div class="metric-sub" id="chem-stage">H⁺ 过量，持续被中和</div>
+      </div>
+    </div>
+
+    <div class="lab-grid">
+      <div class="canvas-column">
+        <div class="card">
+          <div class="card-header">
+            <h3>滴定实验台 &amp; 微观离子视野 <span class="en-inline">Titration Bench &amp; Ionic View</span></h3>
+            <div class="legend-row">
+              <span class="legend-item"><i class="swatch swatch-red"></i> H⁺</span>
+              <span class="legend-item"><i class="swatch swatch-blue"></i> OH⁻</span>
+              <span class="legend-item"><i class="swatch swatch-green"></i> Cl⁻</span>
+              <span class="legend-item"><i class="swatch swatch-purple"></i> Na⁺</span>
+              <span class="legend-item"><i class="swatch swatch-cyan"></i> H₂O</span>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="chemLabCanvas" width="760" height="320"></canvas>
+          </div>
+          <div class="micro-caption" id="chemCaption">
+            初始锥形瓶中只有 H⁺ 和 Cl⁻（盐酸完全电离），呈强酸性（pH = 1.00）。点击右侧按钮开始滴加 NaOH。
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>实时 pH 滴定曲线 <span class="en-inline">Live pH Titration Curve</span></h3>
+            <span class="en-inline">横轴: V(NaOH) / mL · 纵轴: pH</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="chemCurveCanvas" width="760" height="220"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <aside class="control-column">
+        <div class="card">
+          <h3>滴定操作台 <span class="en-inline">Titration Controls</span></h3>
+
+          <div class="control-group">
+            <div class="group-title">滴加 0.10 mol/L NaOH 溶液 <span class="en-inline">Add Base</span></div>
+            <div class="btn-grid">
+              <button class="btn btn-primary chem-add" data-ml="0.2" type="button">逐滴 +0.2 mL</button>
+              <button class="btn btn-primary chem-add" data-ml="1" type="button">滴加 +1.0 mL</button>
+              <button class="btn btn-secondary chem-add" data-ml="5" type="button">快速 +5.0 mL</button>
+              <button id="chemAutoBtn" class="btn btn-outline" type="button">自动连续滴定</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="slider-head">
+              <label for="chemSlider">直接拖动体积 <span class="en-inline">Set Volume</span></label>
+              <strong id="chemSliderVal">0.0 mL</strong>
+            </div>
+            <input id="chemSlider" type="range" min="0" max="40" step="0.2" value="0" />
+            <div class="slider-scale"><span>0 mL</span><span>20 mL (中和点)</span><span>40 mL</span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="control-group">
+            <div class="group-title">选择酸碱指示剂 <span class="en-inline">Indicator</span></div>
+            <div class="radio-stack">
+              <label class="check-row">
+                <input type="radio" name="chemIndicator" value="phenolphthalein" checked />
+                <span>酚酞 <span class="en-inline">Phenolphthalein</span> (pH 8.2–10.0: 无色→粉红)</span>
+              </label>
+              <label class="check-row">
+                <input type="radio" name="chemIndicator" value="litmus" />
+                <span>紫色石蕊 <span class="en-inline">Litmus</span> (pH 5.0–8.0: 红→紫→蓝)</span>
+              </label>
+              <label class="check-row">
+                <input type="radio" name="chemIndicator" value="methylorange" />
+                <span>甲基橙 <span class="en-inline">Methyl Orange</span> (pH 3.1–4.4: 红→橙→黄)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="control-group btn-row">
+            <button id="chemJumpNearBtn" class="btn btn-outline" type="button">跳至 19.6 mL 观察突跃</button>
+            <button id="chemResetBtn" class="btn btn-outline" type="button">重置实验</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>化学原理与方程式 <span class="en-inline">Chemistry Principles</span></h3>
+          <div class="eq-box">
+            <div>化学方程式：<br /><code>HCl + NaOH = NaCl + H₂O</code></div>
+            <div>离子方程式：<br /><code>H⁺ + OH⁻ = H₂O</code></div>
+          </div>
+          <ul class="concept-list">
+            <li>
+              <strong>旁观离子 (Spectator Ions)</strong>
+              <p>反应前后 <code>Na⁺</code> 与 <code>Cl⁻</code> 始终游离在溶液中，不参与结合，因此在离子方程式中约去。</p>
+            </li>
+            <li>
+              <strong>滴定突跃 (Titration Jump)</strong>
+              <p>在 19.8 mL → 20.2 mL 之间，仅增加两三滴 NaOH，pH 就从约 3.3 跃升至 10.7，这是由 <code>pH = -lg c(H⁺)</code> 的对数性质决定的。</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>动手探究任务（自动记入账号进度） <span class="en-inline">Guided Tasks</span></h3>
+          <ol class="task-list" id="chemTaskList">
+            <li data-task="drip">滴加 NaOH，观察微观视野中 H⁺ 减少、H₂O 增加而 Cl⁻ 不变。</li>
+            <li data-task="jump">到达或跨越 20.0 mL 中和点，在曲线上观察 pH 突跃与指示剂变色。</li>
+            <li data-task="indicator">切换不同指示剂（酚酞 / 石蕊 / 甲基橙），比较它们的变色区间。</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+
+    <div class="card glossary-card">
+      <h3>中英化学术语对照 <span class="en-inline">Bilingual Glossary</span></h3>
+      <div class="glossary-grid">
+        <div class="term"><b>中和反应</b><span>Neutralization Reaction</span></div>
+        <div class="term"><b>酸碱滴定</b><span>Acid-Base Titration</span></div>
+        <div class="term"><b>等当点 / 滴定终点</b><span>Equivalence Point / Endpoint</span></div>
+        <div class="term"><b>酸碱指示剂</b><span>Acid-Base Indicator</span></div>
+        <div class="term"><b>离子方程式</b><span>Net Ionic Equation</span></div>
+        <div class="term"><b>旁观离子</b><span>Spectator Ions</span></div>
+        <div class="term"><b>滴定突跃</b><span>Titration Jump</span></div>
+        <div class="term"><b>物质的量浓度</b><span>Molar Concentration (mol/L)</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">ABS Lab · 化学双语互动实验</footer>
+  <script src="js/neutralization.js"></script>
+</body>
+</html>

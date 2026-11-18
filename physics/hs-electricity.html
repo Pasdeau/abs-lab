@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>高中双语电学：电流的形成与自由电子运动 · ABS Lab</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <script src="../shared/auth.js"></script>
+</head>
+<body class="lang-bilingual">
+  <script src="../shared/topbar.js" data-root=".." data-page="hs-electricity" data-bilingual="true"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>电流的形成、方向与自由电子运动 <span class="en-sub">Electric Current Formation, Direction &amp; Electron Drift</span></h1>
+        <p>对比宏观电路与金属导体微观内部，直观理解欧姆定律、热运动与电场漂移速度。</p>
+      </div>
+      <a class="hero-pill-btn" href="circuits-lab.html">⚡ 切换至 21合1电学实验台</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 核心指标栏 -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">电路状态 <span class="en-inline">Circuit State</span></div>
+        <div class="metric-value" id="phy-state">断开 (Open)</div>
+        <div class="metric-sub" id="phy-field-desc">导体内电场 E = 0</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">电流强度 I = U / R <span class="en-inline">Current</span></div>
+        <div class="metric-value accent-red" id="phy-current">0.00 A</div>
+        <div class="metric-sub" id="phy-current-dir">无定向电流</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">电路功率 P = U · I <span class="en-inline">Power</span></div>
+        <div class="metric-value accent-amber" id="phy-power">0.00 W</div>
+        <div class="metric-sub" id="phy-bulb-desc">灯泡熄灭</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">电子定向漂移 <span class="en-inline">Drift Velocity v<sub>d</sub></span></div>
+        <div class="metric-value accent-blue" id="phy-drift">0.000 mm/s</div>
+        <div class="metric-sub" id="phy-electron-dir">仅做无规则热运动</div>
+      </div>
+    </div>
+
+    <div class="lab-grid">
+      <div class="canvas-column">
+        <div class="card">
+          <div class="card-header">
+            <h3>宏观电路图 <span class="en-inline">Macroscopic Circuit</span></h3>
+            <div class="legend-row">
+              <span class="legend-item"><i class="swatch swatch-red"></i> 规定电流方向 <span class="en-inline">Current (I)</span></span>
+              <span class="legend-item"><i class="swatch swatch-blue"></i> 自由电子 <span class="en-inline">Electrons (e⁻)</span></span>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="phyCircuitCanvas" width="760" height="330"></canvas>
+          </div>
+          <div class="canvas-tip">提示：可直接点击画布中的“开关 S”或使用右侧控制台操作。</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>金属导体微观放大镜 <span class="en-inline">Microscopic Conductor Zoom</span></h3>
+            <div class="legend-row">
+              <span class="legend-item"><i class="swatch swatch-gray"></i> 金属阳离子 <span class="en-inline">Lattice Ions (+)</span></span>
+              <span class="legend-item"><i class="swatch swatch-blue"></i> 自由电子 <span class="en-inline">Free e⁻</span></span>
+              <span class="legend-item"><i class="swatch swatch-purple"></i> 电场 <span class="en-inline">E-Field</span></span>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="phyMicroCanvas" width="760" height="220"></canvas>
+          </div>
+          <div class="micro-caption" id="phyMicroCaption">
+            开关断开时，导体内没有电场，自由电子仍在做剧烈的无规则热运动（Thermal Motion），各方向抵消，因此宏观电流为 0。
+          </div>
+        </div>
+      </div>
+
+      <aside class="control-column">
+        <div class="card">
+          <h3>实验控制台 <span class="en-inline">Controls</span></h3>
+
+          <div class="control-group btn-row">
+            <button id="phySwitchBtn" class="btn btn-primary" type="button">闭合开关 (Close S)</button>
+            <button id="phyPolarityBtn" class="btn btn-secondary" type="button">调换正负极 (Flip ±)</button>
+          </div>
+
+          <div class="control-group">
+            <div class="slider-head">
+              <label for="phyVoltage">电源电压 U <span class="en-inline">Voltage</span></label>
+              <strong id="phyVoltageVal">6.0 V</strong>
+            </div>
+            <input id="phyVoltage" type="range" min="0" max="12" step="0.5" value="6" />
+            <div class="slider-scale"><span>0 V</span><span>6 V</span><span>12 V</span></div>
+          </div>
+
+          <div class="control-group">
+            <div class="slider-head">
+              <label for="phyResistance">回路总电阻 R <span class="en-inline">Resistance</span></label>
+              <strong id="phyResistanceVal">6.0 Ω</strong>
+            </div>
+            <input id="phyResistance" type="range" min="2" max="24" step="1" value="6" />
+            <div class="slider-scale"><span>2 Ω (小)</span><span>12 Ω</span><span>24 Ω (大)</span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="control-group">
+            <div class="group-title">可视化图层 <span class="en-inline">Visual Overlays</span></div>
+            <label class="check-row">
+              <input id="phyShowCurrent" type="checkbox" checked />
+              <span>显示规定电流方向 <span class="en-inline">Conventional Current (+ → −)</span></span>
+            </label>
+            <label class="check-row">
+              <input id="phyShowElectrons" type="checkbox" checked />
+              <span>显示自由电子运动 <span class="en-inline">Electron Flow (− → +)</span></span>
+            </label>
+            <label class="check-row">
+              <input id="phyShowField" type="checkbox" checked />
+              <span>显示微观电场方向 <span class="en-inline">Electric Field E</span></span>
+            </label>
+            <label class="check-row">
+              <input id="phySlowMo" type="checkbox" />
+              <span>慢动作观察 <span class="en-inline">Slow Motion</span></span>
+            </label>
+          </div>
+
+          <div class="control-group btn-row">
+            <button id="phyPauseBtn" class="btn btn-outline" type="button">暂停动画 (Pause)</button>
+            <button id="phyResetBtn" class="btn btn-outline" type="button">重置 (Reset)</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>核心知识点 <span class="en-inline">Key Physics Concepts</span></h3>
+          <ul class="concept-list">
+            <li>
+              <strong>为什么电流方向与电子运动方向相反？</strong>
+              <p>历史上先规定<strong>正电荷定向移动的方向</strong>为电流方向（Conventional Current，外电路由 + 到 −）。金属中实际移动的是带负电的自由电子（e⁻），所以电子由 − 极流向 + 极。</p>
+            </li>
+            <li>
+              <strong>电子漂移很慢，为什么开灯瞬间就亮？</strong>
+              <p>在 <code>I = n·e·S·v_d</code> 中，电子定向漂移速度 <code>v_d</code> 仅每秒零点几毫米；但合上开关时，<strong>电场（Electric Field）</strong>几乎以光速在整条导线中建立，各处自由电子同时开始定向移动。</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>动手探究任务（自动记入账号进度） <span class="en-inline">Guided Tasks</span></h3>
+          <ol class="task-list" id="phyTaskList">
+            <li data-task="open">断开开关，观察微观放大镜：自由电子仍在做无规则热运动。</li>
+            <li data-task="close">闭合开关，对比红色箭头（电流）与蓝色微粒（电子）的运动方向。</li>
+            <li data-task="ohm">保持电阻 6 Ω 不变，将电压从 6 V 调至 12 V，验证电流翻倍。</li>
+            <li data-task="flip">点击“调换正负极”，观察电场 E、电流 I 与电子运动同步反转。</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+
+    <div class="card glossary-card">
+      <h3>中英物理术语对照 <span class="en-inline">Bilingual Glossary</span></h3>
+      <div class="glossary-grid">
+        <div class="term"><b>电流</b><span>Electric Current (I, A)</span></div>
+        <div class="term"><b>电压 / 电势差</b><span>Voltage / Potential Difference (U, V)</span></div>
+        <div class="term"><b>电阻</b><span>Resistance (R, Ω)</span></div>
+        <div class="term"><b>欧姆定律</b><span>Ohm's Law (I = U / R)</span></div>
+        <div class="term"><b>自由电子</b><span>Free Electron (e⁻)</span></div>
+        <div class="term"><b>定向漂移速度</b><span>Drift Velocity (v<sub>d</sub>)</span></div>
+        <div class="term"><b>无规则热运动</b><span>Random Thermal Motion</span></div>
+        <div class="term"><b>电场</b><span>Electric Field (E)</span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">ABS Lab · 物理双语互动实验</footer>
+  <script src="js/hs-electricity.js"></script>
+</body>
+</html>
