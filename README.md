@@ -1,49 +1,162 @@
 # ABS-LAB · 数理化生互动实验平台
 
-作者：Wenzheng Wang · Hang Li
+> 源于课本，高于课本——在线可视化原理探索与互动实验平台
 
-## 目录结构
+- **在线访问**：`https://www.wenzheng.eu/abs-lab/`
+- **GitHub 仓库**：`https://github.com/Pasdeau/abs-lab`
+- **Authors**：Wenzheng Wang · Hang Li
+
+---
+
+## 一、如何加入这个仓库（首次接入，只需做一次）
+
+### 1. 接受协作者邀请
+1. 登录你的 GitHub 账号。
+2. 打开注册邮箱里的邀请邮件，或直接访问 `https://github.com/Pasdeau/abs-lab/invitations`。
+3. 点击 **Accept invitation** 接受邀请，即可获得本仓库的贡献权限。
+
+### 2. 配置本地 Git 环境
+如果你电脑上还没有 Git，先安装 Git（macOS 在终端运行 `xcode-select --install` 或用 Homebrew；Windows 下载 [Git for Windows](https://git-scm.com/)；不习惯命令行也可以直接安装 [GitHub Desktop](https://desktop.github.com/)）。
+
+首次使用 Git 需设置姓名和邮箱（与你的 GitHub 账号一致）：
+```bash
+git config --global user.name "你的名字"
+git config --global user.email "你的GitHub邮箱"
+```
+
+> **登录认证方式（二选一）**：
+> - **方式 A（推荐，最省事）**：安装 **GitHub Desktop** 或 **VS Code**，登录 GitHub 账号后即可自动完成授权。
+> - **方式 B（命令行 SSH）**：执行 `ssh-keygen -t ed25519` 生成密钥，将 `~/.ssh/id_ed25519.pub` 的内容粘贴到 GitHub 的 **Settings → SSH and GPG keys**。
+
+### 3. 把仓库克隆（Clone）到本地电脑
+在终端进入你想存放代码的目录（例如桌面或个人项目文件夹），执行：
+```bash
+# HTTPS 方式
+git clone https://github.com/Pasdeau/abs-lab.git
+
+# 如果配置了 SSH 密钥，也可以用：
+# git clone git@github.com:Pasdeau/abs-lab.git
+
+cd abs-lab
+```
+
+### 4. 本地预览网站
+本仓库为纯静态前端 + Vercel Serverless API，无需安装 `node_modules`：
+- **最简单**：直接用浏览器双击打开 `index.html` 即可离线浏览所有实验。
+- **推荐（本地 HTTP 服务）**：在 `abs-lab` 目录下运行：
+  ```bash
+  python3 -m http.server 8080
+  ```
+  浏览器打开 `http://localhost:8080`。
+
+---
+
+## 二、在自己电脑上更新后，如何上传贡献代码（日常流程）
+
+推荐采用 **「同步最新代码 → 切独立分支修改 → 推送分支 → 发 Pull Request (PR)」** 的标准协作流程，这样即使两人同时开发也不会互相覆盖，而且每次 PR 都会自动生成 Vercel 在线预览链接。
+
+### 第 1 步：开始修改前，先同步最新代码
+每次动手写新内容前，先把远程 `main` 分支的最新改动拉下来：
+```bash
+cd abs-lab
+git checkout main
+git pull origin main
+```
+
+### 第 2 步：新建一个本次修改的分支
+根据你要做的内容起一个简短的英文分支名（例如新增光学实验或修改物理导图）：
+```bash
+git checkout -b feat/physics-optics
+```
+（常见前缀：`feat/` 新增实验或功能，`fix/` 修复问题，`docs/` 修改文档。）
+
+### 第 3 步：在本地修改并自测
+按学科目录编辑或新增文件（详见下方「项目结构与开发规范」），改完后在浏览器打开测试功能是否正常。
+
+### 第 4 步：查看改动、提交并推送到 GitHub
+```bash
+# 1. 检查自己修改或新增了哪些文件
+git status
+
+# 2. 暂存所有改动（也可以只写具体文件名，如 git add physics/）
+git add .
+
+# 3. 写一句简明的提交说明
+git commit -m "feat(physics): add optics refraction experiment"
+
+# 4. 推送你的分支到 GitHub 远程仓库
+git push -u origin feat/physics-optics
+```
+
+### 第 5 步：在 GitHub 发起 Pull Request (PR) 并上线
+1. 推送成功后，打开 `https://github.com/Pasdeau/abs-lab`。
+2. 页面上方会出现绿/黄色的 **Compare & pull request** 按钮，点击它。
+3. 填写标题和简短说明（例如“新增高中物理光的折射实验”），点击 **Create pull request**。
+4. 等待几秒后，PR 页面下方会自动出现 **Vercel Preview** 预览链接，可先在线核对效果。
+5. 确认无误后点击 **Merge pull request** 合并进 `main` 分支，Vercel 会在约 10 秒内自动部署上线到 `https://www.wenzheng.eu/abs-lab/`。
+
+> **合并后的清理**：下次再做新改动时，回到第 1 步执行 `git checkout main && git pull origin main` 再开新分支即可。
+
+### 补充：使用 GitHub Desktop（纯图形界面，免记命令）
+1. 打开 GitHub Desktop → **File → Clone Repository**，选择 `Pasdeau/abs-lab`。
+2. 每次改动前点顶部 **Fetch origin / Pull origin** 同步最新代码。
+3. 点左上角 **Current Branch → New Branch** 新建一个分支。
+4. 在本地文件夹改好代码后，回到 GitHub Desktop，在左下角填写提交说明 → 点 **Commit to <分支名>** → 点右上角 **Publish branch / Push origin**。
+5. 点击提示的 **Create Pull Request** 跳转到网页完成合并。
+
+---
+
+## 三、项目结构与开发规范
 
 ```text
 abs-lab/
-├── index.html                    # 统一门户首页
-├── vercel.json                   # Vercel 静态与 Serverless 路由配置
-├── api/                          # Vercel Serverless API（绑定 Upstash Redis 后自动启用跨设备云同步）
-│   ├── _redis.js                 # Upstash Redis REST 客户端、密码哈希与签名 Token
-│   ├── auth.js                   # POST /api/auth（注册/登录）与 GET /api/auth（探测云同步状态）
-│   └── progress.js               # GET/POST /api/progress（跨设备同步学习进度）
+├── index.html                    # 平台总门户（按物理、化学、数学、生物四科分类）
+├── vercel.json                   # Vercel 部署配置
+├── api/                          # 云端登录与进度同步接口（Upstash Redis）
+│   ├── _redis.js
+│   ├── auth.js
+│   └── progress.js
 ├── shared/
-│   ├── theme.css                 # 统一视觉样式与双语控制
-│   ├── auth.js                   # 账号认证（支持 Remember Me + 云端/本地双模式无缝切换）
+│   ├── theme.css                 # 公共样式与中英双语切换
+│   ├── auth.js                   # 用户认证、记住我、跨设备进度同步
 │   └── topbar.js                 # 全站统一顶栏与账号弹窗
-├── physics/
-│   ├── knowledge-map.html        # 物理知识体系与导图
-│   ├── circuits-lab.html         # 21 合 1 电学与磁学实验台
-│   ├── hs-electricity.html       # 高中双语电学：电流形成与自由电子漂移
-│   └── js/hs-electricity.js
-├── chemistry/
-│   ├── neutralization.html       # 高中双语化学：酸碱中和滴定与微观离子视图
-│   └── js/neutralization.js
-├── biology/
-│   ├── index.html                # 生物目录
-│   ├── microscope.html           # 光学显微镜实操实验台（4 种真实标本）
-│   ├── js/microscope.js
-│   └── specimens/                # 洋葱表皮、人口腔上皮、黑藻叶片、人血涂片显微图
-└── math/
-    └── index.html                # 数学模块路线图
+├── physics/                      # ⚡ 物理（知识导图、21合1电学、高中双语电学）
+├── chemistry/                    # 🧪 化学（酸碱中和滴定等）
+├── math/                         # 📐 数学
+└── biology/                      # 🧬 生物（光学显微镜实操实验台与标本图）
 ```
 
-## 如何在 Vercel 绑定 Upstash Redis 实现跨设备云同步（约 2 分钟）
+### 贡献代码时的 3 条关键约定
+1. **所有链接与资源必须使用相对路径**
+   - 正确写法：`../shared/theme.css`、`../index.html`、`specimens/onion-epidermis.jpg`
+   - **禁止**以 `/` 开头的根路径（如 `/shared/theme.css`），否则通过 `https://www.wenzheng.eu/abs-lab/` 访问时会找不到资源。
+2. **新页面接入统一顶栏与账号进度**
+   - 在新 HTML 的 `<head>` 中加入：
+     ```html
+     <link rel="stylesheet" href="../shared/theme.css" />
+     <script src="../shared/auth.js"></script>
+     ```
+   - 在 `<body>` 第一行加入：
+     ```html
+     <script src="../shared/topbar.js" data-root=".." data-page="你的模块名" data-bilingual="true"></script>
+     ```
+   - 如果是独立单文件整页集成（如知识导图），给 `topbar.js` 加上 `data-mode="compact"` 即可。
+3. **尽量一实验一文件，减少冲突**
+   - 新增实验放在对应学科文件夹下，并在 `index.html` 对应学科板块中增加入口卡片。
 
-代码层已经完整写好 `api/auth.js` 和 `api/progress.js`，无需任何 `npm` 依赖，也无需改一行代码：
+---
 
-1. 在 Vercel 打开你的 `abs-lab` 项目 → 点击顶部 **Storage** 标签页。
-2. 点击 **Create Database** → 选择 **Upstash** → **Upstash for Redis**（选择 Free 免费套餐，区域选离用户较近的如 Singapore / Frankfurt / US-East）。
-3. 创建完成后，点击 **Connect Project**，勾选你的 `abs-lab` 项目（Environment 勾选 Production / Preview / Development）。
-4. Vercel 会自动向项目注入 `UPSTASH_REDIS_REST_URL` 与 `UPSTASH_REDIS_REST_TOKEN`（或 `KV_REST_API_URL` / `KV_REST_API_TOKEN`，后端已同时兼容两种变量名）。
-5. 回到 Vercel 项目的 **Deployments**，对最新一次部署点右侧 `...` → **Redeploy**，让环境变量生效即可！
-6. 生效后，打开网站登录账号弹窗右上角会显示绿色「云端已连接」，之后在手机、iPad、电脑上用同一账号密码登录，所有进度都会跨设备自动同步。
+## 四、常见问题快速排查
 
-## 本地预览
-
-- 直接双击打开 `index.html`，或在目录内执行 `python3 -m http.server 8080` 访问 `http://localhost:8080`。
+- **`git push` 提示 `rejected (fetch first / non-fast-forward)`**
+  说明远程 `main` 有别人新合并的更新，先同步再推：
+  ```bash
+  git pull --rebase origin main
+  git push
+  ```
+- **想放弃本地改乱的某个文件**
+  ```bash
+  git checkout -- 文件路径
+  ```
+- **如何测试跨设备登录与进度同步？**
+  本地双击 `file://` 打开时自动走浏览器本地存储模式；推送合并上线后访问 `https://www.wenzheng.eu/abs-lab/`，登录弹窗右上角显示绿色「云端已连接」，即可在电脑和手机间实时同步进度。
