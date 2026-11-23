@@ -14,38 +14,63 @@
     <div class="hero-inner">
       <div>
         <h1>数学 <span class="en-sub">Mathematics</span></h1>
-        <p>初中数学知识导图已上线；可视化交互实验陆续补充。</p>
+        <p>人教版初中数学（七上—九下）知识导图。一次函数、反比例函数、二次函数的几个知识点，可以直接跳到物理电学实验台里看对应的图像。</p>
       </div>
       <a class="hero-pill-btn" href="../index.html">← 返回首页</a>
     </div>
   </header>
 
   <main class="container">
+    <button type="button" class="search-launch" data-open-search="math">🔍 <b>搜索数学</b>知识点、章节或实验……<kbd>Ctrl K</kbd></button>
+    <div class="section-head">
+      <h2>知识导图 <span class="en-inline">Knowledge Atlas</span></h2>
+      <span class="section-note">知识点旁的「动手」标签可以直接打开对应的实验</span>
+    </div>
     <div class="portal-grid">
       <a class="portal-card" href="knowledge-map.html">
         <div class="portal-top"><div class="portal-icon">🗺️</div><span class="badge badge-ref">知识导图</span></div>
-        <h3>数学知识体系与导图 <span class="en-sub">Mathematics Knowledge Atlas</span></h3>
+        <h3>数学知识体系与导图</h3>
         <p>七上至九下全部章节与知识点：课标主题地图、本章导图、近 5 年河南中考题号地图与考频；登录后可记录错题（仅自己可见）。</p>
-        <div class="portal-foot"><span>查看知识体系</span><span>进入 →</span></div>
+        <div class="portal-foot"><span id="hub-km">查看知识体系</span><span>进入 →</span></div>
       </a>
+    </div>
+
+    <div class="section-head">
+      <h2>互动实验 <span class="en-inline">Interactive Labs</span></h2>
+      <span class="section-note">数学自己的实验还在规划中</span>
+    </div>
+    <div class="portal-grid">
       <div class="portal-card is-soon">
-        <div class="portal-top"><div class="portal-icon">📐</div><span class="badge badge-soon">规划中</span></div>
+        <div class="portal-top"><div class="portal-icon">📐</div><span class="badge badge-soon">规划中 · 高中</span></div>
         <h3>单位圆与三角函数波形 <span class="en-sub">Unit Circle &amp; sin/cos Waves</span></h3>
         <p>拖动角度 θ，打通三角函数图像与物理简谐振动、交流电正弦波之间的联系。</p>
       </div>
       <div class="portal-card is-soon">
-        <div class="portal-top"><div class="portal-icon sun">📈</div><span class="badge badge-soon">规划中</span></div>
+        <div class="portal-top"><div class="portal-icon sun">📈</div><span class="badge badge-soon">规划中 · 高中</span></div>
         <h3>导数与切线斜率极限 <span class="en-sub">Derivatives &amp; Tangent Slope</span></h3>
         <p>动态缩小 Δx → 0，直观观察割线逼近切线的几何意义。</p>
       </div>
       <div class="portal-card is-soon">
-        <div class="portal-top"><div class="portal-icon green">🧭</div><span class="badge badge-soon">规划中</span></div>
+        <div class="portal-top"><div class="portal-icon green">🧭</div><span class="badge badge-soon">规划中 · 高中</span></div>
         <h3>平面向量合成与分解 <span class="en-sub">Vector Addition &amp; Decomposition</span></h3>
-        <p>自由拖拽受力/位移向量，配合平行四边形法则衔接物理力学。</p>
+        <p>自由拖拽受力、位移向量，配合平行四边形法则衔接物理力学。</p>
       </div>
     </div>
   </main>
 
   <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="../shared/linker.js" data-mode="home"></script>
+  <script>
+    (function () {
+      function render() {
+        if (!window.ABSLabAuth) return;
+        var s = window.ABSLabAuth.getSummary(), m = (s.maps || {})["math"] || {};
+        var el = document.getElementById("hub-km");
+        if (el) el.textContent = m.marked ? "已掌握 " + (m.mastered || 0) + " · 已标 " + m.marked : "查看知识体系";
+      }
+      window.addEventListener("abs-auth-changed", render);
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render); else render();
+    })();
+  </script>
 </body>
 </html>
