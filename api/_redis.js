@@ -116,6 +116,7 @@ function sendJson(res, status, obj) {
 
 module.exports = {
   isCloudEnabled,
+  redisCommand,
   getUserRecord,
   setUserRecord,
   hashPassword,

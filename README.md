@@ -115,15 +115,21 @@ abs-lab/
 ├── api/                          # 云端登录与进度同步接口（Upstash Redis）
 │   ├── _redis.js
 │   ├── auth.js
-│   └── progress.js
+│   ├── progress.js
+│   └── mistakes.js               # 错题本（按账号保存，仅本人可读写）
 ├── shared/
 │   ├── theme.css                 # 公共样式与中英双语切换
 │   ├── auth.js                   # 用户认证、记住我、跨设备进度同步
-│   └── topbar.js                 # 全站统一顶栏与账号弹窗
+│   ├── topbar.js                 # 全站统一顶栏与账号弹窗
+│   └── mistakes.js               # 知识导图页面上的「我的错题」
 ├── physics/                      # ⚡ 物理（知识导图、21合1电学、高中双语电学）
-├── chemistry/                    # 🧪 化学（酸碱中和滴定等）
-├── math/                         # 📐 数学
-└── biology/                      # 🧬 生物（光学显微镜实操实验台与标本图）
+├── chemistry/                    # 🧪 化学（知识导图、酸碱中和滴定等）
+├── math/                         # 📐 数学（知识导图）
+├── biology/                      # 🧬 生物（知识导图、光学显微镜实操实验台与标本图）
+├── tools/
+│   ├── sync-maps.py              # 把项目里的知识导图同步成网站公开版
+│   └── dev-server.js             # 本地预览（含登录、进度同步、错题本，数据库用内存模拟）
+└── docs/操作日志.md               # 每次改动的记录
 ```
 
 ### 贡献代码时的 3 条关键约定
@@ -146,7 +152,21 @@ abs-lab/
 
 ---
 
-## 四、常见问题快速排查
+## 四、知识导图与错题本
+
+- 四科知识导图（`*/knowledge-map.html`）**不要直接改**：它们由 `tools/sync-maps.py` 从项目里的原始导图生成。改内容时先改原始导图，再运行：
+  ```bash
+  python3 tools/sync-maps.py --src <放原始导图的文件夹>          # 四科都同步
+  python3 tools/sync-maps.py --src <文件夹> --only math            # 只同步一科
+  ```
+  脚本会去掉个人考试信息（阶段考试的日期、题号、分数、薄弱标记）和课堂进度，再插入站点顶栏、登录同步和错题本三行接入代码；对不上会报错停下。**原始导图含个人信息，不要放进仓库**（仓库是公开的）。
+- 学习状态：四科分别存在浏览器的 `wlzs.` / `hxzs.` / `sxzs.` / `swzs.` 键里，已加入 `shared/auth.js` 的同步名单，登录后跨设备同步。
+- 错题本：登录云端账号后，知识点旁出现「＋错题」，左下角「我的错题」查看、编辑、导出、导入。数据存在 Redis 的 `abslab:mistakes:<用户名>`，一条一个字段，只有本人的登录令牌能读写；游客和本地账号不能用。
+- 本地预览（含登录和错题本）：`node tools/dev-server.js`，打开 `http://localhost:8080/abs-lab/`。
+
+---
+
+## 五、常见问题快速排查
 
 - **`git push` 提示 `rejected (fetch first / non-fast-forward)`**
   说明远程 `main` 有别人新合并的更新，先同步再推：

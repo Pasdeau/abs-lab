@@ -4,10 +4,18 @@
   var TOKEN_KEY = "abs_lab_v1_cloud_token";
   var GUEST_KEY = "abs_lab_v1_guest_data";
 
+  // 需要跟账号走、跨设备同步的本地存储键（四科知识导图的学习状态与状态名称等）
   var BRIDGED_KEYS = [
     "wlzs.status",
     "wlzs.statusNames",
     "wlzs.showHS",
+    "hxzs.status",
+    "hxzs.statusNames",
+    "hxzs.showHS",
+    "sxzs.status",
+    "sxzs.statusNames",
+    "swzs.status",
+    "swzs.statusNames",
     "mx_lab_cur"
   ];
 
@@ -287,6 +295,15 @@
       return cloudState.enabled;
     },
 
+    // 云端登录令牌（错题本等按条读写的接口使用）；本地账号或游客返回 null
+    getToken: function () {
+      return getCurrentUsername() ? getSessionToken() : null;
+    },
+
+    getApiBase: function () {
+      return API_BASE;
+    },
+
     getCurrentUser: function () {
       var u = getCurrentUsername();
       if (!u) return null;
@@ -470,16 +487,21 @@
       var data = bucket.data;
       var bridged = data.bridged || {};
 
-      var kmMastered = 0, kmMarked = 0;
-      if (bridged["wlzs.status"]) {
+      // 知识导图：各科「已掌握」（第 4 档）和「已标状态」的知识点数
+      function countMap(key) {
+        var out = { mastered: 0, marked: 0 };
+        if (!bridged[key]) return out;
         try {
-          var st = JSON.parse(bridged["wlzs.status"]);
+          var st = JSON.parse(bridged[key]);
           Object.keys(st).forEach(function (k) {
-            if (st[k] > 0) kmMarked++;
-            if (st[k] === 3) kmMastered++;
+            if (+st[k] > 0) out.marked++;
+            if (+st[k] === 3) out.mastered++;
           });
         } catch (e) {}
+        return out;
       }
+      var kmPhy = countMap("wlzs.status"), kmChem = countMap("hxzs.status"), kmMath = countMap("sxzs.status"), kmBio = countMap("swzs.status");
+      var kmMastered = kmPhy.mastered, kmMarked = kmPhy.marked;
 
       var mxCur = bridged["mx_lab_cur"] !== undefined ? parseInt(bridged["mx_lab_cur"], 10) + 1 : null;
       if (isNaN(mxCur)) mxCur = null;
@@ -501,6 +523,7 @@
         cloud: cloudState.enabled && Boolean(getSessionToken()),
         kmMastered: kmMastered,
         kmMarked: kmMarked,
+        maps: { physics: kmPhy, chemistry: kmChem, math: kmMath, biology: kmBio },
         mxCur: mxCur,
         circuitsDone: circuitsDone,
         circuitsTotal: 21,
