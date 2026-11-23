@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "about": "知识点与实验的关联表。targets 是实验页里的模块或任务；links 每条只写一次，导图上的标签和实验页上的「对应知识点」都从这里自动生成。level：junior 初中，senior 高中，mixed 看选哪种做法（这时每条关联要写明 level）。初中、高中按河南使用的人教版教材划分：七到九年级课本里有的算初中，只在高中课本（必修、选择性必修）里出现的算高中。修改后运行 python3 tools/build-index.py 检查。",
+  "about": "知识点与实验的关联表。targets 是实验页里的模块或任务；links 每条只写一次，导图上的标签和实验页上的「对应知识点」都从这里自动生成。level：junior 初中，senior 高中，mixed 看选哪种做法（这时每条关联要写明 level）。初中、高中严格按河南使用的人教版教材划分：七到九年级课本里有的算初中，只在高中课本（必修、选择性必修）里出现的算高中。修改后运行 python3 tools/build-index.py 检查。",
   "labs": {
     "circuits": { "name": "电学实验台", "page": "physics/circuits-lab.html", "subject": "physics" },
     "hs-elec": { "name": "电流的微观本质", "page": "physics/hs-electricity.html", "subject": "physics" },
@@ -30,19 +30,19 @@
     "circuits-m20": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m20", "no": 20, "title": "弹簧、磁铁和电磁铁", "desc": "安培定则、磁极间相互作用和动态电路串成一条推理链。", "level": "junior", "where": "九年级 第二十章 第 2、3 节", "done": ["circuits_learned", "m20"] },
     "circuits-m21": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m21", "no": 21, "title": "原理辨析", "desc": "给出装置，判断用的是电流的磁效应、电动机原理还是发电机原理。", "level": "junior", "where": "九年级 第二十章 第 2、4、6 节", "done": ["circuits_learned", "m21"] },
 
-    "hs-close": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "close", "title": "电流方向和自由电子的运动方向", "desc": "闭合开关，对比规定的电流方向（红箭头）和自由电子的运动方向（蓝点）。", "level": "junior", "where": "九年级 第十五章 第 2 节", "done": ["hs_elec_tasks", "close"], "verify": "新版课本第十五章第 2 节是否写明「金属导体中自由电子定向移动的方向与电流方向相反」，待用课本核对" },
-    "hs-open": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "open", "title": "断开开关时的电子热运动", "desc": "断开开关，看自由电子仍在做无规则的热运动，各方向抵消，所以没有电流。", "level": "senior", "where": "必修第三册 第十一章 第 1 节 电源和电流", "done": ["hs_elec_tasks", "open"] },
+    "hs-close": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "close", "title": "电流方向和自由电子的运动方向", "desc": "闭合开关，对比规定的电流方向（红箭头）和自由电子的运动方向（蓝点）。", "level": "junior", "where": "九年级 第十五章 第 2 节", "done": ["hs_elec_tasks", "close"] },
+    "hs-open": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "open", "title": "断开开关时自由电子杂乱无章地运动", "desc": "断开开关，看自由电子仍在杂乱无章地运动，没有定向移动，所以没有电流。", "level": "junior", "where": "九年级 第十五章 第 2 节", "done": ["hs_elec_tasks", "open"], "note": "课本的说法是「没有接电源时，金属内自由电子运动的方向杂乱无章」；页面上的「热运动」「电场 E = 0」是高中说法（必修第三册 第十一章 第 1 节）。" },
     "hs-ohm": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "ohm", "title": "电阻不变，电压加倍电流也加倍", "desc": "保持电阻 6 Ω，把电压从 6 V 调到 12 V，看电流是否翻倍。", "level": "junior", "where": "九年级 第十七章 第 1、2 节", "done": ["hs_elec_tasks", "ohm"] },
-    "hs-flip": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "flip", "title": "电场、电流和电子一起反向", "desc": "调换电源正负极，看导体内的电场、电流方向和电子运动同时反过来。", "level": "senior", "where": "必修第三册 第九章 第 3 节；第十一章 第 1 节", "done": ["hs_elec_tasks", "flip"] },
+    "hs-flip": { "lab": "hs-elec", "page": "physics/hs-electricity.html", "task": "flip", "title": "电场、电流和电子一起反向", "desc": "调换电源正负极，看导体内的电场、电流方向和电子运动同时反过来。", "level": "senior", "where": "必修第三册 第九章 第 3 节；第十一章 第 1 节", "done": ["hs_elec_tasks", "flip"], "note": "调换正负极后电流方向和电子运动方向都反过来，这一半是初中内容（九年级 第十五章 第 2 节）；导体里的「电场」是高中内容。" },
 
     "neut-drip": { "lab": "neut", "page": "chemistry/neutralization.html", "task": "drip", "title": "中和反应的微观过程", "desc": "逐滴加入氢氧化钠溶液，看 H⁺ 减少、水分子增加，Cl⁻ 一直不变。", "level": "junior", "where": "九年级下册 第十单元 课题 2", "done": ["chem_neut_tasks", "drip"], "note": "页面上的「离子方程式」写法是高中内容（必修第一册 第一章 第二节）。" },
     "neut-jump": { "lab": "neut", "page": "chemistry/neutralization.html", "task": "jump", "title": "pH 变化曲线与恰好完全反应", "desc": "加到 20.0 mL 附近，看曲线经过 pH = 7、酚酞变色的那一刻。", "level": "junior", "where": "九年级下册 第十单元 课题 1、2", "done": ["chem_neut_tasks", "jump"], "note": "「滴定」「pH 突跃」是高中说法（选择性必修 1 第三章 第二节）；初中只要看懂曲线在 pH = 7 时恰好完全反应。" },
     "neut-indicator": { "lab": "neut", "page": "chemistry/neutralization.html", "task": "indicator", "title": "比较石蕊和甲基橙的变色范围", "desc": "切换紫色石蕊和甲基橙，对比它们在什么 pH 范围内变色。", "level": "senior", "where": "选择性必修 1 第三章 第二节", "done": ["chem_neut_tasks", "indicator"], "note": "初中只要求记住石蕊、酚酞遇酸、遇碱的颜色。" },
 
     "micro-focus_low": { "lab": "micro", "page": "biology/microscope.html", "task": "focus_low", "title": "低倍镜下找到并调清物像", "desc": "用 4× 或 10× 物镜，先转粗准焦螺旋找到洋葱表皮细胞，再用细准焦螺旋调清楚。", "level": "junior", "where": "七年级上册 第一单元 第二章 第一节", "done": ["bio_micro_tasks", "focus_low"] },
-    "micro-high_mag": { "lab": "micro", "page": "biology/microscope.html", "task": "high_mag", "title": "换高倍物镜后调焦、调亮", "desc": "转到 40× 物镜，只用细准焦螺旋调清，再用大光圈或凹面镜把视野调亮。", "level": "senior", "where": "必修 1 第 1 章 第 2 节（使用高倍显微镜观察几种细胞）", "done": ["bio_micro_tasks", "high_mag"], "note": "「倍数越大视野越暗，要用大光圈、凹面镜」是初中内容（七年级上册）；换高倍物镜的一整套操作是高中内容。", "verify": "新版七年级上册是否已加入换高倍物镜的操作，待用课本核对" },
+    "micro-high_mag": { "lab": "micro", "page": "biology/microscope.html", "task": "high_mag", "title": "换高倍物镜后调焦、调亮", "desc": "转到 40× 物镜，只用细准焦螺旋调清，再用大光圈或凹面镜把视野调亮。", "level": "junior", "where": "七年级上册 第一单元 第二章 第一节", "done": ["bio_micro_tasks", "high_mag"] },
     "micro-animal_cell": { "lab": "micro", "page": "biology/microscope.html", "task": "animal_cell", "title": "观察人口腔上皮细胞", "desc": "切换到人口腔上皮细胞并调清楚，和洋葱表皮细胞比较：没有细胞壁。", "level": "junior", "where": "七年级上册 第一单元 第二章 第三节", "done": ["bio_micro_tasks", "animal_cell"] },
-    "micro-organelle": { "lab": "micro", "page": "biology/microscope.html", "task": "organelle", "title": "高倍镜下看白细胞或叶绿体", "desc": "选人血涂片找白细胞，或选黑藻叶片看叶绿体。", "level": "mixed", "where": "人血涂片：七年级下册 第四单元 第四章 第一节；黑藻叶绿体：高中 必修 1 第 3 章 第 2 节", "done": ["bio_micro_tasks", "organelle"], "note": "选人血涂片是初中内容；用高倍镜观察黑藻叶绿体是高中实验。" }
+    "micro-organelle": { "lab": "micro", "page": "biology/microscope.html", "task": "organelle", "title": "高倍镜下看白细胞或叶绿体", "desc": "选人血涂片找白细胞，或选黑藻叶片看叶绿体。", "level": "mixed", "where": "人血涂片：七年级下册 第四单元 第四章 第一节；黑藻叶绿体：高中 必修 1 第 3 章 第 2 节", "done": ["bio_micro_tasks", "organelle"], "note": "选人血涂片是初中内容；用高倍镜观察黑藻叶片的叶绿体是高中实验（初中课本里没有黑藻）。" }
   },
   "links": [
     { "kp": "physics:k1", "to": "circuits-m5", "note": "保持电阻两端的电压不变，换电阻、记电流，就是探究电流与电阻的关系。" },
@@ -114,7 +114,7 @@
     { "kp": "biology:u1-c2-k15", "to": "micro-animal_cell", "note": "和洋葱表皮细胞对比：口腔上皮细胞没有细胞壁。" },
     { "kp": "biology:u4-c4-k4", "to": "micro-organelle", "level": "junior", "note": "选人血涂片，找有细胞核、个头最大的白细胞。" },
     { "kp": "biology:u4-c4-k3", "to": "micro-organelle", "level": "junior", "note": "选人血涂片：红细胞数量最多，成熟的没有细胞核。" },
-    { "kp": "biology:u1-c2-k11", "to": "micro-organelle", "level": "senior", "note": "用高倍镜观察黑藻叶片的叶绿体是高中实验。" },
+    { "kp": "biology:u1-c2-k11", "to": "micro-organelle", "level": "senior", "note": "用高倍镜观察黑藻叶片的叶绿体是高中实验（初中课本里没有黑藻）。" },
     { "kp": "biology:u1-c2-k3", "to": "micro-high_mag", "note": "换高倍镜后细胞变大、数目变少、视野变暗。" },
     { "kp": "biology:u1-c2-k5", "to": "micro-high_mag", "note": "视野变暗时用大光圈、凹面镜。" },
 
