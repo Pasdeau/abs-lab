@@ -16,8 +16,11 @@
 1. 公开版处理：去掉个人考试信息（阶段考试的日期、题号、分数、薄弱标记）和课堂进度。
    个人的错题改由登录后的「错题本」记录（shared/mistakes.js，仅本人可见）。
    每条替换都写明应该命中几次；导图改版后对不上，脚本会停下来报错，不会悄悄漏掉。
-2. 接入网站：加站点顶栏、登录与进度同步、错题本，三处各插一行，导图正文不改。
+2. 接入网站：加站点顶栏、登录与进度同步、错题本、知识点与实验互链（shared/linker.js），
+   各插一行，导图正文不改。
 3. 检查：输出里不能再有个人考试信息的字样。
+
+同步之后运行 python3 tools/build-index.py：重建全站搜索索引，并检查关联表里的知识点还在不在。
 
 注意：仓库是公开的，原始导图（含个人信息）不要放进仓库。
 """
@@ -152,7 +155,8 @@ def integrate(name, html, page):
     idx = html.rfind("</body>")
     if idx < 0:
         raise SystemExit(f"[{name}] 找不到 </body>")
-    html = html[:idx] + '<script src="../shared/mistakes.js" data-subject="%s"></script>\n' % name + html[idx:]
+    html = (html[:idx] + '<script src="../shared/mistakes.js" data-subject="%s"></script>\n' % name
+            + '<script src="../shared/linker.js" data-mode="map" data-subject="%s"></script>\n' % name + html[idx:])
     return html
 
 
