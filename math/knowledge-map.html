@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<!-- 网站公开版：由 tools/sync-maps.py 从项目里的导图生成（已去掉个人考试信息）。要改内容请改原始导图后重新同步，不要直接改这个文件。 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>初中数学知识导图（人教版新版 七上—九下）</title>
+<style>
+:root{
+  --ink:#25292f; --ink-2:#4a5059; --ink-3:#6a707a;
+  --pen:#3b4049; --link:#7a5c00; --mustard:#d9ab2a; --mustard-soft:#fbf3dc;
+  --paper:#f4f4f0; --sheet:#ffffff; --rule:#d9d9d2; --grid:#e6e6df;
+  --weak:#9f1239;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",sans-serif;
+  --serif:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
+  --math:"Times New Roman","STIX Two Math","Cambria Math","Noto Serif",serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:140px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background-color:var(--paper);background-image:linear-gradient(rgba(59,64,73,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(59,64,73,.055) 1px,transparent 1px);background-size:20px 20px;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.8}
+a{color:var(--link)}
+:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:700;line-height:1.35;color:var(--ink)}
+.note{font-size:15px;color:var(--ink-2)}
+.i{color:#92400e;cursor:help;font-style:normal}
+
+/* 数学排版：字母用斜体，分式上下排，根号的横线盖住被开方数 */
+.ok i,.ok b i,.wl i,.cnote i{font-family:var(--math);font-size:1.07em;padding-right:.03em}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .14em;line-height:1.2;font-size:.92em}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 .2em 1px}
+.frac>span:last-child{padding:1px .2em 0}
+.rad{white-space:nowrap}
+.rad-in{border-top:1px solid currentColor;padding:0 .08em 0 .04em;margin-left:-.06em}
+.arc{position:relative;display:inline-block}
+.arc::before{content:"⌒";position:absolute;left:50%;top:-.78em;transform:translateX(-50%);font-size:.95em;font-style:normal;line-height:1}
+.ov{text-decoration:overline}
+sup,sub{font-size:.72em;line-height:0}
+
+/* 顶栏 */
+.topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:2px solid var(--pen);box-shadow:0 2px 0 var(--mustard)}
+.topbar-in{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 20px;max-width:1880px;margin:0 auto}
+.brand{font-family:var(--serif);font-weight:700;font-size:18px;margin-right:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.brand svg{width:26px;height:26px;flex:none}
+.brand small{font-family:var(--sans);font-weight:400;color:var(--ink-3);font-size:14px;margin-left:8px}
+.navlinks{display:flex;flex-wrap:wrap;gap:6px;font-size:14px}
+.navlinks a{text-decoration:none;padding:2px 10px;border:1px solid var(--rule);border-radius:14px;color:var(--ink-2);background:#fff}
+.navlinks a:hover{border-color:var(--pen);color:var(--pen);background:var(--mustard-soft)}
+.topbar input[type=search]{font:inherit;font-size:15px;padding:5px 10px;border:1px solid var(--rule);border-radius:6px;width:15em}
+.qinfo{font-size:14px;color:var(--ink-3)}
+.btn{font:inherit;font-size:14px;padding:4px 10px;border:1px solid var(--rule);border-radius:6px;background:#fff;color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--pen)}
+.btn.primary{border-color:var(--pen);background:var(--pen);color:#fff;font-weight:600}
+.btn.weakbtn[aria-pressed="true"]{background:#fff1f3;border-color:var(--weak);color:var(--weak);font-weight:600}
+.help{display:none;max-width:1880px;margin:0 auto;padding:2px 20px 12px;font-size:15.5px;color:var(--ink-2)}
+.help.open{display:block}
+.help ul{margin:4px 0;padding-left:1.3em}
+.help li{margin:3px 0}
+
+/* 版式 */
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-radius:4px;padding:26px 32px;margin:24px 0}
+.sheet>h2,.cm-head h2{font-size:24px;margin:0}
+.sheet>h2{padding-bottom:4px;border-bottom:3px solid var(--mustard);display:inline-block}
+
+/* 知识地图 */
+.atlas{max-width:1880px;margin:20px auto 0;padding:0 20px}
+.atlas-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px;margin-bottom:10px}
+.atlas-head h2{font-size:28px;margin:0;letter-spacing:.04em}
+.atlas-head p{margin:0;color:var(--ink-2);font-size:15.5px}
+.mm-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 8px}
+.mm-hint{font-size:14px;color:var(--ink-3)}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-right:6px}
+.seg button{font:inherit;font-size:14px;border:0;background:#fff;padding:4px 12px;cursor:pointer;color:var(--ink-2)}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--pen);color:#fff;box-shadow:inset 0 -3px 0 var(--mustard)}
+.mm-stage{border:1px solid var(--rule);border-radius:4px;background:#fcfcfa;overflow:hidden;touch-action:pan-x pan-y}
+.mm.zoomed .mm-stage{cursor:grab;touch-action:none}
+.mm.dragging .mm-stage{cursor:grabbing}
+.mm-stage svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.mm-stage a{cursor:pointer}
+.mm-stage a:hover text{text-decoration:underline}
+.mm-focus .mm-g{opacity:.14;transition:opacity .15s}
+.mm-focus .mm-g.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.mm-focus .mm-g{transition:none}}
+.mm-full{position:fixed;inset:0;z-index:60;background:#fff;padding:10px 14px;display:flex;flex-direction:column}
+.mm-full .mm-stage{flex:1;min-height:0}
+.mm-full .mm-stage svg{height:100%}
+html.mm-lock{overflow:hidden}
+.mm-zoom{display:inline-flex;flex-wrap:wrap;gap:6px 8px}
+.mm.is-list .map-only,.mm.is-list .mm-stage{display:none}
+.mm:not(.is-list) .vm-stage{display:none}
+.mm-node[data-bb]{cursor:zoom-in}
+
+/* 竖版 */
+.vmap{font-size:16px;line-height:1.5}
+.vm-root{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:4px 12px;width:max-content;max-width:100%;margin:4px auto 16px;padding:8px 22px;border:2px solid var(--ink);border-radius:28px;background:#fff}
+.vm-root b{font-family:var(--serif);font-size:24px}
+.vm-root span,.vm-root small{font-size:14px;color:var(--ink-3);letter-spacing:.15em}
+.vm-root.ch{flex-direction:column;align-items:center;gap:0;border-radius:16px;padding:8px 28px}
+.vm-dom{font:700 15px var(--sans);color:var(--ink-2);letter-spacing:.2em;margin:18px 0 8px 4px}
+.vm-dom:first-of-type{margin-top:4px}
+.vm-board{background:var(--t);border:1.5px solid var(--tb);border-radius:18px;padding:12px 8px 10px 10px;margin:0 0 14px}
+.vm-bhead{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:22px;background:var(--c);color:#fff;font:700 19px/1.4 var(--serif);padding:5px 16px 5px 9px;cursor:pointer}
+.vm-bhead small{font:400 13px var(--sans);opacity:.9}
+.vm-bhead::after{content:"";width:7px;height:7px;border-right:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(45deg);margin:-4px 0 0 2px}
+.vm-bhead[aria-expanded="false"]::after{transform:rotate(-45deg);margin:0}
+.vm-icon{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vm-chaps{list-style:none;margin:0 0 0 20px;padding:0}
+.vm-chap{position:relative;padding:6px 0 0 22px}
+.vm-chap::before{content:"";position:absolute;left:0;top:0;width:18px;height:28px;border-left:3px solid var(--c);border-bottom:3px solid var(--c);border-bottom-left-radius:14px}
+.vm-chap::after{content:"";position:absolute;left:0;top:22px;bottom:0;border-left:3px solid var(--c)}
+.vm-chap:last-child::after{display:none}
+.vm-crow{display:flex;align-items:center;gap:6px;min-height:44px}
+.vm-cname{display:inline-flex;align-items:center;gap:8px;min-width:0;min-height:40px;background:#fff;border:1.5px solid var(--c);border-radius:22px;padding:3px 14px 3px 4px;color:var(--ink);text-decoration:none;font:700 17px/1.3 var(--serif)}
+.vm-badge{width:32px;height:32px;flex:none}
+.vm-badge text{font-family:var(--sans)}
+.vm-book{font-size:13px;font-weight:700;flex:none}
+.vm-wk{font-size:12px;color:var(--weak);border:1px solid var(--weak);background:#fff1f3;border-radius:4px;padding:0 5px;flex:none}
+.vm-tog{flex:none;margin-left:auto;width:40px;height:40px;border:0;border-radius:50%;background:transparent;cursor:pointer;position:relative}
+.vm-tog::before{content:"";position:absolute;left:15px;top:13px;width:8px;height:8px;border-right:2.4px solid var(--c);border-bottom:2.4px solid var(--c);transform:rotate(45deg)}
+.vm-tog[aria-expanded="false"]::before{transform:rotate(-45deg);left:13px;top:16px}
+.vm-secs{list-style:none;margin:2px 0 6px 19px;padding:0}
+.vm-secs>li{position:relative;padding:2px 0 2px 18px}
+.vm-secs>li::before{content:"";position:absolute;left:0;top:0;width:13px;height:19px;border-left:1.6px solid var(--l);border-bottom:1.6px solid var(--l);border-bottom-left-radius:9px}
+.vm-secs>li::after{content:"";position:absolute;left:0;top:16px;bottom:0;border-left:1.6px solid var(--l)}
+.vm-secs>li:last-child::after{display:none}
+.vm-secs a{display:inline-block;padding:4px 0 2px;color:var(--ink);text-decoration:none;font-size:15.5px;border-bottom:1.6px solid var(--l)}
+.vm-sname{text-decoration:none;display:inline-flex!important;align-items:center;gap:9px;min-height:40px;background:var(--c);color:#fff!important;border-radius:20px;padding:5px 16px 5px 6px!important;font-weight:700;font-size:16px;line-height:1.35;border:0!important}
+.vm-sno{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 4px;border-radius:13px;background:#fff;color:var(--c);font-size:13px;flex:none}
+.vm-kplist{margin-left:16px}
+.vm-kplist a{font-size:15px;font-weight:600}
+.vm-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--ink-2);margin:4px 4px 2px}
+
+/* 本章导图 */
+.cm-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:6px}
+.cm-head select{font:inherit;font-size:15px;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;background:#fff;max-width:100%}
+.cm-info{margin:2px 0 10px}
+
+/* 文字版 */
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree ul{margin-left:14px;padding-left:16px;border-left:1px solid var(--rule)}
+.tree li{position:relative;margin:3px 0}
+.tree ul>li::before{content:"";position:absolute;left:-16px;top:.95em;width:12px;border-top:1px solid var(--rule)}
+.tree summary{cursor:pointer;list-style:none}
+.tree summary::-webkit-details-marker{display:none}
+.tree summary::before{content:"＋";display:inline-block;width:1.3em;color:var(--link);font-weight:700}
+.tree details[open]>summary::before{content:"－"}
+.tree .dom{font-size:14px;color:var(--ink-3);letter-spacing:.15em;margin:14px 0 2px;padding-left:2px}
+.tree .board{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--c)}
+.tree .cnt{font-size:13px;color:var(--ink-3);margin-left:8px}
+.tree .chap{font-weight:700}
+.tree .bk{font-size:13px;font-weight:700;margin-left:6px}
+.tree .go{font-size:13.5px;margin-left:8px}
+.tree .ok{padding-left:1.3em;font-size:16px;line-height:1.95}
+.tree .ok b{color:var(--ink)}
+.tree .cnote{margin:2px 0 4px 1.3em}
+.wk{display:inline-block;font-size:13px;line-height:1.5;color:var(--weak);border:1px solid var(--weak);background:#fff1f3;border-radius:4px;padding:0 6px;margin-left:6px;white-space:nowrap;vertical-align:1px}
+.wl{columns:2;column-gap:32px;padding-left:1.2em;margin:6px 0}
+.wl li{break-inside:avoid;margin:3px 0}
+.wl .src{font-size:13.5px;color:var(--ink-3)}
+mark{background:#fff1a8;color:inherit;padding:0 1px}
+@keyframes flash{0%{background-color:#fff1b8}100%{background-color:transparent}}
+.flash{animation:flash 1.8s ease-out}
+@media (prefers-reduced-motion:reduce){.flash{animation:none;outline:3px solid #f59e0b;outline-offset:2px}}
+.srcs li{font-size:14.5px;word-break:break-all}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:6px 0}
+th,td{border:1px solid var(--rule);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:#f1f1ec}
+
+/* 四科共用的小标记：学习状态、考频、★（颜色四科统一，并且都配文字） */
+.st{display:inline-block;font-family:var(--sans);font-weight:400;font-size:12.5px;line-height:1.5;border:1px solid currentColor;border-radius:4px;padding:0 6px;margin-left:8px;vertical-align:1px;white-space:nowrap}
+.st[data-s="0"]{color:#64748b}
+.st[data-s="1"]{color:#b45309;background:#fffbeb}
+.st[data-s="2"]{color:#1d4ed8;background:#eef4ff}
+.st[data-s="3"]{color:#15803d;background:#f0fdf4}
+.tier{font-weight:600;white-space:nowrap}
+.tier[data-t="必考"]{color:#b42318}.tier[data-t="高频"]{color:#c2410c}.tier[data-t="中频"]{color:#1d4ed8}.tier[data-t="低频"]{color:#64748b}
+.stars{color:#b7791f;letter-spacing:1px;white-space:nowrap;font-family:var(--sans)}
+.stars .off{color:#d6dbe2}
+.pend{font-size:12px;color:#92400e;border:1px solid #f0d58a;background:#fffbeb;border-radius:3px;padding:0 4px;margin-left:4px;white-space:nowrap}
+.newc{font-size:12px;color:#0e7490;border:1px solid #67c3d3;background:#ecfeff;border-radius:3px;padding:0 4px;margin-left:4px;white-space:nowrap}
+.prog{display:inline-block;font-size:12.5px;line-height:1.5;border:1px solid #9aa0a8;color:var(--ink-2);border-radius:4px;padding:0 6px;margin-left:6px;white-space:nowrap;font-weight:600;vertical-align:1px}
+.prog[data-p="1"]{border-color:var(--ink);color:var(--ink);background:#fff}
+.prog[data-p="2"]{border-style:dashed;color:var(--ink-3);font-weight:400}
+.tree .bk{color:var(--ink-3)!important}
+/* 筛选与进度 */
+.tools2{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;max-width:1880px;margin:0 auto;padding:0 20px 10px;font-size:14.5px;color:var(--ink-2)}
+.tools2 select{font:inherit;font-size:14px;padding:3px 6px;border:1px solid var(--rule);border-radius:6px;background:#fff}
+.tools2 label{white-space:nowrap}
+.tools2 .status{font-size:14px;color:var(--ink-3)}
+.toolsBtn{display:none}
+/* 文字版里的知识点：名称、我的状态、★、考频、题号 */
+.tree .ok{padding:6px 0 6px 1.3em;border-top:1px dashed #e6e6df}
+.tree .ok:first-child{border-top:0}
+.kh{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.kh .kn{font-weight:700}
+.status-pick{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink-3)}
+.status-pick select,.batch{font:inherit;font-size:13.5px;padding:1px 6px;border:1px solid var(--rule);border-radius:14px;background:#fff;color:var(--ink)}
+.batch{margin-left:0;color:var(--ink-2)}
+.km{display:flex;flex-wrap:wrap;align-items:center;gap:2px 14px;font-size:14px;color:var(--ink-2);line-height:1.7}
+.km details{display:inline}
+.km summary{cursor:pointer;color:var(--link)}
+.km summary::before{content:""!important;width:0!important}
+.km .hb{display:block;border:1px dashed var(--rule);border-radius:4px;padding:4px 10px;margin:4px 0;background:#fcfcfa}
+.km .hb ul{margin:0;padding-left:1.1em}
+.km .hb li{margin:1px 0}
+.yr{font-family:var(--math);font-weight:700;margin-right:4px;color:var(--ink)}
+.kt{max-width:52em}
+.chsum{font-size:14px;margin-left:8px;font-weight:400}
+/* 题号地图 */
+.qm-wrap{overflow-x:auto}
+.qm{min-width:860px;font-size:14px}
+.qm th,.qm td{padding:5px 8px}
+.qm thead th{text-align:center;background:#f1f1ec}
+.qm tbody th{white-space:nowrap;background:#fafaf7;font-weight:600}
+.qm tbody th small{display:block;font-weight:400;color:var(--ink-3);font-size:12px}
+.qm td{line-height:1.5}
+.qm td .cl{display:inline-block;margin:2px 4px 0 0;font-size:12.5px;padding:0 6px;border-radius:10px;border:1px solid var(--c,#9aa0a8);color:var(--ink);text-decoration:none;background:#fff}
+.qm td .cl:hover{background:var(--mustard-soft)}
+.qm td.u{color:var(--ink-3);background:repeating-linear-gradient(135deg,#fff 0 6px,#f6f6f2 6px 12px)}
+.qm tr.hard th{box-shadow:inset 4px 0 0 var(--mustard)}
+.hardtag{font-size:11.5px;color:var(--ink);border:1px solid var(--ink);border-radius:3px;padding:0 4px;margin-left:4px;font-weight:600}
+.chtab td,.chtab th{font-size:14.5px}
+dialog.names{border:1px solid var(--rule);border-radius:6px;padding:20px 24px;max-width:26em}
+dialog.names::backdrop{background:rgba(31,36,48,.35)}
+dialog.names h2{font-size:19px;margin:0 0 6px}
+dialog.names label{display:flex;align-items:center;gap:10px;margin:8px 0}
+dialog.names input{font:inherit;font-size:16px;padding:4px 8px;border:1px solid var(--rule);border-radius:6px;width:9em}
+dialog.names .row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+@media (max-width:760px){
+  html{scroll-padding-top:12px}
+  .toolsBtn{display:inline-block}
+  .tools2{display:none;padding:0 12px 10px}
+  .tools2.open{display:flex}
+  .status-pick{margin-left:0}
+  .tree .ok{padding-left:.4em}
+  .topbar{position:static}
+  .topbar-in{padding:8px 12px;gap:6px 8px}
+  .brand{font-size:17px;width:100%}
+  .brand small{display:block;margin:0}
+  .topbar input[type=search]{flex:1;width:auto;min-width:8em}
+  .atlas{padding:0 10px}
+  .atlas-head h2{font-size:24px}
+  .wrap{padding:0 10px}
+  .sheet{padding:18px 14px}
+  .mm-stage{overflow-x:auto}
+  .mm-stage svg{min-width:680px}
+  .mm-full .mm-stage svg{min-width:0}
+  .tree ul{margin-left:6px;padding-left:12px}
+  .wl{columns:1}
+}
+@media print{
+  @page{margin:14mm 12mm}
+  body{background:#fff;background-image:none;font-size:11.5pt}
+  .topbar,.help,.mm-tools,.no-print,.cm-head select,.cm-head button,.status-pick,.batch,.tools2{display:none!important}
+  .qm-wrap{overflow:visible}.qm{min-width:0;font-size:9pt}
+  #qmap{break-before:page}
+  .atlas{max-width:none;padding:0;margin:0}
+  .atlas-head p{display:none}
+  .mm .mm-stage{display:block!important;border:0;overflow:visible}
+  .mm-stage svg{min-width:0!important;max-height:180mm}
+  .vm-stage{display:none!important}
+  .sheet{border:0;padding:0;margin:0 0 8mm}
+  #cmap,#book,#weak{break-before:page}
+  .tree summary::before{content:""!important}
+  .tree li,.tree summary{break-inside:avoid}
+  .tree .ok[hidden],.tree li[hidden]{display:block!important}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+<script src="../shared/auth.js"></script>
+</head>
+<body>
+<script src="../shared/topbar.js" data-root=".." data-page="math-map" data-mode="compact"></script>
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#3b4049" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="1.6"/><path d="M11.2 5.5 6 20.5M12.8 5.5 18 20.5"/><path d="M4.5 15.5a10 10 0 0 0 15 0" stroke="#d9ab2a" stroke-width="2"/></svg>初中数学知识导图<small>人教版新版　七年级上册—九年级下册</small></div>
+    <nav class="navlinks" aria-label="页面导航"><a href="#atlas">知识地图</a><a href="#cmap">本章导图</a><a href="#book">文字版</a><a href="#qmap">题号地图</a><a href="#weak">我的错题</a><a href="#about">说明</a></nav>
+    <input type="search" id="q" placeholder="搜索：如 中位线、≌、判别式" aria-label="搜索知识点">
+    <button class="btn weakbtn" id="weakBtn" type="button" aria-pressed="false" title=\"文字版里只显示自己记过错题的知识点\" data-mk-filter hidden>只看有错题的</button>
+    <span class="qinfo" id="qInfo" aria-live="polite"></span>
+    <button class="btn toolsBtn" id="toolsBtn" type="button" aria-expanded="false" aria-controls="tools2">筛选与进度</button>
+    <button class="btn primary" id="helpBtn" type="button" aria-expanded="false" aria-controls="help">怎么用</button>
+  </div>
+  <div class="tools2" id="tools2">
+    <label>状态 <select id="fSt"><option value="">全部</option></select></label>
+    <label>重要度 <select id="fStar"><option value="0">全部</option><option value="5">★5</option><option value="4">★4 及以上</option><option value="3">★3 及以上</option></select></label>
+    <label>考频 <select id="fTier"><option value="">全部</option><option>必考</option><option>高频</option><option>中频</option><option>低频</option></select></label>
+    <span class="status" id="progress" aria-live="polite"></span>
+    <button class="btn" id="namesBtn" type="button">改状态名称</button>
+    <button class="btn" id="exportBtn" type="button">导出进度</button>
+    <button class="btn" id="importBtn" type="button">导入进度</button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+  </div>
+  <div class="help" id="help">
+    <ul>
+      <li><b>先标学习状态</b>：文字版里每个知识点右边有“我的状态”，四档：要预习 → 学习中 → 要巩固 → 已掌握（和化学同一套，名称可以改）。每章、每节标题后有“全部标为…”，可以一次标一整章。标了以后，地图上章号外的彩色圈、本章导图里的小圆饼会跟着变。状态只存在这个浏览器里，记得用“导出进度”备份成“数学进度.json”。</li>
+      <li><b>考频和 ★</b>：章名后的小圆点是近 5 年（2022–2026）河南中考考到这一章的年数，后面写着“必考／高频／中频／低频”；“?”表示 2026 年原卷没取全，可能还更多。★ 是重要度，★5＝近 5 年有 3 年以上出现在解答题或压轴题位。点“题号地图”看每年每道题考了哪一章。</li>
+      <li><b>知识地图</b>：全书一张图。按课标分成 8 个主题加“综合与实践”。可选“只看到章”或“展开到节”。点主题名放大那一块；点章名打开它的“本章导图”；点节名跳到文字版里的这一节。</li>
+      <li><b>本章导图</b>：一章一张图，画到每个知识点。点知识点跳到文字版；用下拉框或“上一章／下一章”切换。</li>
+      <li><b>文字版</b>：全部知识点的完整内容，点“＋”展开。搜索框输入关键词或符号（如“全等”或“≌”）；“筛选与进度”里可以按状态、重要度、考频筛选。</li>
+      <li><b>我的错题</b>：登录后，每个知识点旁有「＋错题」，可以把自己做错的题记在这个知识点下，只有自己能看到；左下角「我的错题」查看全部。登录后，“只看有错题的”可以只留下这些知识点。</li>
+      <li><b>横版／竖版</b>：横版适合电脑，竖版适合手机。放大后可拖动，全屏时可用滚轮缩放（Esc 退出）。“保存为图片”可存高清图打印。</li>
+      <li>章名后的“七上……九下”是所在册。带 <span class="i">ⓘ</span> 的内容要对照课本核实。</li>
+    </ul>
+  </div>
+</header>
+
+<section class="atlas" id="atlas" aria-labelledby="atlasTitle"></section>
+
+<div class="wrap">
+  <section class="sheet" id="cmap" aria-labelledby="cmTitle"></section>
+  <section class="sheet" id="book" aria-labelledby="bookTitle"></section>
+  <section class="sheet" id="qmap" aria-labelledby="qmTitle"></section>
+  <section class="sheet" id="weak" aria-labelledby="weakTitle"></section>
+  <section class="sheet" id="about" aria-labelledby="aboutTitle"></section>
+</div>
+
+<dialog class="names" id="namesDlg" aria-labelledby="namesTitle">
+  <form method="dialog" id="namesForm">
+    <h2 id="namesTitle">改状态名称</h2>
+    <p class="note">从第 1 档到第 4 档，表示越来越熟。名称可以按自己的习惯改，只保存在这台设备的浏览器里。</p>
+    <label>第 1 档 <input name="n0" maxlength="6" required></label>
+    <label>第 2 档 <input name="n1" maxlength="6" required></label>
+    <label>第 3 档 <input name="n2" maxlength="6" required></label>
+    <label>第 4 档 <input name="n3" maxlength="6" required></label>
+    <div class="row"><button class="btn" type="button" id="namesReset">恢复默认</button><button class="btn" value="cancel" formnovalidate>取消</button><button class="btn" value="save">保存</button></div>
+  </form>
+</dialog>
+
+<script>
+/* ============ 数据层 1：板块（课标第四学段的 8 个主题 + 综合与实践） ============ */
+window.ICON={
+  num:'M3 13h3l3 7 6-16h6',
+  eq:'M12 4v16 M7 20h10 M4 8h16 M4 8l-2.5 5h5z M20 8l-2.5 5h5z',
+  fn:'M4 3v17h17 M6 17c3-1 5-9 8-11s4 0 6-3',
+  stat:'M4 20h16 M7 20v-6 M12 20V7 M17 20v-10',
+  prob:'M5 5h14v14H5z M9 9h.01 M15 15h.01 M12 12h.01 M15 9h.01 M9 15h.01',
+  shape:'M12 4L21 19H3z M12 4v15',
+  move:'M12 3v18 M9 7L3 17h6z M15 7l6 10h-6z',
+  coord:'M3 12h18 M12 3v18 M16.5 7.5a1.5 1.5 0 1 0 .01 0',
+  prac:'M12 3l-6.5 18 M12 3l6.5 18 M8.4 13h7.2 M12 3v-.01'
+};
+window.DOMAINS={num:'数与代数',geo:'图形与几何',stat:'统计与概率',prac:'综合与实践'};
+window.BOARDS=[
+ {name:'数与式',domain:'num',color:'#2c5a85',side:'R',icon:ICON.num,items:['c1','c2','c3','c4','c8','c16','c17','c18','c19']},
+ {name:'方程与不等式',domain:'num',color:'#45609e',side:'R',icon:ICON.eq,items:['c5','c10','c11','c25']},
+ {name:'函数',domain:'num',color:'#1d7487',side:'R',icon:ICON.fn,items:['c22','c23','c26','c27']},
+ {name:'抽样与数据分析',domain:'stat',color:'#8a6a0f',side:'R',icon:ICON.stat,items:['c12','c24']},
+ {name:'随机事件的概率',domain:'stat',color:'#9a5a2e',side:'R',icon:ICON.prob,items:['c34']},
+ {name:'图形的性质',domain:'geo',color:'#3e7448',side:'L',icon:ICON.shape,items:['c6','c7','c13','c14','c20','c21','c29','c30']},
+ {name:'图形的变化',domain:'geo',color:'#2d7768',side:'L',icon:ICON.move,items:['c15','c28','c31','c32','c33']},
+ {name:'图形与坐标',domain:'geo',color:'#647a22',side:'L',icon:ICON.coord,items:['c9']},
+ {name:'综合与实践',domain:'prac',color:'#5e5a55',side:'L',icon:ICON.prac,items:['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10']}
+];
+/* 课本顺序（用于“上一章／下一章”） */
+window.ORDER=['c1','c2','p1','c3','c4','c5','c6',
+ 'c7','c8','c9','c10','c11','p2','c12','p3',
+ 'c13','p4','c14','c15','p5','c16','c17','c18',
+ 'c19','c20','c21','c22','c23','p6','c24',
+ 'c25','c26','c27','p7','c28','c29','c30','p8',
+ 'c31','c32','p9','c33','p10','c34'];
+</script>
+<script>
+/* ============ 数据层 2：章、节、知识点（七年级）。章节名与新版目录一致；知识点按课标和通行教材内容整理 ============ */
+window.CH=window.CH||{};
+Object.assign(window.CH,{
+/* ---------- 七上 ---------- */
+'c1':{no:1,name:'有理数',book:'七上',secs:[
+ {name:'正数和负数',kps:[
+  ['正数和负数','大于 0 的数叫正数；在正数前面加“−”的数叫负数。0 既不是正数，也不是负数，它是正数与负数的分界。'],
+  ['相反意义的量','用正数、负数表示具有相反意义的量：收入与支出、上升与下降、高于与低于海平面。先规定哪个方向为正，另一方向就为负。']]},
+ {name:'有理数及其大小比较',kps:[
+  ['有理数及其分类','整数和分数统称有理数。按定义分：整数（正整数、0、负整数）和分数（正分数、负分数）；按符号分：正有理数、0、负有理数。有限小数和无限循环小数都能化成分数，所以都是有理数。'],
+  ['数轴','规定了原点、正方向和单位长度的直线叫数轴，三要素缺一不可。每个有理数都可以用数轴上的一个点表示。'],
+  ['相反数','只有符号不同的两个数互为相反数，0 的相反数是 0。a 与 −a 在数轴上位于原点两侧，到原点的距离相等；a + b = 0 等价于 a、b 互为相反数。'],
+  ['绝对值','数轴上表示数 a 的点与原点的距离叫 a 的绝对值，记作 |a|。正数的绝对值是它本身，负数的绝对值是它的相反数，0 的绝对值是 0，所以 |a| ≥ 0。'],
+  ['有理数的大小比较','数轴上右边的点表示的数总比左边的大；正数大于 0，0 大于负数；两个负数，绝对值大的反而小，如 −5 < −3。']]}]},
+'c2':{no:2,name:'有理数的运算',book:'七上',secs:[
+ {name:'有理数的加法与减法',kps:[
+  ['有理数加法法则','同号两数相加，取相同的符号，并把绝对值相加；绝对值不相等的异号两数相加，取绝对值较大的加数的符号，并用较大的绝对值减去较小的绝对值；互为相反数的两个数相加得 0。'],
+  ['加法运算律','交换律 a + b = b + a，结合律 (a + b) + c = a + (b + c)。计算时可以先把互为相反数、同号或能凑整的数结合起来。'],
+  ['有理数减法法则','减去一个数，等于加这个数的相反数：a − b = a + (−b)。'],
+  ['加减混合运算','先把减法统一成加法，写成省略加号的和的形式，如 −3 + 5 − 7 读作“负 3、正 5、负 7 的和”，再用运算律简便计算。']]},
+ {name:'有理数的乘法与除法',kps:[
+  ['有理数乘法法则','两数相乘，同号得正，异号得负，并把绝对值相乘；任何数同 0 相乘都得 0。几个不为 0 的数相乘，负因数的个数是奇数时积为负，是偶数时积为正。'],
+  ['倒数','乘积是 1 的两个数互为倒数，0 没有倒数。注意区分倒数与相反数：−2 的倒数是 −⟨1|2⟩，相反数是 2。'],
+  ['乘法运算律','交换律、结合律和分配律 a(b + c) = ab + ac。用分配律时，括号里每一项都要乘到，符号一起带上。'],
+  ['有理数除法法则','除以一个不等于 0 的数，等于乘这个数的倒数；两数相除，同号得正，异号得负，并把绝对值相除。0 除以任何一个不为 0 的数都得 0，0 不能作除数。']]},
+ {name:'有理数的乘方',kps:[
+  ['乘方','求 n 个相同因数的积的运算叫乘方，a^{n} 中 a 是底数，n 是指数。负数的奇次幂是负数，偶次幂是正数。注意 −2² = −4，而 (−2)² = 4。'],
+  ['混合运算顺序','先乘方，再乘除，最后加减；同级运算从左到右；有括号先算括号里面的。'],
+  ['科学记数法','把一个绝对值大于 10 的数表示成 a × 10^{n} 的形式，其中 1 ≤ |a| < 10，n 等于原数整数部分的位数减 1，如 360 000 = 3.6 × 10⁵。'],
+  ['近似数','近似数与准确数的接近程度用精确度表示，如“精确到百分位”“精确到千位”。用科学记数法表示的近似数，要看最后一位数字在原数的哪一位，如 3.6 × 10⁵ 精确到万位。']]}]},
+'p1':{practice:true,name:'进位制的认识与探究',book:'七上',where:'七上 第二章后',secs:[
+ {name:'项目要点',kps:[
+  ['进位制','十进制“逢十进一”，用 0～9 十个数字；二进制“逢二进一”，只用 0 和 1，计算机内部用的就是二进制。时间的 60 进制也是一种进位制。'],
+  ['不同进位制的互化','二进制数 1011 化成十进制：1 × 2³ + 0 × 2² + 1 × 2 + 1 = 11。十进制化二进制可以反复除以 2 取余数。具体做法以课本为准 ⓘ']]}]},
+'c3':{no:3,name:'代数式',book:'七上',secs:[
+ {name:'列代数式表示数量关系',kps:[
+  ['用字母表示数','字母可以表示任意的数，也能简明地表示运算律和公式，如 a + b = b + a、圆的面积 S = πr²。'],
+  ['代数式及书写规范','用运算符号把数或表示数的字母连接而成的式子叫代数式，单独一个数或字母也是代数式。数与字母相乘时乘号省略或写成“·”，数写在字母前；带分数要化成假分数；除法写成分数形式。'],
+  ['列代数式','抓住关键词“和、差、倍、平方、增加了、增加到、比……多”，把文字翻译成式子；先算的部分要加括号，如“a 与 b 的和的平方”是 (a + b)²。']]},
+ {name:'代数式的值',kps:[
+  ['代数式的值','用数值代替代数式里的字母，按运算关系计算得出的结果。代入负数或分数时要添括号。'],
+  ['整体代入','不能单独求出字母的值时，把一个式子看成整体代入。如已知 x − 2y = 3，则 2x − 4y + 1 = 2 × 3 + 1 = 7。']]}]},
+'c4':{no:4,name:'整式的加减',book:'七上',secs:[
+ {name:'整式',kps:[
+  ['单项式','数或字母的积叫单项式，单独一个数或字母也是单项式。数字因数叫系数，所有字母的指数之和叫次数，如 −3a²b 的系数是 −3，次数是 3。π 是数不是字母。'],
+  ['多项式','几个单项式的和叫多项式。每个单项式叫它的项，不含字母的项叫常数项；次数最高的项的次数，就是这个多项式的次数。'],
+  ['整式','单项式与多项式统称整式。分母里含字母的式子不是整式。']]},
+ {name:'整式的加法与减法',kps:[
+  ['同类项','所含字母相同，并且相同字母的指数也相同的项叫同类项；与系数、字母的排列顺序无关。几个常数项也是同类项。'],
+  ['合并同类项','把同类项的系数相加，字母和字母的指数不变，如 3a²b − 5a²b = −2a²b。'],
+  ['去括号','括号前是“+”，去括号后括号里各项都不变号；括号前是“−”，去括号后括号里各项都改变符号。括号前有数时，先用分配律再去括号。'],
+  ['整式的加减运算','先去括号，再合并同类项。化简求值题一般先化简，再代入数值。']]}]},
+'c5':{no:5,name:'一元一次方程',book:'七上',secs:[
+ {name:'方程',kps:[
+  ['一元一次方程','含有未知数的等式叫方程。只含一个未知数、未知数的次数都是 1、等号两边都是整式的方程，叫一元一次方程。'],
+  ['方程的解','使方程左右两边相等的未知数的值。检验时把它代回原方程，看左右两边是否相等。'],
+  ['等式的性质','性质 1：等式两边加（或减）同一个数（或式子），结果仍相等；性质 2：等式两边乘同一个数，或除以同一个不为 0 的数，结果仍相等。']]},
+ {name:'解一元一次方程',kps:[
+  ['移项','把等式一边的某项变号后移到另一边，依据是等式的性质 1。移项一定要变号。'],
+  ['解方程的步骤','去分母 → 去括号 → 移项 → 合并同类项 → 系数化为 1。去分母时每一项都要乘最小公倍数，不含分母的项也要乘；分子是多项式时要加括号。']]},
+ {name:'实际问题与一元一次方程',kps:[
+  ['列方程解应用题','审题 → 设未知数 → 找等量关系 → 列方程 → 解方程 → 检验 → 作答。解出的数要检验是否符合实际，最后写出答句。'],
+  ['常见类型','行程问题（相遇、追及）；工程问题（工作总量 = 工作效率 × 工作时间）；销售问题（利润 = 售价 − 进价，利润率 = 利润 ÷ 进价）；配套问题、比赛积分、分段计费。']]}]},
+'c6':{no:6,name:'几何图形初步',book:'七上',secs:[
+ {name:'几何图形',kps:[
+  ['立体图形与平面图形','长方体、圆柱、圆锥、球、棱柱、棱锥是立体图形；三角形、四边形、圆是平面图形。'],
+  ['从不同方向看','从正面、左面、上面看一个立体图形，得到三个平面图形。'],
+  ['展开图','正方体的表面展开图有 11 种，相对的面在展开图中不相邻；圆柱的侧面展开图是长方形，圆锥的侧面展开图是扇形。'],
+  ['点、线、面、体','点动成线，线动成面，面动成体，如长方形绕一边旋转一周得到圆柱。']]},
+ {name:'直线、射线、线段',kps:[
+  ['两点确定一条直线','经过两点有一条直线，并且只有一条直线。这是基本事实，如用两个钉子就能把木条固定在墙上。'],
+  ['直线、射线、线段','直线没有端点，向两方无限延伸；射线有一个端点；线段有两个端点。射线 OA 的端点 O 要写在前面。'],
+  ['两点之间，线段最短','两点的所有连线中，线段最短（基本事实）。连接两点间的线段的长度，叫这两点间的距离。'],
+  ['线段的比较与中点','比较线段可以用叠合法或度量法。点 M 把线段 AB 分成相等的两条线段 AM 与 MB，M 叫 AB 的中点，AM = MB = ⟨1|2⟩AB。'],
+  ['尺规作线段','用圆规在射线上截取一条线段等于已知线段，是最基本的尺规作图。新教材从这里开始用尺规作图 ⓘ']]},
+ {name:'角',kps:[
+  ['角的概念','有公共端点的两条射线组成的图形叫角，也可以看成一条射线绕端点旋转而成。平角等于 180°，周角等于 360°。'],
+  ['角的度量','1° = 60′，1′ = 60″。度、分、秒的换算和加减运算要满 60 进 1。'],
+  ['角平分线','从一个角的顶点出发，把这个角分成两个相等的角的射线，叫这个角的平分线。'],
+  ['余角和补角','两个角的和为 90°，这两个角互为余角；和为 180°，互为补角。同角（或等角）的余角相等，同角（或等角）的补角相等。'],
+  ['方位角','用“北偏东 30°”“南偏西 45°”等描述方向，先说南或北，再说偏东或偏西 ⓘ']]}]},
+
+/* ---------- 七下 ---------- */
+'c7':{no:7,name:'相交线与平行线',book:'七下',secs:[
+ {name:'相交线',kps:[
+  ['对顶角与邻补角','两条直线相交，对顶角相等，邻补角互补。'],
+  ['垂线','两条直线相交成直角时，叫互相垂直，记作 a ⊥ b。在同一平面内，过一点有且只有一条直线与已知直线垂直（基本事实）。'],
+  ['垂线段最短','连接直线外一点与直线上各点的所有线段中，垂线段最短。直线外一点到这条直线的垂线段的长度，叫点到直线的距离。'],
+  ['同位角、内错角、同旁内角','两条直线被第三条直线所截形成的三类角，可以借字母形状辨认：同位角像“F”，内错角像“Z”，同旁内角像“U”。所在小节以课本为准 ⓘ']]},
+ {name:'平行线',kps:[
+  ['平行公理','在同一平面内，不相交的两条直线叫平行线。经过直线外一点，有且只有一条直线与这条直线平行（基本事实）。推论：两条直线都与第三条直线平行，那么这两条直线也互相平行。'],
+  ['平行线的判定','同位角相等，两直线平行（基本事实）；内错角相等，两直线平行；同旁内角互补，两直线平行。在同一平面内，垂直于同一条直线的两条直线互相平行。'],
+  ['平行线的性质','两直线平行，同位角相等；两直线平行，内错角相等；两直线平行，同旁内角互补。判定是由角得平行，性质是由平行得角，书写时条件和结论不能颠倒。课本把哪一条作为基本事实，以课本为准 ⓘ']]},
+ {name:'定义、命题、定理',kps:[
+  ['命题','判断一件事情的语句叫命题，由题设和结论两部分组成，常写成“如果……那么……”的形式。正确的命题叫真命题，错误的叫假命题。'],
+  ['定义、基本事实与定理','定义规定一个名称的含义；基本事实是公认的、不需要证明的出发点；从基本事实出发、经过推理证实的真命题叫定理。'],
+  ['证明与反例','根据题设和已知的定义、基本事实、定理，一步一步推出结论，这个过程叫证明，每一步都要有依据。要说明一个命题是假命题，举出一个反例就够了。']]},
+ {name:'平移',kps:[
+  ['平移及其性质','把一个图形整体沿某一方向移动一定的距离叫平移。平移不改变图形的形状和大小；对应点所连的线段平行（或在同一条直线上）且相等。'],
+  ['画平移后的图形','先找出图形的关键点，按给定的方向和距离分别平移，再顺次连接。']]}]},
+'c8':{no:8,name:'实数',book:'七下',secs:[
+ {name:'平方根',kps:[
+  ['算术平方根','如果一个正数 x 的平方等于 a，那么 x 叫 a 的算术平方根，记作 √a；0 的算术平方根是 0。√a 中 a ≥ 0，且 √a ≥ 0（双重非负）。'],
+  ['平方根','如果 x² = a，那么 x 叫 a 的平方根，记作 ±√a。正数有两个平方根，它们互为相反数；0 的平方根是 0；负数没有平方根。'],
+  ['估算','用“夹逼法”确定一个算术平方根的范围，如 1.4² < 2 < 1.5²，所以 1.4 < √2 < 1.5。√2 是无限不循环小数。']]},
+ {name:'立方根',kps:[
+  ['立方根','如果 x³ = a，那么 x 叫 a 的立方根，记作 ∛a。任何数都有唯一的立方根：正数的立方根是正数，负数的立方根是负数，0 的立方根是 0；∛⟪−a⟫ = −∛a。']]},
+ {name:'实数及其简单运算',kps:[
+  ['无理数与实数','无限不循环小数叫无理数，如 √2、π、0.101 001 000 1…（相邻两个 1 之间 0 的个数逐次加 1）。有理数和无理数统称实数。⟨22|7⟩ 是分数，是有理数。'],
+  ['实数与数轴','实数与数轴上的点一一对应。相反数、绝对值的意义和有理数一样，如 |1 − √2| = √2 − 1。'],
+  ['实数的运算与比较','有理数的运算法则和运算律在实数范围内仍然适用。比较大小可以估算，也可以比较平方，如 2√3 = √⟪12⟫ < √⟪13⟫。']]}]},
+'c9':{no:9,name:'平面直角坐标系',book:'七下',secs:[
+ {name:'用坐标描述平面内点的位置',kps:[
+  ['平面直角坐标系','两条互相垂直、原点重合的数轴组成平面直角坐标系：水平的叫 x 轴（横轴），竖直的叫 y 轴（纵轴）。坐标轴把平面分成四个象限，坐标轴上的点不属于任何象限。'],
+  ['点的坐标','点 P 的坐标记作 (a, b)，横坐标写在前。各象限坐标的符号：第一象限 (+, +)，第二象限 (−, +)，第三象限 (−, −)，第四象限 (+, −)。'],
+  ['特殊位置的点','x 轴上的点纵坐标为 0，y 轴上的点横坐标为 0；与 x 轴平行的直线上各点纵坐标相同。点 (a, b) 到 x 轴的距离是 |b|，到 y 轴的距离是 |a|。']]},
+ {name:'坐标方法的简单应用',kps:[
+  ['用坐标表示地理位置','选适当的点作原点，确定坐标轴的方向和单位长度，就能用坐标表示位置；也可以用方向和距离描述位置。'],
+  ['用坐标表示平移','点向右（左）平移 a 个单位长度，横坐标加（减）a；向上（下）平移 b 个单位长度，纵坐标加（减）b。图形平移时，每个点都这样变。']]}]},
+'c10':{no:10,name:'二元一次方程组',book:'七下',secs:[
+ {name:'二元一次方程组的概念',kps:[
+  ['二元一次方程','含有两个未知数，并且含未知数的项的次数都是 1 的整式方程。它的解是一对数，有无数组。'],
+  ['方程组及其解','把两个一次方程合在一起，共含两个未知数，就组成二元一次方程组；两个方程的公共解叫方程组的解。']]},
+ {name:'消元——解二元一次方程组',kps:[
+  ['消元思想','把“二元”转化为“一元”，先求一个未知数，再求另一个。'],
+  ['代入消元法','从一个方程中用一个未知数表示另一个未知数，代入另一个方程。某个未知数系数是 1 或 −1 时用它方便。'],
+  ['加减消元法','两个方程中某个未知数的系数相等或互为相反数时，把两个方程相减或相加消去它；否则先把方程两边乘适当的数，使系数相同。']]},
+ {name:'实际问题与二元一次方程组',kps:[
+  ['列方程组解应用题','有两个未知量时设两个未知数，找出两个等量关系。常见类型：和差倍分、配套、行程、方案选择、表格或图片信息题。解出后检验是否符合实际。']]},
+ {name:'三元一次方程组的解法',kps:[
+  ['三元一次方程组','含有三个未知数的一次方程组。解法仍是消元：三元 → 二元 → 一元，先选定要消去的那个未知数。']]}]},
+'c11':{no:11,name:'不等式与不等式组',book:'七下',secs:[
+ {name:'不等式',kps:[
+  ['不等式及其解集','用不等号表示大小关系的式子叫不等式。使不等式成立的未知数的值叫它的解，所有解组成解集。在数轴上表示解集时，含等号的端点画实心点，不含等号的画空心点。'],
+  ['不等式的性质','性质 1：两边加（或减）同一个数或式子，不等号方向不变；性质 2：两边乘（或除以）同一个正数，方向不变；性质 3：两边乘（或除以）同一个负数，不等号方向改变。']]},
+ {name:'一元一次不等式',kps:[
+  ['一元一次不等式','只含一个未知数，未知数的次数是 1，两边都是整式的不等式。'],
+  ['解法','步骤与解一元一次方程相同：去分母、去括号、移项、合并同类项、系数化为 1。乘或除以负数时，不等号要改变方向。'],
+  ['实际问题与不等式','“至少”“不低于”用 ≥，“不超过”“至多”用 ≤。求出解集后按实际意义取值，如人数、件数取整数。']]},
+ {name:'一元一次不等式组',kps:[
+  ['不等式组的解集','几个不等式解集的公共部分。口诀：同大取大，同小取小，大小小大中间找，大大小小找不到（无解）。最好在数轴上画出来再找。'],
+  ['整数解与含参数的不等式组','在数轴上画出解集，再数整数解。含参数时，参数的范围在端点处能不能取等，要把端点值代回去检验。']]}]},
+'p2':{practice:true,name:'低碳生活',book:'七下',where:'七下 第十一章后',secs:[
+ {name:'项目要点',kps:[
+  ['任务','调查家庭用电、用水、出行等产生的碳排放，计算、比较并提出减排方案 ⓘ'],
+  ['用到的数学','收集和整理数据，用代数式、方程或不等式估算节约量，用统计图展示结果 ⓘ']]}]},
+'c12':{no:12,name:'数据的收集、整理与描述',book:'七下',secs:[
+ {name:'统计调查',kps:[
+  ['全面调查与抽样调查','对全体对象进行调查叫全面调查；只抽取一部分对象进行调查叫抽样调查。对象多、有破坏性或不必全部调查时用抽样调查。'],
+  ['总体、个体、样本','要考察的全体对象叫总体，每个对象叫个体，被抽取的那部分个体叫样本，样本中个体的数目叫样本容量（只是一个数，没有单位）。'],
+  ['简单随机抽样','每个个体被抽到的机会相等的抽样方法。样本要有代表性、数量足够，才能用样本估计总体。'],
+  ['收集与整理数据','设计调查问卷，用划记法整理数据，列出频数分布表。']]},
+ {name:'用统计图描述数据',kps:[
+  ['条形图、折线图、扇形图','条形图看出每个项目的具体数量，折线图看出变化情况，扇形图看出各部分占总体的百分比。扇形的圆心角 = 360° × 该部分所占的百分比。'],
+  ['频数分布直方图','先算最大值与最小值的差，再定组距和组数，列频数分布表，然后画直方图；各小长方形的高表示频数。'],
+  ['趋势图','把数据按时间顺序画成折线，观察数据随时间变化的趋势，并作简单的预测。新教材内容 ⓘ']]}]},
+'p3':{practice:true,name:'日昼时长规律的探究',book:'七下',where:'七下 第十二章后',secs:[
+ {name:'项目要点',kps:[
+  ['任务','收集一年中不同日期的昼长数据，画成趋势图，探究日昼时长随日期变化的规律 ⓘ'],
+  ['用到的数学','数据的收集与整理、趋势图、用图描述变化规律；可以和地理学科的知识联系起来 ⓘ']]}]}
+});
+</script>
+<script>
+/* ============ 数据层 2（续）：八年级 ============ */
+Object.assign(window.CH,{
+/* ---------- 八上 ---------- */
+'c13':{no:13,name:'三角形',book:'八上',secs:[
+ {name:'三角形的概念',kps:[
+  ['三角形及其表示','由不在同一条直线上的三条线段首尾顺次相接组成的图形，记作 △ABC。'],
+  ['三角形的分类','按角分：锐角三角形、直角三角形、钝角三角形；按边分：三边都不相等的三角形、等腰三角形（等边三角形是特殊的等腰三角形）。']]},
+ {name:'与三角形有关的线段',kps:[
+  ['三边关系','三角形两边之和大于第三边，两边之差小于第三边。判断三条线段能否组成三角形，只要看较短的两条之和是否大于最长的一条。'],
+  ['高、中线、角平分线','三角形的三条高（所在直线）、三条中线、三条角平分线分别交于一点。中线把三角形分成面积相等的两部分。钝角三角形有两条高在三角形外。'],
+  ['三角形的稳定性','三角形具有稳定性，四边形没有。所以自行车架、屋顶支架多做成三角形。']]},
+ {name:'三角形的内角与外角',kps:[
+  ['内角和定理','三角形三个内角的和等于 180°。证明的关键是作平行线，把三个角“搬”到一起拼成平角。'],
+  ['直角三角形的两锐角互余','直角三角形可以记作 Rt△ABC，两个锐角互余；反过来，有两个角互余的三角形是直角三角形。'],
+  ['三角形的外角','三角形的一个外角等于与它不相邻的两个内角的和，所以大于任何一个与它不相邻的内角。']]}]},
+'p4':{practice:true,name:'确定轻质薄板的重心位置',book:'八上',where:'八上 第十三章后',note:'名称另一来源作“匀质薄板”，以课本为准 ⓘ',secs:[
+ {name:'项目要点',kps:[
+  ['任务','用悬挂法或支撑法找出三角形薄板的重心，发现它恰好是三条中线的交点 ⓘ'],
+  ['理化交叉','和物理的重心、二力平衡联系：悬挂静止时，重力的作用线一定通过悬挂点 ⓘ']]}]},
+'c14':{no:14,name:'全等三角形',book:'八上',secs:[
+ {name:'全等三角形及其性质',kps:[
+  ['全等三角形','能够完全重合的两个三角形叫全等三角形，记作 △ABC ≌ △DEF，对应顶点要写在对应的位置上。'],
+  ['全等三角形的性质','全等三角形的对应边相等，对应角相等；对应的高、中线、角平分线、周长和面积也都相等。']]},
+ {name:'三角形全等的判定',kps:[
+  ['SSS（边边边）','三边分别相等的两个三角形全等（基本事实 ⓘ）。'],
+  ['SAS（边角边）','两边和它们的夹角分别相等的两个三角形全等（基本事实）。注意：两边和其中一边的对角分别相等（“SSA”）不能判定全等。'],
+  ['ASA 与 AAS','两角和它们的夹边分别相等（ASA）；两角分别相等且其中一组等角的对边相等（AAS）。三个角分别相等（“AAA”）不能判定全等。'],
+  ['HL（斜边、直角边）','斜边和一条直角边分别相等的两个直角三角形全等，只能用于直角三角形。'],
+  ['尺规作三角形与等角','已知三边、两边及其夹角、两角及其夹边，可以用尺规作出三角形；作一个角等于已知角，依据是 SSS。所在小节以课本为准 ⓘ'],
+  ['全等证明的书写','先找已知的相等边、角，看还缺哪个条件；公共边、公共角、对顶角是常用的隐含条件。“∵”后面按判定方法的顺序写全三个条件，并注明依据。'],
+  ['倍长中线构造全等','题中有中点时，可以延长过中点的线段，构造一对“8 字型”全等三角形，把分散的条件集中到一起。（解题方法，非课标条目）']]},
+ {name:'角的平分线',kps:[
+  ['尺规作角的平分线','以顶点为圆心画弧交两边，再分别以两个交点为圆心、相同半径画弧交于一点，连接顶点与这一点；依据是 SSS。'],
+  ['角平分线的性质','角的平分线上的点到角的两边的距离相等。'],
+  ['角平分线的判定','角的内部到角的两边距离相等的点在角的平分线上。三角形三条角平分线交于一点，这点到三边的距离相等。']]}]},
+'c15':{no:15,name:'轴对称',book:'八上',secs:[
+ {name:'图形的轴对称',kps:[
+  ['轴对称与轴对称图形','一个图形沿一条直线折叠，直线两旁的部分能够互相重合，这个图形叫轴对称图形；两个图形沿一条直线折叠后能够重合，叫这两个图形成轴对称。'],
+  ['轴对称的性质','对称轴是任何一对对应点所连线段的垂直平分线；成轴对称的两个图形全等。折叠问题就是轴对称：折痕两侧的边、角对应相等。'],
+  ['线段垂直平分线的性质与判定','线段垂直平分线上的点与这条线段两个端点的距离相等；反过来，与线段两个端点距离相等的点在这条线段的垂直平分线上。'],
+  ['尺规作垂直平分线与垂线','分别以线段两端为圆心、大于线段一半的长为半径画弧，连接两弧的交点。用同样的方法可以找线段的中点、过一点作已知直线的垂线。']]},
+ {name:'画轴对称的图形',kps:[
+  ['画轴对称的图形','找出关键点关于对称轴的对称点，再按原来的顺序连接。'],
+  ['用坐标表示轴对称','点 (x, y) 关于 x 轴的对称点是 (x, −y)，关于 y 轴的对称点是 (−x, y)。']]},
+ {name:'等腰三角形',kps:[
+  ['等腰三角形的性质','两个底角相等（等边对等角）；顶角的平分线、底边上的中线、底边上的高互相重合（三线合一）。'],
+  ['等腰三角形的判定','有两个角相等的三角形是等腰三角形（等角对等边）。'],
+  ['等边三角形','三边相等，三个内角都是 60°。三个角都相等的三角形、有一个角是 60° 的等腰三角形，都是等边三角形。'],
+  ['含 30° 角的直角三角形','在直角三角形中，30° 角所对的直角边等于斜边的一半。'],
+  ['等腰三角形中的分类讨论','没有说明哪个角是顶角、哪条边是腰时要分情况讨论，并检查每种情况能否构成三角形。']]}]},
+'p5':{practice:true,name:'最短路径问题',book:'八上',where:'八上 第十五章后',secs:[
+ {name:'项目要点',kps:[
+  ['将军饮马','直线 l 同侧有两点 A、B，在 l 上找点 P 使 PA + PB 最小：作 A 关于 l 的对称点 A′，连接 A′B 交 l 于 P。依据是“两点之间，线段最短”。'],
+  ['化折为直','路径由几段组成时，用轴对称或平移把折线变成一条线段，最短距离就是这条线段的长 ⓘ']]}]},
+'c16':{no:16,name:'整式的乘法',book:'八上',secs:[
+ {name:'幂的运算',kps:[
+  ['同底数幂的乘法','a^{m} · a^{n} = a^{m+n}（m、n 是正整数）：底数不变，指数相加。'],
+  ['幂的乘方','(a^{m})^{n} = a^{mn}：底数不变，指数相乘。'],
+  ['积的乘方','(ab)^{n} = a^{n}b^{n}：每个因式分别乘方，再相乘，系数也要乘方。'],
+  ['同底数幂的除法','a^{m} ÷ a^{n} = a^{m−n}（a ≠ 0）：底数不变，指数相减；a⁰ = 1（a ≠ 0）。所在小节以课本为准 ⓘ']]},
+ {name:'整式的乘法',kps:[
+  ['单项式乘单项式','系数、同底数的幂分别相乘，只在一个单项式里出现的字母连同它的指数一起作为积的因式。'],
+  ['单项式乘多项式','用单项式去乘多项式的每一项，再把所得的积相加：m(a + b) = ma + mb。'],
+  ['多项式乘多项式','(a + b)(m + n) = am + an + bm + bn，乘完要合并同类项；常用 (x + p)(x + q) = x² + (p + q)x + pq。'],
+  ['整式的除法','单项式除以单项式、多项式除以单项式：系数、同底数幂分别相除。所在小节以课本为准 ⓘ']]},
+ {name:'乘法公式',kps:[
+  ['平方差公式','(a + b)(a − b) = a² − b²，可以用图形面积验证。使用时先找出“相同项”a 和“相反项”b。'],
+  ['完全平方公式','(a ± b)² = a² ± 2ab + b²。最常见的错误是写成 (a + b)² = a² + b²，漏了中间项 2ab。'],
+  ['公式的变形','a² + b² = (a + b)² − 2ab；(a − b)² = (a + b)² − 4ab。已知两数的和与积，可以不求出两数就算出平方和。']]}]},
+'c17':{no:17,name:'因式分解',book:'八上',secs:[
+ {name:'用提公因式法分解因式',kps:[
+  ['因式分解','把一个多项式化成几个整式的积的形式。它和整式乘法是方向相反的变形，可以用乘法检验。'],
+  ['提公因式法','公因式的系数取各项系数的最大公约数，字母取各项都含有的字母，指数取最低次。首项是负数时一般先提出“−”，括号里各项都要变号。']]},
+ {name:'用公式法分解因式',kps:[
+  ['平方差公式分解','a² − b² = (a + b)(a − b)：两项、都能写成平方、符号相反。'],
+  ['完全平方公式分解','a² ± 2ab + b² = (a ± b)²：三项，两项是平方且同号，另一项是这两个底数积的 2 倍。'],
+  ['分解的一般步骤','一提（公因式）、二套（公式）、三检查：每个因式都不能再分解为止，如 x⁴ − 1 = (x² + 1)(x + 1)(x − 1)。'],
+  ['十字相乘法','x² + (p + q)x + pq = (x + p)(x + q)。新教材是否作为正文内容，待对照课本 ⓘ']]}]},
+'c18':{no:18,name:'分式',book:'八上',secs:[
+ {name:'分式及其基本性质',kps:[
+  ['分式的概念','形如 ⟨A|B⟩ 的式子（A、B 是整式，B 中含有字母）叫分式。分式有意义：B ≠ 0；分式的值为 0：A = 0 且 B ≠ 0。'],
+  ['分式的基本性质','分式的分子与分母乘（或除以）同一个不等于 0 的整式，分式的值不变。'],
+  ['约分与通分','约分：约去分子、分母的公因式，先因式分解再约。通分：化成同分母，最简公分母取各分母所有因式的最高次幂的积。']]},
+ {name:'分式的乘法与除法',kps:[
+  ['分式的乘除','分式乘分式，分子乘分子、分母乘分母；除以一个分式，等于乘它的倒数。先因式分解，再约分。'],
+  ['分式的乘方','(⟨a|b⟩)^{n} = ⟨a^{n}|b^{n}⟩：分子、分母分别乘方。']]},
+ {name:'分式的加法与减法',kps:[
+  ['分式的加减','同分母的分式相加减，分母不变，分子相加减；异分母的分式先通分。分子相减时，减式的分子要加括号。'],
+  ['混合运算与化简求值','先乘方，再乘除，后加减。化简后代入的值，必须使原分式（包括除式）有意义。']]},
+ {name:'整数指数幂',kps:[
+  ['负整数指数幂','a^{−n} = ⟨1|a^{n}⟩（a ≠ 0，n 是正整数）。引入后，幂的运算性质对全体整数指数都成立。'],
+  ['科学记数法表示较小的数','0.000 012 = 1.2 × 10^{−5}：n 等于原数左起第一个非零数字前所有 0 的个数（包括小数点前的那个 0）。']]},
+ {name:'分式方程',kps:[
+  ['分式方程','分母中含有未知数的方程叫分式方程。'],
+  ['解分式方程与验根','两边乘最简公分母化成整式方程，解出后必须检验：使最简公分母为 0 的根是增根，要舍去。检验要写在解题过程里。'],
+  ['增根与无解','分式方程无解有两种情况：去分母后的整式方程无解，或者整式方程的解都是增根。'],
+  ['列分式方程解应用题','常见于工程、行程、购物问题。解出后既要检验是不是原方程的根，又要检验是否符合实际，最后写出答句。']]}]},
+
+/* ---------- 八下 ---------- */
+'c19':{no:19,name:'二次根式',book:'八下',secs:[
+ {name:'二次根式及其性质',kps:[
+  ['二次根式','形如 √a（a ≥ 0）的式子叫二次根式，有意义的条件是被开方数 a ≥ 0。'],
+  ['二次根式的性质','(√a)² = a（a ≥ 0）；√⟪a²⟫ = |a|，a 是负数时 √⟪a²⟫ = −a。'],
+  ['最简二次根式','被开方数不含分母，也不含能开得尽方的因数或因式，如 √⟪12⟫ 要化成 2√3。']]},
+ {name:'二次根式的乘法与除法',kps:[
+  ['二次根式的乘法','√a · √b = √⟪ab⟫（a ≥ 0，b ≥ 0）；反过来用可以化简：√⟪ab⟫ = √a · √b。'],
+  ['二次根式的除法','⟨√a|√b⟩ = √⟪⟨a|b⟩⟫（a ≥ 0，b > 0）。分母有理化：把分母中的根号化去，如 ⟨1|√2⟩ = ⟨√2|2⟩。']]},
+ {name:'二次根式的加法与减法',kps:[
+  ['同类二次根式','几个二次根式化成最简二次根式后，被开方数相同，就是同类二次根式。先确认根指数是 2，再比被开方数。'],
+  ['二次根式的加减与混合运算','先化成最简二次根式，再合并同类二次根式。整式的乘法公式仍然适用，如 (√3 + √2)(√3 − √2) = 1。']]}]},
+'c20':{no:20,name:'勾股定理',book:'八下',secs:[
+ {name:'勾股定理及其应用',kps:[
+  ['勾股定理','直角三角形两条直角边的平方和等于斜边的平方：a² + b² = c²。可以用赵爽弦图等面积法证明。'],
+  ['已知两边求第三边','先确定哪条边是斜边；题目没说明时要分两种情况讨论。'],
+  ['勾股定理的应用与折叠','梯子、旗杆、立体图形表面的最短路线（先展开）；折叠问题：设所求线段为 x，用折叠前后相等的线段表示其他边，再用勾股定理列方程。'],
+  ['在数轴上表示无理数','用勾股定理作出长为 √2、√5 等的线段，再用圆规在数轴上截取，找到表示它们的点。']]},
+ {name:'勾股定理的逆定理及其应用',kps:[
+  ['勾股定理的逆定理','如果三角形的三边长 a、b、c 满足 a² + b² = c²，那么这个三角形是直角三角形，最长边 c 所对的角是直角。'],
+  ['勾股数','能构成直角三角形三边长的三个正整数，如 3、4、5；5、12、13；8、15、17。它们的同倍数仍是勾股数。'],
+  ['互逆命题','把一个命题的题设和结论交换，得到它的逆命题。原命题成立，逆命题不一定成立；两个都成立的，叫互逆定理。']]}]},
+'c21':{no:21,name:'四边形',book:'八下',note:'中位线归在 21.2、斜边中线归在 21.3，是按旧版编排推定的，以课本为准 ⓘ',secs:[
+ {name:'四边形及多边形',kps:[
+  ['多边形','由一些线段首尾顺次相接组成的封闭图形。从 n 边形的一个顶点出发可以作 (n − 3) 条对角线，n 边形共有 ⟨n(n − 3)|2⟩ 条对角线。'],
+  ['内角和与外角和','n 边形的内角和是 (n − 2) · 180°；任意多边形的外角和都是 360°，与边数无关。'],
+  ['正多边形','各边相等、各角也相等的多边形。正 n 边形每个外角是 ⟨360°|n⟩，每个内角是 180° 减去它。']]},
+ {name:'平行四边形',kps:[
+  ['平行四边形的性质','对边平行且相等，对角相等，对角线互相平分；是中心对称图形。'],
+  ['平行四边形的判定','两组对边分别平行；两组对边分别相等；一组对边平行且相等；对角线互相平分；两组对角分别相等。书写判定时，条件要写全，最后写出结论。'],
+  ['平行线间的距离','两条平行线中，一条直线上任意一点到另一条直线的距离都相等。同底等高的三角形面积相等。'],
+  ['三角形的中位线','连接三角形两边中点的线段叫中位线。中位线平行于第三边，并且等于第三边的一半。图中有两个中点时先想到它。']]},
+ {name:'特殊的平行四边形',kps:[
+  ['矩形','四个角都是直角，对角线相等。判定：有一个角是直角的平行四边形；对角线相等的平行四边形；有三个角是直角的四边形。'],
+  ['直角三角形斜边上的中线','直角三角形斜边上的中线等于斜边的一半。图中有直角三角形和斜边中点时先想到它；反过来，一边上的中线等于这边一半的三角形是直角三角形。'],
+  ['菱形','四条边相等，对角线互相垂直，并且每条对角线平分一组对角；面积等于两条对角线乘积的一半。判定：一组邻边相等的平行四边形；对角线互相垂直的平行四边形；四条边相等的四边形。'],
+  ['正方形','既是矩形又是菱形。判定：有一组邻边相等的矩形，或有一个角是直角的菱形。正方形里常借全等证线段相等、垂直，如 CE = DF 推出 AE ⊥ BF。'],
+  ['中点四边形','顺次连接任意四边形各边中点，得到平行四边形；原四边形对角线相等时得到菱形，互相垂直时得到矩形，相等且垂直时得到正方形 ⓘ'],
+  ['动点最值的两种思路','两条线段的和最小：作对称点，化成一条线段；动点对一条定线段始终张直角：动点到这条线段中点的距离不变（等于线段的一半），按“定点到动点”求最值。（解题方法，非课标条目）']]}]},
+'c22':{no:22,name:'函数',book:'八下',secs:[
+ {name:'函数的概念',kps:[
+  ['常量与变量','在一个变化过程中，数值发生变化的量叫变量，数值始终不变的量叫常量。'],
+  ['函数','在一个变化过程中有两个变量 x 与 y，对于 x 的每一个确定的值，y 都有唯一确定的值与它对应，就说 y 是 x 的函数，x 是自变量。'],
+  ['自变量的取值范围','整式：全体实数；分式：分母不为 0；二次根式：被开方数 ≥ 0；实际问题：还要使实际问题有意义。几个条件要同时满足，端点能不能取等要逐个判断。'],
+  ['函数值','当自变量 x 取某个值时，函数 y 的对应值。']]},
+ {name:'函数的表示',kps:[
+  ['三种表示方法','解析式法、列表法、图象法。解析式便于计算，列表直接给出对应值，图象直观看出变化趋势。'],
+  ['画函数图象与读图','描点法：列表、描点、连线。读图时先看横、纵坐标各表示什么，再看上升、下降、水平的线段和拐点的含义。']]}]},
+'c23':{no:23,name:'一次函数',book:'八下',note:'23.3 节名“一次函数与方程（组）、不等式”中的标点以课本为准 ⓘ',secs:[
+ {name:'一次函数的概念',kps:[
+  ['正比例函数','形如 y = kx（k ≠ 0）的函数，k 叫比例系数。理化交叉：电阻一定时 U = IR，U 与 I 成正比，U–I 图像是过原点的直线。'],
+  ['一次函数','形如 y = kx + b（k ≠ 0）的函数；b = 0 时就是正比例函数。判断时看两点：k ≠ 0，x 的次数是 1。']]},
+ {name:'一次函数的图象和性质',kps:[
+  ['正比例函数的图象与性质','图象是经过原点的直线。k > 0 时经过第一、三象限，y 随 x 的增大而增大；k < 0 时经过第二、四象限，y 随 x 的增大而减小。'],
+  ['一次函数的图象','图象是一条直线，两点就能确定，常取与坐标轴的交点 (0, b) 和 (−⟨b|k⟩, 0)。y = kx + b 可由 y = kx 向上（b > 0）或向下（b < 0）平移 |b| 个单位得到。'],
+  ['k、b 与图象位置','k 决定增减和倾斜方向，b 是直线与 y 轴交点的纵坐标。例如“不经过第四象限”要 k > 0 且 b ≥ 0：b = 0 时直线过原点，只经过第一、三象限，也符合。'],
+  ['待定系数法求解析式','设 y = kx + b，把两个点的坐标代入，列方程组求 k、b。题目用什么字母表示变量，解析式就用什么字母写。']]},
+ {name:'一次函数与方程（组）、不等式',kps:[
+  ['与一元一次方程','方程 kx + b = 0 的解，就是直线 y = kx + b 与 x 轴交点的横坐标。图中有几条直线时，先认清是哪一条。'],
+  ['与一元一次不等式','kx + b > 0 的解集，就是直线在 x 轴上方的部分所对应的 x 的范围。比较两个函数值的大小，看哪条直线在上方，以交点为分界。'],
+  ['与二元一次方程组','二元一次方程组的解，就是两条直线交点的坐标。'],
+  ['直线与线段有公共点','把线段的两个端点分别代入，求出参数的两个临界值；线段包含端点，所以参数的范围两头都能取等。']]},
+ {name:'实际问题与一次函数',kps:[
+  ['建立一次函数模型','从文字、表格或图象中找出两个变量的一次关系，写出解析式，并写出自变量的取值范围（同时满足所有限制条件）。'],
+  ['分段函数与读图','行程、计费、注水等问题的图象常分几段：弄清每一段的意义、拐点的坐标和每段的速度（斜率）。题目问到的每一问都要答，答案带单位。'],
+  ['方案选择与最值','先写出总费用（或利润）关于 x 的一次函数，再用 k 的正负判断增减，在自变量的范围内取端点得到最大（小）值；最后写出方案和最值。']]}]},
+'p6':{practice:true,name:'音乐与数学',book:'八下',where:'八下 第二十三章后 ⓘ',secs:[
+ {name:'项目要点',kps:[
+  ['任务','探究音高与弦长、频率之间的数量关系，例如弦长减半，音高升高八度 ⓘ'],
+  ['用到的数学','比与比例、分数运算、函数的表示方法 ⓘ']]}]},
+'c24':{no:24,name:'数据的分析',book:'八下',note:'节名另一写法为“集中趋势、离散程度、四分位数、分组”（无“数据的”），以课本为准 ⓘ',secs:[
+ {name:'数据的集中趋势',kps:[
+  ['平均数与加权平均数','加权平均数 = ⟨x₁w₁ + x₂w₂ + … + x_{n}w_{n}|w₁ + w₂ + … + w_{n}⟩，权反映各数据的重要程度。由平均数反求某个数据时，先求总和再相减，加法要细心。'],
+  ['中位数','把数据从小到大排列，处在最中间的一个数（数据个数为偶数时取中间两个数的平均数）。先排序再找。'],
+  ['众数','一组数据中出现次数最多的数据，可以不止一个。'],
+  ['选择合适的统计量','平均数受极端值影响大；中位数不受极端值影响；众数反映最集中的情况。用样本的统计量估计总体。']]},
+ {name:'数据的离散程度',kps:[
+  ['方差','s² = ⟨1|n⟩[(x₁ − x̄)² + (x₂ − x̄)² + … + (x_{n} − x̄)²]。方差越大，数据波动越大，越不稳定。'],
+  ['方差的变化规律','每个数据都加上（或减去）同一个数，平均数随之变化，方差不变；每个数据都乘 a，方差变为原来的 a² 倍 ⓘ'],
+  ['极差','一组数据中最大值与最小值的差，只反映两个极端值的差距 ⓘ']]},
+ {name:'数据的四分位数',kps:[
+  ['四分位数','把数据从小到大排列后，用三个数把它们分成数量相等的四部分，这三个数就是四分位数，中间那个就是中位数。具体求法以课本为准 ⓘ'],
+  ['箱线图','用最小值、第一四分位数、中位数、第三四分位数、最大值五个数画出；箱子越长，中间一半数据越分散。']]},
+ {name:'数据的分组',kps:[
+  ['数据的分组','数据较多时，按一定标准（如组距）把数据分组，统计各组的频数，比较各组的集中趋势和离散程度，从中发现更多信息。新教材内容 ⓘ']]}]}
+});
+</script>
+<script>
+/* ============ 数据层 2（续）：九年级。九上节名已核对；九下只有第三方汇总的章名，节名待新课本 ============ */
+Object.assign(window.CH,{
+/* ---------- 九上 ---------- */
+'c25':{no:25,name:'一元二次方程',book:'九上',secs:[
+ {name:'一元二次方程的概念',kps:[
+  ['一元二次方程','只含一个未知数、未知数的最高次数是 2 的整式方程。一般形式 ax² + bx + c = 0（a ≠ 0），a、b、c 分别是二次项系数、一次项系数和常数项。含字母系数时别忘了 a ≠ 0。'],
+  ['方程的根','使方程左右两边相等的未知数的值。已知一个根求字母的值，就把这个根代入方程。']]},
+ {name:'降次——解一元二次方程',kps:[
+  ['直接开平方法','形如 x² = p（p ≥ 0）或 (mx + n)² = p 的方程，两边开平方，x = ±√p，注意“±”。'],
+  ['配方法','二次项系数化为 1，常数项移到右边，两边同加一次项系数一半的平方，化成 (x + m)² = n 的形式再开平方。'],
+  ['公式法','x = ⟨−b ± √⟪b² − 4ac⟫|2a⟩（b² − 4ac ≥ 0）。用之前先化成一般形式，确定 a、b、c 的值（带符号）。'],
+  ['根的判别式','Δ = b² − 4ac：Δ > 0 时方程有两个不相等的实数根；Δ = 0 时有两个相等的实数根；Δ < 0 时没有实数根。'],
+  ['因式分解法','把方程化成两个一次因式的积等于 0，如 x² − 3x = 0 化为 x(x − 3) = 0。两边不能随便约去含未知数的因式，否则会丢根。'],
+  ['根与系数的关系','x₁ + x₂ = −⟨b|a⟩，x₁x₂ = ⟨c|a⟩（前提是方程有实数根）。课标中是选学内容，新教材的处理方式待核实 ⓘ']]},
+ {name:'实际问题与一元二次方程',kps:[
+  ['增长率问题','原来是 a，连续两次增长，平均增长率为 x，则 a(1 + x)² = b；下降则是 a(1 − x)² = b。负根或大于 1 的下降率要舍去。'],
+  ['面积、传播与比赛问题','围栏、道路面积问题常用“平移”把图形拼成长方形；单循环比赛共 ⟨n(n − 1)|2⟩ 场。解出后检验是否符合实际。']]}]},
+'c26':{no:26,name:'二次函数',book:'九上',secs:[
+ {name:'二次函数的概念',kps:[
+  ['二次函数','形如 y = ax² + bx + c（a、b、c 是常数，a ≠ 0）的函数。']]},
+ {name:'二次函数的图象和性质',kps:[
+  ['y = ax² 的图象','抛物线，顶点在原点，对称轴是 y 轴。a > 0 开口向上，a < 0 开口向下；|a| 越大，开口越小。'],
+  ['顶点式与平移','y = a(x − h)² + k 的顶点是 (h, k)，对称轴是直线 x = h。它由 y = ax² 平移得到：左右平移改 h，上下平移改 k。口诀“左加右减”只管自变量：向左平移 m 个单位，把 x 换成 x + m；“上加下减”是对整个式子加减。'],
+  ['一般式与配方','y = ax² + bx + c 配方后，顶点是 (−⟨b|2a⟩, ⟨4ac − b²|4a⟩)，对称轴是直线 x = −⟨b|2a⟩。'],
+  ['增减性与最值','a > 0 时，在对称轴左侧 y 随 x 的增大而减小，右侧增大，顶点处取最小值；a < 0 时相反。自变量有范围时，比较顶点和两个端点的函数值，端点能否取到要看题目。'],
+  ['a、b、c 与图象','a 决定开口方向；a、b 同号，对称轴在 y 轴左侧，异号在右侧（左同右异）；c 是抛物线与 y 轴交点的纵坐标。'],
+  ['待定系数法','已知三个点用一般式；已知顶点用顶点式；已知与 x 轴的两个交点 (x₁, 0)、(x₂, 0) 时可设 y = a(x − x₁)(x − x₂) ⓘ']]},
+ {name:'二次函数与一元二次方程',kps:[
+  ['抛物线与 x 轴的交点','抛物线与 x 轴交点的横坐标，就是方程 ax² + bx + c = 0 的根。Δ > 0 时有两个交点，Δ = 0 时有一个，Δ < 0 时没有。'],
+  ['用图象求近似解','方程的根就是图象与 x 轴交点的横坐标，可以从图象上估计近似值，再列表逐步精确。']]},
+ {name:'实际问题与二次函数',kps:[
+  ['最大利润与最大面积','列出利润或面积关于 x 的二次函数，配方或用顶点坐标求最值；如果顶点不在自变量的取值范围内，要用增减性在端点处取最值。'],
+  ['抛物线形问题','拱桥、投篮、喷泉等：先建立合适的坐标系，写出关键点的坐标，求出解析式，再求高度或距离。']]}]},
+'c27':{no:27,name:'反比例函数',book:'九上',secs:[
+ {name:'反比例函数的概念',kps:[
+  ['反比例函数','形如 y = ⟨k|x⟩（k 是常数，k ≠ 0）的函数，也可以写成 xy = k；自变量 x ≠ 0。']]},
+ {name:'反比例函数的图象和性质',kps:[
+  ['图象','双曲线，有两支，与坐标轴没有交点，关于原点对称。k > 0 时两支在第一、三象限，k < 0 时在第二、四象限。'],
+  ['增减性','k > 0 时，在每一个象限内，y 随 x 的增大而减小；k < 0 时增大。不能说“在整个定义域内”，比较不同象限的点要先看符号。'],
+  ['k 的几何意义','过双曲线上任一点作两坐标轴的垂线，与坐标轴围成的矩形面积是 |k|；与原点、一条垂线围成的三角形面积是 |k| 的一半。'],
+  ['与一次函数的综合','联立两个解析式求交点坐标；比较两个函数值的大小，看哪个图象在上方，以交点和 y 轴为分界。']]},
+ {name:'实际问题与反比例函数',kps:[
+  ['实际问题与反比例函数','面积一定时长与宽、路程一定时速度与时间成反比例。理化交叉：电压一定时 I = ⟨U|R⟩，电流与电阻成反比例；压力一定时压强与受力面积成反比例。']]}]},
+'p7':{practice:true,name:'高铁列车运行中的数量关系',book:'九上',where:'九上 第二十七章后',secs:[
+ {name:'项目要点',kps:[
+  ['任务','研究高铁列车运行中路程、速度、时间等量之间的关系，用函数描述和分析 ⓘ'],
+  ['用到的数学','一次函数、反比例函数的建模与读图 ⓘ']]}]},
+'c28':{no:28,name:'旋转',book:'九上',secs:[
+ {name:'图形的旋转',kps:[
+  ['旋转','把一个图形绕一个定点（旋转中心）转动一个角度（旋转角），叫图形的旋转。'],
+  ['旋转的性质','对应点到旋转中心的距离相等；对应点与旋转中心所连线段的夹角等于旋转角；旋转前后的图形全等。'],
+  ['用旋转构造全等','图中有共顶点的相等线段（如等边三角形、正方形、等腰直角三角形）时，常把一个三角形绕公共顶点旋转，构造全等。（解题方法，非课标条目）']]},
+ {name:'中心对称',kps:[
+  ['中心对称','把一个图形绕某一点旋转 180°，如果它能与另一个图形重合，这两个图形关于这点对称。对称点的连线都经过对称中心，并且被对称中心平分。'],
+  ['中心对称图形','一个图形绕某点旋转 180° 后能与自身重合，如平行四边形、圆、正六边形。'],
+  ['关于原点对称的点','点 (x, y) 关于原点的对称点是 (−x, −y)。']]}]},
+'c29':{no:29,name:'圆',book:'九上',note:'点与圆的位置关系、过三点的圆、圆锥侧面积等在新版哪一节，以课本为准 ⓘ',secs:[
+ {name:'圆的有关概念',kps:[
+  ['圆','平面上到定点（圆心）的距离等于定长（半径）的所有点组成的图形。'],
+  ['弦、弧、等圆与等弧','连接圆上任意两点的线段叫弦，经过圆心的弦是直径；圆上任意两点间的部分叫弧，分优弧、劣弧和半圆。能够重合的两个圆叫等圆；在同圆或等圆中能够互相重合的弧叫等弧。'],
+  ['点与圆的位置关系','设点到圆心的距离为 d，半径为 r：d > r 时点在圆外，d = r 时点在圆上，d < r 时点在圆内 ⓘ']]},
+ {name:'圆的有关性质',kps:[
+  ['垂径定理','垂直于弦的直径平分弦，并且平分弦所对的两条弧；平分弦（不是直径）的直径垂直于弦。常和勾股定理一起用：r² = d² + (⟨a|2⟩)²（a 是弦长，d 是弦心距）。'],
+  ['弧、弦、圆心角的关系','在同圆或等圆中，相等的圆心角所对的弧相等，所对的弦也相等；三者中有一组相等，其余两组也相等。'],
+  ['圆周角定理','一条弧所对的圆周角等于它所对的圆心角的一半；同弧或等弧所对的圆周角相等。直径所对的圆周角是直角；90° 的圆周角所对的弦是直径。'],
+  ['圆内接四边形','圆内接四边形的对角互补。'],
+  ['过三点的圆与外心','不在同一条直线上的三个点确定一个圆。三角形外接圆的圆心（外心）是三边垂直平分线的交点，到三个顶点的距离相等。可以用尺规作出 ⓘ']]},
+ {name:'弧长和扇形面积',kps:[
+  ['弧长','半径为 r 的圆中，n° 的圆心角所对的弧长 l = ⟨nπr|180⟩。'],
+  ['扇形面积','S = ⟨nπr²|360⟩ = ⟨1|2⟩lr。求不规则阴影面积常用“割补法”。'],
+  ['圆锥的侧面积','圆锥的侧面展开图是扇形：扇形的半径是圆锥的母线 l，弧长是底面圆的周长 2πr，所以 S_{侧} = πrl ⓘ']]}]},
+'c30':{no:30,name:'直线与圆的位置关系',book:'九上',note:'切线长定理所在小节以课本为准 ⓘ',secs:[
+ {name:'直线与圆',kps:[
+  ['直线与圆的位置关系','设圆心到直线的距离为 d，半径为 r：d > r 相离，d = r 相切，d < r 相交。'],
+  ['切线的判定','经过半径的外端并且垂直于这条半径的直线是圆的切线。证明切线：已知直线与圆有交点，“连半径，证垂直”；没有给出交点，“作垂直，证半径”。'],
+  ['切线的性质','圆的切线垂直于过切点的半径。见到切线，先连接圆心和切点。'],
+  ['切线长定理','从圆外一点可以引圆的两条切线，它们的切线长相等，这一点和圆心的连线平分两条切线的夹角 ⓘ']]},
+ {name:'三角形的内切圆',kps:[
+  ['内切圆与内心','与三角形各边都相切的圆叫内切圆，圆心（内心）是三条角平分线的交点，到三边的距离相等。可以用尺规作出 ⓘ'],
+  ['内切圆半径','三角形面积 S = ⟨1|2⟩r(a + b + c)；直角三角形的内切圆半径 r = ⟨a + b − c|2⟩（c 为斜边）。（常用结论 ⓘ）']]},
+ {name:'正多边形与圆',kps:[
+  ['正多边形的有关计算','正 n 边形的中心角是 ⟨360°|n⟩；半径、边心距和边长的一半组成直角三角形，用勾股定理计算。'],
+  ['作圆内接正多边形','正六边形的边长等于外接圆半径，用圆规在圆上连续截取即可；作两条互相垂直的直径可得内接正方形。']]}]},
+'p8':{practice:true,name:'生活中的优化问题',book:'九上',where:'九上 第三十章后',secs:[
+ {name:'项目要点',kps:[
+  ['任务','把生活中“最省、最多、最短”的问题转化为数学模型，求出最优方案 ⓘ'],
+  ['用到的数学','二次函数的最值、一次函数的增减性、轴对称求最短路径 ⓘ']]}]},
+
+/* ---------- 九下（2027 年春起用；章名来自第三方汇总，节名待新课本） ---------- */
+'c31':{no:31,name:'相似',book:'九下',noSecNo:true,note:'九下新课本还未见到，节名未知；下面三组按内容分，不是课本节名 ⓘ',secs:[
+ {name:'图形的相似',kps:[
+  ['相似图形与相似多边形','形状相同的图形叫相似图形。相似多边形的对应角相等、对应边成比例，对应边的比叫相似比。'],
+  ['比例线段与黄金分割','若 a : b = c : d，则 ad = bc（比例的基本性质）。点 C 把线段 AB 分成 AC > BC，且 ⟨AC|AB⟩ = ⟨BC|AC⟩，C 叫黄金分割点，这个比是 ⟨√5 − 1|2⟩ ≈ 0.618。'],
+  ['平行线分线段成比例','两条直线被一组平行线所截，所得的对应线段成比例（基本事实）。']]},
+ {name:'相似三角形',kps:[
+  ['相似三角形的判定','两角分别相等；两边成比例且夹角相等；三边成比例；平行于三角形一边的直线与其他两边相交，截得的三角形与原三角形相似。'],
+  ['相似三角形的性质','对应高、对应中线、对应角平分线的比都等于相似比；周长比等于相似比；面积比等于相似比的平方。'],
+  ['相似三角形的应用','用影子、镜子或标杆测量物体高度，测河宽。常见的基本图形：“A 字型”“8 字型”，以及直角三角形斜边上的高分出的“母子型”。']]},
+ {name:'位似',kps:[
+  ['位似图形','两个相似图形对应点的连线交于一点（位似中心），对应边平行或在同一直线上。位似比等于相似比。'],
+  ['坐标中的位似','以原点为位似中心、位似比为 k 时，点 (x, y) 的对应点是 (kx, ky) 或 (−kx, −ky)。']]}]},
+'c32':{no:32,name:'锐角三角函数',book:'九下',noSecNo:true,note:'节名未知，下面两组按内容分 ⓘ；按课标，锐角三角函数属于“图形的变化”主题中的“图形的相似”',secs:[
+ {name:'锐角三角函数',kps:[
+  ['正弦、余弦、正切','在 Rt△ABC 中，∠C = 90°：sin A = ⟨∠A 的对边|斜边⟩，cos A = ⟨∠A 的邻边|斜边⟩，tan A = ⟨∠A 的对边|∠A 的邻边⟩。它们只与角的大小有关，与三角形的大小无关。'],
+  ['特殊角的三角函数值','sin 30° = ⟨1|2⟩，sin 45° = ⟨√2|2⟩，sin 60° = ⟨√3|2⟩；cos 30° = ⟨√3|2⟩，cos 45° = ⟨√2|2⟩，cos 60° = ⟨1|2⟩；tan 30° = ⟨√3|3⟩，tan 45° = 1，tan 60° = √3。'],
+  ['用计算器求值','由已知锐角求它的三角函数值，或由三角函数值求对应的锐角。']]},
+ {name:'解直角三角形及其应用',kps:[
+  ['解直角三角形','由已知的边和角求出未知的边和角；除直角外至少要知道两个元素，其中至少有一条边。'],
+  ['实际应用','仰角和俯角、方向角、坡度（坡比）i = ⟨铅直高度|水平宽度⟩ = tan α。不是直角三角形时，作高构造直角三角形。']]}]},
+'p9':{practice:true,name:'停车设计问题',book:'九下',where:'九下 第三十二章后 ⓘ',secs:[
+ {name:'项目要点',kps:[
+  ['任务','根据停车位的尺寸和车辆转弯的要求，设计停车场的车位排布 ⓘ'],
+  ['用到的数学','解直角三角形、面积计算与方案比较 ⓘ']]}]},
+'c33':{no:33,name:'投影与视图',book:'九下',noSecNo:true,note:'节名未知，下面三组按内容分 ⓘ',secs:[
+ {name:'投影',kps:[
+  ['平行投影与中心投影','太阳光线可以看成平行光线，形成的投影是平行投影；灯光形成的投影是中心投影。投影线垂直于投影面的平行投影叫正投影。']]},
+ {name:'三视图',kps:[
+  ['三视图','主视图、左视图、俯视图。画法要求：主视图与俯视图“长对正”，主视图与左视图“高平齐”，左视图与俯视图“宽相等”；看得见的轮廓线画实线，看不见的画虚线。'],
+  ['由三视图想象几何体','根据三视图说出几何体的形状，计算表面积、体积，或求搭成它的小正方体最多、最少有几个。']]},
+ {name:'展开图与立体模型',kps:[
+  ['展开图','了解直棱柱、圆锥的侧面展开图，能根据展开图想象和制作实物模型 ⓘ']]}]},
+'p10':{practice:true,name:'建筑中的数学',book:'九下',where:'九下 第三十三章后 ⓘ',secs:[
+ {name:'项目要点',kps:[
+  ['任务','观察建筑中的对称、比例、视图和测量问题，用学过的数学知识分析或设计 ⓘ'],
+  ['用到的数学','轴对称与旋转、相似与黄金分割、三视图、解直角三角形 ⓘ']]}]},
+'c34':{no:34,name:'随机事件的概率',book:'九下',note:'节名来自第三方汇总（34.1 下分随机事件、概率两小节），以新课本为准 ⓘ',secs:[
+ {name:'随机事件与概率 ⓘ',kps:[
+  ['必然、不可能与随机事件','在一定条件下必然会发生的事件叫必然事件，必然不会发生的叫不可能事件，可能发生也可能不发生的叫随机事件。'],
+  ['概率','表示一个随机事件 A 发生的可能性大小的数，记作 P(A)，0 ≤ P(A) ≤ 1。必然事件的概率是 1，不可能事件的概率是 0。']]},
+ {name:'用列举法求概率',kps:[
+  ['等可能情形下的概率','一次试验中共有 n 种等可能的结果，事件 A 包含其中 m 种，则 P(A) = ⟨m|n⟩。'],
+  ['列表法与画树状图法','两步试验可以列表或画树状图，三步及以上用树状图。注意“放回”与“不放回”：不放回时，第二步的结果数少一个。']]},
+ {name:'用频率估计概率',kps:[
+  ['用频率估计概率','在大量重复试验中，事件发生的频率会稳定在某个常数附近，可以用这个常数估计概率。试验次数少时，频率和概率可能相差很大。']]}]}
+});
+</script>
+<script>
+/* ============ 数据层 5：河南中考数学 2022–2026 逐题考点（题号地图） ============
+   每条：[年, 题号, 题型(选/填/解), 核实级别, 考了什么, [章:知识点 或 只写章]]
+   核实级别：c = 两个来源对上（解析或原卷 + 官方评析）；p = 只有一个来源，或具体知识点靠题干推断；u = 原卷未取得，只知道题号
+   计数规则：c、p 计入考频；u 不计。一道题只记“必须用到”的定理和方法（规则 b）。 */
+window.EXAM=[
+/* ---------- 2022 ---------- */
+[2022,'1','选','c','−1/2 的相反数',['c1:相反数']],
+[2022,'2','选','c','正方体展开图：找“地”的对面',['c6:展开图']],
+[2022,'3','选','c','两直线相交、EO⊥CD，求角',['c7:垂线','c7:对顶角与邻补角']],
+[2022,'4','选','p','整式运算正误（选项含二次根式、乘法公式、幂的运算）',['c16:单项式乘单项式','c16:幂的乘方']],
+[2022,'5','选','c','菱形对角线交于 O，E 为 AB 中点：由 OE 求周长',['c21:菱形','c21:直角三角形斜边上的中线']],
+[2022,'6','选','c','一元二次方程根的情况',['c25:根的判别式']],
+[2022,'7','选','c','扇形统计图中的众数（课后服务打分）',['c24:众数','c12:条形图、折线图、扇形图']],
+[2022,'8','选','c','“1 兆 = 万万亿”：用 10 的幂表示',['c16:同底数幂的乘法','c2:科学记数法']],
+[2022,'9','选','c','正六边形绕原点旋转，第 2022 次后点的坐标',['c28:旋转的性质','c9:点的坐标','c30:正多边形的有关计算']],
+[2022,'10','选','c','呼气式酒精测试仪：读函数图象（跨学科）',['c22:画函数图象与读图']],
+[2022,'11','填','c','写一个 y 随 x 增大而增大的一次函数',['c23:k、b 与图象位置']],
+[2022,'12','填','c','解一元一次不等式组',['c11:不等式组的解集']],
+[2022,'13','填','c','四人中选两人，恰好选中甲、丙的概率',['c34:列表法与画树状图法']],
+[2022,'14','填','c','扇形平移后求阴影面积',['c7:平移及其性质','c29:扇形面积']],
+[2022,'15','填','c','线段绕点旋转，直角三角形中分类求长',['c28:旋转的性质','c20:勾股定理']],
+[2022,'16','解','p','(1) 实数运算　(2) 分式化简',['c8:实数的运算与比较','c18:混合运算与化简求值']],
+[2022,'17','解','c','航空航天知识竞赛：中位数与评价',['c24:中位数','c12:频数分布直方图']],
+[2022,'18','解','c','反比例函数解析式；尺规作垂直平分线；证明平行',['c27:反比例函数','c15:尺规作垂直平分线与垂线','c15:线段垂直平分线的性质与判定','c7:平行线的判定']],
+[2022,'19','解','c','两次测仰角求拂云阁高度',['c32:实际应用']],
+[2022,'20','解','c','菜苗单价（分式方程）；不等式与一次函数求最少花费',['c18:列分式方程解应用题','c11:实际问题与不等式','c23:方案选择与最值']],
+[2022,'21','解','c','喷泉水柱：顶点式求抛物线，再求距离',['c26:抛物线形问题','c26:顶点式与平移']],
+[2022,'22','解','c','推铁环：切线的性质证明；解直角三角形求长',['c30:切线的性质','c32:解直角三角形']],
+[2022,'23','解','c','矩形、正方形折叠：找角、全等、分类求长',['c15:轴对称的性质','c21:矩形','c21:正方形','c14:全等三角形的性质','c20:勾股定理的应用与折叠']],
+/* ---------- 2023 ---------- */
+[2023,'1','选','c','实数大小比较（含 −√3）',['c8:实数的运算与比较']],
+[2023,'2','选','c','汝官窑鹅颈瓶的三视图',['c33:三视图']],
+[2023,'3','选','c','“4.59 亿”用科学记数法表示',['c2:科学记数法']],
+[2023,'4','选','c','相交线：对顶角相等求角',['c7:对顶角与邻补角']],
+[2023,'5','选','c','同分母分式加减',['c18:分式的加减']],
+[2023,'6','选','c','圆周角定理',['c29:圆周角定理']],
+[2023,'7','选','p','一元二次方程根的情况（评析：方程）',['c25:根的判别式']],
+[2023,'8','选','p','观看推荐影片：求概率（评析只给背景）',['c34:列表法与画树状图法']],
+[2023,'9','选','c','由二次函数图象判断一次函数图象',['c26:a、b、c 与图象','c23:k、b 与图象位置']],
+[2023,'10','选','c','动点在等边三角形内运动：读函数图象求边长',['c22:画函数图象与读图','c15:等边三角形']],
+[2023,'11','填','c','列代数式（劳动工具套数）',['c3:列代数式']],
+[2023,'12','填','c','解二元一次方程组（由解答题改为填空）',['c10:加减消元法']],
+[2023,'13','填','u','统计与概率中的一题（具体知识点未取得）',[]],
+[2023,'14','填','c','切线、全等、相似、勾股求线段',['c30:切线的性质','c14:全等三角形的性质','c31:相似三角形的判定','c20:勾股定理']],
+[2023,'15','填','c','矩形中直角三角形的存在性（不给图，分类）',['c21:矩形','c20:勾股定理']],
+[2023,'16','解','p','(1) 实数运算　(2) 整式化简',['c8:实数的运算与比较','c16:完全平方公式']],
+[2023,'17','解','p','统计应用题（具体统计量未取得）',['c24']],
+[2023,'18','解','c','尺规作角平分线；几何证明',['c14:尺规作角的平分线','c14:全等证明的书写']],
+[2023,'19','解','c','反比例函数与一次函数；四边形中的阴影面积',['c27:反比例函数','c27:与一次函数的综合','c21']],
+[2023,'20','解','c','自制测高仪：用比例式算高度',['c31:相似三角形的应用']],
+[2023,'21','解','c','购物方案：一元一次方程与不等式',['c5:列方程解应用题','c11:实际问题与不等式']],
+[2023,'22','解','c','羽毛球击球路线：二次函数表达式与最值',['c26:待定系数法','c26:增减性与最值','c26:抛物线形问题']],
+[2023,'23','解','c','“图形的变化”：平移、轴对称、旋转整合（四边形背景）',['c7:平移及其性质','c15:轴对称的性质','c28:旋转的性质','c21']],
+/* ---------- 2024 ---------- */
+[2024,'1','选','c','数轴上点表示的数',['c1:数轴']],
+[2024,'2','选','c','“5784 亿”用科学记数法表示',['c2:科学记数法']],
+[2024,'3','选','c','方向角与平行线的性质',['c6:方位角','c7:平行线的性质']],
+[2024,'4','选','c','信阳毛尖包装盒的主视图',['c33:三视图']],
+[2024,'5','选','c','使不等式组无解的不等式',['c11:不等式组的解集']],
+[2024,'6','选','c','平行四边形对角线；相似求线段长',['c21:平行四边形的性质','c31:相似三角形的性质']],
+[2024,'7','选','c','乘方的意义与幂的乘方',['c2:乘方','c16:幂的乘方']],
+[2024,'8','选','c','豫剧卡片有放回抽两次的概率',['c34:列表法与画树状图法']],
+[2024,'9','选','c','等边三角形外接圆中求阴影面积',['c29:扇形面积','c29:圆内接四边形','c15:等边三角形','c32:解直角三角形']],
+[2024,'10','选','c','插线板电流与功率：读函数图象（跨学科）',['c22:画函数图象与读图']],
+[2024,'11','填','c','写一个同类项',['c4:同类项']],
+[2024,'12','填','c','由统计图求众数',['c24:众数']],
+[2024,'13','填','c','方程有两个相等实根，求 c',['c25:根的判别式']],
+[2024,'14','填','c','坐标系中正方形折叠，求点的坐标',['c9:点的坐标','c21:正方形','c15:轴对称的性质','c20:勾股定理的应用与折叠']],
+[2024,'15','填','c','线段绕点旋转：求线段的最大值与最小值（动点最值）',['c28:旋转的性质','c29:圆周角定理','c29:圆内接四边形','c30:切线的性质','c20:勾股定理']],
+[2024,'16','解','c','(1) 二次根式与零指数幂　(2) 分式化简',['c19:二次根式的乘法','c16:同底数幂的除法','c18:混合运算与化简求值']],
+[2024,'17','解','c','两名球员的比赛数据：稳定性、中位数、加权平均',['c24:方差','c24:中位数','c24:平均数与加权平均数']],
+[2024,'18','解','c','格点矩形与反比例函数：求表达式、画图、平移',['c27:反比例函数','c27:图象','c9:用坐标表示平移']],
+[2024,'19','解','c','尺规作一个角；斜边中线；证明菱形',['c14:尺规作三角形与等角','c21:直角三角形斜边上的中线','c21:平行四边形的判定','c21:菱形']],
+[2024,'20','解','c','视角最大：圆周角与外角；解直角三角形求塑像高',['c29:圆周角定理','c13:三角形的外角','c32:实际应用']],
+[2024,'21','解','c','食品搭配：二元一次方程组；不等式与一次函数',['c10:列方程组解应用题','c11:实际问题与不等式','c23:方案选择与最值']],
+[2024,'22','解','c','竖直上抛：二次函数最值；解方程判断说法',['c26:增减性与最值','c26:抛物线形问题','c25:公式法']],
+[2024,'23','解','c','新定义“邻等对补四边形”：全等、解直角三角形、相似',['c14:全等三角形的性质','c15:等腰三角形的性质','c32:解直角三角形','c31:相似三角形的判定','c20:勾股定理']],
+/* ---------- 2025 ---------- */
+[2025,'1','选','c','进 4 球记 +4 个，失 3 球记作',['c1:相反意义的量']],
+[2025,'2','选','c','由展开图判断几何体（圆锥）',['c6:展开图']],
+[2025,'3','选','c','0.000074 用科学记数法表示',['c18:科学记数法表示较小的数']],
+[2025,'4','选','c','用量角器量正六边形零件的内角',['c21:内角和与外角和','c6:余角和补角']],
+[2025,'5','选','c','一元二次方程根的情况',['c25:根的判别式']],
+[2025,'6','选','c','网格中求 DE（三角形中位线）',['c21:三角形的中位线','c31:平行线分线段成比例']],
+[2025,'7','选','c','同分母分式加减',['c18:分式的加减']],
+[2025,'8','选','c','“美丽山河”卡片抽两张的概率',['c34:列表法与画树状图法']],
+[2025,'9','选','c','菱形折叠，求 CF',['c21:菱形','c15:轴对称的性质','c20:勾股定理','c20:勾股定理的逆定理']],
+[2025,'10','选','c','轮胎摩擦系数与车速：反比例函数图象（跨学科）',['c27:增减性','c27:实际问题与反比例函数']],
+[2025,'11','填','c','使二次根式有意义的 x',['c19:二次根式']],
+[2025,'12','填','c','两种小麦苗高的方差',['c24:方差']],
+[2025,'13','填','c','数式规律：写第 n 个式子',['c3:列代数式']],
+[2025,'14','填','c','《九章算术》割圆术：求阴影面积',['c29:垂径定理','c29:弧、弦、圆心角的关系','c29:圆周角定理','c29:扇形面积','c21:矩形']],
+[2025,'15','填','c','新定义“反直角三角形”：分类求 BP',['c15:等腰三角形的性质','c15:等腰三角形的判定','c20:勾股定理','c31:相似三角形的判定']],
+[2025,'16','解','c','(1) 实数运算（零指数幂、二次根式）　(2) 整式化简',['c19:二次根式的乘法','c16:同底数幂的除法','c16:完全平方公式']],
+[2025,'17','解','c','宪法知识测试：平均数、中位数、众数',['c24:中位数','c24:众数','c24:选择合适的统计量','c12:条形图、折线图、扇形图']],
+[2025,'18','解','c','三角板旋转与反比例函数（含斜边中线）',['c27:反比例函数','c28:旋转的性质','c21:直角三角形斜边上的中线']],
+[2025,'19','解','c','尺规作圆心（垂直平分线）；证明平行四边形',['c15:尺规作垂直平分线与垂线','c29:垂径定理','c21:平行四边形的性质','c21:平行四边形的判定']],
+[2025,'20','解','c','苹果单价：方程组；不等式与一次函数求最少花费',['c10:列方程组解应用题','c11:实际问题与不等式','c23:方案选择与最值']],
+[2025,'21','解','c','综合与实践：测焦裕禄纪念碑高（相似、解直角三角形、误差分析）',['c31:相似三角形的应用','c32:实际应用','c7:平行线的性质']],
+[2025,'22','解','c','二次函数：待定系数、顶点、画图、平移后最值之差',['c26:待定系数法','c26:顶点式与平移','c26:增减性与最值','c26:一般式与配方']],
+[2025,'23','解','c','几何探究：角平分线、矩形、相似',['c14:角平分线的性质','c21:矩形','c20:勾股定理','c31:相似三角形的判定','c31:相似三角形的性质']],
+/* ---------- 2026（原卷只取得少量文字；其余据官方评析） ---------- */
+[2026,'1','选','c','早晨气温与中午气温（有理数加法）',['c2:有理数加法法则']],
+[2026,'2','选','u','以“六五环境日”为背景（考点未取得）',[]],
+[2026,'3','选','u','生活情境（考点未取得）',[]],
+[2026,'4','选','u','评析：体现形式转化（考点未取得）',[]],
+[2026,'5','选','u','评析：体现形式转化（考点未取得）',[]],
+[2026,'6','选','u','生活情境（考点未取得）',[]],
+[2026,'7','选','u','（考点未取得）',[]],
+[2026,'8','选','u','生活情境（考点未取得）',[]],
+[2026,'9','选','u','（考点未取得）',[]],
+[2026,'10','选','c','劳动课装饰团扇边缘：圆的综合运用',['c29']],
+[2026,'11','填','p','评析：体现函数建模（具体待核）',['c22']],
+[2026,'12','填','u','（考点未取得）',[]],
+[2026,'13','填','u','评析：体现形式转化（考点未取得）',[]],
+[2026,'14','填','c','弹钢琴：“二度音程”的概率（跨学科）',['c34']],
+[2026,'15','填','c','等腰三角形：定长线段的不同位置分类构图',['c15:等腰三角形中的分类讨论']],
+[2026,'16','解','p','(2) 解不等式组（填空形式）；(1) 待核',['c11:不等式组的解集']],
+[2026,'17','解','c','“投篮机器人”数据分析',['c24']],
+[2026,'18','解','u','方程（组）应用题（是分式方程还是方程组，待核）',[]],
+[2026,'19','解','u','评析：体现形式转化（考点未取得）',[]],
+[2026,'20','解','c','长征纪念广场研学：反比例函数的应用与图象',['c27:实际问题与反比例函数','c27:图象']],
+[2026,'21','解','u','综合与实践：车库入口斜坡改造与限高（计算方法待核）',[]],
+[2026,'22','解','c','以“新定义”考查二次函数（分类讨论）',['c26']],
+[2026,'23','解','p','几何综合：SAS 证全等；给面积求角度（分两种位置）',['c14:SAS（边角边）']]
+];
+/* 压轴题位（规则 c）与综合与实践、尺规作图索引（规则 e、f） */
+window.EXAM_META={
+  years:[2022,2023,2024,2025,2026],
+  hard:['10','15','22','23'],
+  practice:[[2025,'21','测量纪念碑高度'],[2026,'21','车库入口斜坡改造']],
+  ruler:[[2022,'18(2)','作线段的垂直平分线','c15'],[2023,'18(1)','作角的平分线','c14'],[2024,'19(1)','作一个角等于已知角','c14'],[2025,'19(1)','作弦的垂直平分线确定圆心','c15']],
+  newOnly:['c24:四分位数','c24:箱线图'],
+  partial2026:'2026 年原卷只取得第 1 题文字和第 23 题的解法要点，其余据河南省教育厅官方评析；第 2–9、12、13、18、19、21 题的具体知识点未取得，不计入考频。'
+};
+</script>
+<script>
+/* ============ 考频与 ★ 的计算（网页和核对脚本共用同一段代码） ============
+   规则：考频按“年”计——一章（或一个知识点）在某年任意一道题里必须用到就记 1 年；
+   必考 5/5、高频 3–4/5、中频 1–2/5、低频 0/5；2026 年原卷未取全，没在 2026 年出现的写成“n/5 + ?”。
+   ★5：近 5 年有 3 年以上出现在解答题（第 16–23 题），或有 3 年以上用在压轴题位（第 10、15、22、23 题）；
+   ★4：考频必考或高频，但主要在选择、填空；★3：中频；★2：已核对的题目中未见；
+   ★1：新教材内容（2027 年起可考）或课本项目；规则 g（人工调整，待确认）：几乎每份卷子都要用的基础方法提到 ★4。 */
+window.FREQ_BASE=['c2:混合运算顺序','c4:合并同类项','c4:去括号','c5:等式的性质','c5:解方程的步骤','c8:算术平方根','c10:代入消元法',
+  'c11:不等式的性质','c11:解法','c13:内角和定理','c14:SSS（边边边）','c14:SAS（边角边）','c14:ASA 与 AAS','c15:等腰三角形的性质',
+  'c15:含 30° 角的直角三角形','c16:平方差公式','c17:提公因式法','c17:平方差公式分解','c17:完全平方公式分解','c18:约分与通分',
+  'c18:解分式方程与验根','c19:二次根式的性质','c19:二次根式的加减与混合运算','c20:已知两边求第三边','c23:待定系数法求解析式',
+  'c25:配方法','c25:因式分解法','c32:正弦、余弦、正切','c32:特殊角的三角函数值'];
+window.computeFreq=function(CH,EX,EM,BASE){
+  const kpId={};Object.keys(CH).forEach(id=>CH[id].secs.forEach((s,si)=>s.kps.forEach((k,j)=>{kpId[id+':'+k[0]]=`${id}-${si+1}-${j+1}`;})));
+  const ch={},kp={},bad=[];
+  const add=(m,key,h)=>{(m[key]=m[key]||{hits:[]}).hits.push(h);};
+  EX.forEach(([y,q,kind,v,desc,refs])=>{if(v==='u')return;
+    const chs=new Set(),h={y,q,kind,v,desc};
+    refs.forEach(r=>{const i=r.indexOf(':'),c=i<0?r:r.slice(0,i),k=i<0?'':r.slice(i+1);if(!CH[c]){bad.push(r);return;}chs.add(c);
+      if(k){const id=kpId[r];if(!id){bad.push(r);return;}add(kp,id,h);}});
+    chs.forEach(c=>add(ch,c,h));});
+  const tierOf=n=>n>=5?'必考':n>=3?'高频':n>=1?'中频':'低频';
+  const rate=o=>{const ys=new Set(o.hits.map(h=>h.y)),n=ys.size;
+    const ans=new Set(o.hits.filter(h=>+h.q>=16).map(h=>h.y)).size;
+    const hard=new Set(o.hits.filter(h=>EM.hard.includes(h.q)).map(h=>h.y)).size;
+    let star,why;
+    if(ans>=3||hard>=3){star=5;why=ans>=3?`近 5 年有 ${ans} 年出现在解答题（第 16–23 题）`:`近 5 年有 ${hard} 年用在压轴题位（第 10、15、22、23 题）`;}
+    else if(n>=3){star=4;why=`考频${tierOf(n)}（${n} 年），但主要在选择、填空题`;}
+    else if(n>=1){star=3;why=`考频中频（${n} 年）`;}
+    else {star=2;why='已核对的题目中未见单独设问';}
+    return Object.assign(o,{n,ans,hard,tier:tierOf(n),count:`${n}/5${ys.has(2026)?'':' + ?'}`,star,why,years:[...ys].sort(),
+      pend:o.hits.some(h=>h.v==='p')});};
+  const base=new Set(BASE||[]);
+  Object.keys(CH).forEach(id=>{ch[id]=rate(ch[id]||{hits:[]});
+    CH[id].secs.forEach((s,si)=>s.kps.forEach((k,j)=>{const kid=`${id}-${si+1}-${j+1}`,o=kp[kid]=rate(kp[kid]||{hits:[]}),key=id+':'+k[0];
+      if(EM.newOnly.includes(key)){o.star=1;o.newOnly=true;o.why='新教材内容，2027 年起可考；近 5 年河南卷未见';}
+      else if(base.has(key)&&o.star<4){o.why=`人工调整为 ★4（规则 g，待确认）：基础方法，解答题里几乎年年要用，但很少单独设问；单独设问${o.n?o.n+' 年':'未见'}`;o.star=4;o.base=true;}}));
+    if(CH[id].practice){ch[id].star=1;ch[id].why='课本综合与实践项目；考试以“综合与实践”大题出现，按设问用到的知识记在相应章';}});
+  return {ch,kp,bad};
+};
+</script>
+
+<!-- ============ 程序 ============ -->
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={ok:true,get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){this.ok=false;return d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){this.ok=false;}}};
+const CH=window.CH, BOARDS=window.BOARDS, ORDER=window.ORDER, DOMAINS=window.DOMAINS, WEAK_SRC=window.WEAK_SRC;
+const CN=['','一','二','三','四','五','六','七','八','九','十'];
+const cn=n=>n<=10?CN[n]:n<20?'十'+CN[n-10]:CN[Math.floor(n/10)]+'十'+(n%10?CN[n%10]:'');
+const BOOKFULL={'七上':'七年级上册','七下':'七年级下册','八上':'八年级上册','八下':'八年级下册','九上':'九年级上册','九下':'九年级下册'};
+const PROG={'七上':0,'七下':0,'八上':0,'八下':0,'九上':0,'九下':0};
+const PROG_NAME=['','',''];
+const WEAK_C='#9f1239';
+/* 学习状态：和化学同一套（名称、颜色、批量标、导出导入），键名前缀 sxzs. */
+const APP='初中数学知识体系';
+const DEFAULT_NAMES=['要预习','学习中','要巩固','已掌握'];
+const ST_C=['#94a3b8','#b45309','#1d4ed8','#15803d'], RING_C=['#d5dde7','#d97706','#1d4ed8','#15803d'];
+const TIER_C={'必考':'#b42318','高频':'#c2410c','中频':'#1d4ed8','低频':'#64748b'}, STAR_C='#b7791f', STAR_OFF='#d6dbe2';
+let names=store.get('sxzs.statusNames',DEFAULT_NAMES);
+if(!Array.isArray(names)||names.length!==4||names.some(n=>typeof n!=='string'||!n.trim())) names=DEFAULT_NAMES.slice();
+let status=store.get('sxzs.status',{}); if(!status||typeof status!=='object') status={};
+const stOf=k=>{const n=+status[k];return n>=0&&n<=3?n:0;};
+const kpKey=(id,si,j)=>`${id}-${si+1}-${j+1}`;
+Object.keys(CH).forEach(id=>{CH[id].id=id;});
+const KPS_OF={};Object.keys(CH).forEach(id=>{KPS_OF[id]=[];CH[id].secs.forEach((s,si)=>s.kps.forEach((k,j)=>KPS_OF[id].push(kpKey(id,si,j))));});
+const KP_NAME={};Object.keys(CH).forEach(id=>CH[id].secs.forEach((s,si)=>s.kps.forEach((k,j)=>{KP_NAME[kpKey(id,si,j)]=k[0];})));
+/* 考频与 ★（computeFreq 见数据层） */
+const FREQ=window.computeFreq(CH,window.EXAM,window.EXAM_META,window.FREQ_BASE);
+const starTxt=n=>'★'.repeat(n);
+const starHTML=n=>`<span class="stars" title="重要度 ${n} 星">${'★'.repeat(n)}<span class="off">${'★'.repeat(5-n)}</span></span>`;
+const tierHTML=f=>`<span class="tier" data-t="${f.tier}">${f.tier} ${esc(f.count)}</span>`;
+const progTag=c=>PROG[c.book]?`<span class="prog" data-p="${PROG[c.book]}">${PROG_NAME[PROG[c.book]]}</span>`:'';
+/* 小圆饼（一个知识点的状态）、彩色圈（一章各知识点的状态），画法与化学相同 */
+function pieSVG(cx,cy,r,s){
+  const c=ST_C[s];
+  if(s===3) return `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${r}" fill="${c}"/><path d="M${f1(cx-r*.48)} ${f1(cy+r*.02)}L${f1(cx-r*.12)} ${f1(cy+r*.4)}L${f1(cx+r*.5)} ${f1(cy-r*.36)}" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  let h=`<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(r-.7)}" fill="#fff" stroke="${c}" stroke-width="1.4"/>`;
+  if(s>0){const a=2*Math.PI*s/3,x=cx+r*Math.sin(a),y=cy-r*Math.cos(a);h+=`<path d="M${f1(cx)} ${f1(cy)}V${f1(cy-r)}A${r} ${r} 0 ${a>Math.PI?1:0} 1 ${f1(x)} ${f1(y)}Z" fill="${c}"/>`;}
+  return h;
+}
+function ringSVG(cx,cy,r,arr){
+  const n=arr.length;if(!n)return '';
+  if(n===1) return `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${r}" fill="none" stroke="${RING_C[arr[0]]}" stroke-width="3.4"/>`;
+  const g=Math.min(.16,Math.PI/n*.5),p=a=>`${f1(cx+r*Math.sin(a))} ${f1(cy-r*Math.cos(a))}`;
+  return arr.map((s,i)=>{const a0=i/n*2*Math.PI+g/2,a1=(i+1)/n*2*Math.PI-g/2;
+    return `<path d="M${p(a0)}A${r} ${r} 0 ${a1-a0>Math.PI?1:0} 1 ${p(a1)}" fill="none" stroke="${RING_C[s]}" stroke-width="3.4"/>`;}).join('');
+}
+function paintPies(root){
+  root=root||document;
+  root.querySelectorAll('[data-pie]').forEach(g=>{const k=g.dataset.pie,s=stOf(k);g.innerHTML=`<title>${esc(KP_NAME[k]||'')}：${esc(names[s])}</title>`+pieSVG(+g.dataset.cx,+g.dataset.cy,+g.dataset.r,s);});
+  root.querySelectorAll('[data-ring]').forEach(g=>{g.innerHTML=ringSVG(+g.dataset.cx,+g.dataset.cy,+g.dataset.r,KPS_OF[g.dataset.ring].map(stOf));});
+}
+const boardOf=id=>BOARDS.find(b=>b.items.includes(id));
+const chTitle=c=>c.practice?`综合与实践　${c.name}`:`第${cn(c.no)}章　${c.name}`;
+const chShort=c=>c.practice?`综合与实践：${c.name}`:`第${cn(c.no)}章 ${c.name}`;
+const secLabel=(c,i)=>(c.practice||c.noSecNo)?c.secs[i].name:`${c.no}.${i+1}　${c.secs[i].name}`;
+const weakOf=c=>c.secs.reduce((a,s)=>a+s.kps.filter(k=>k[2]).length,0);
+
+/* ---------- 数学排版：⟨分子|分母⟩、√⟪被开方数⟫、^{上标}、_{下标}、⌒⟦弧⟧、字母自动斜体 ---------- */
+const UPRIGHT=new Set(['sin','cos','tan','Rt','SSS','SAS','ASA','AAS','HL','SSA','AAA']);
+function fmtMath(s){
+  s=String(s).replace(/([A-Za-z])̄/g,'\u0004$1\u0005');
+  s=s.replace(/[A-Za-z]+/g,w=>UPRIGHT.has(w)?w:'\u0001'+w+'\u0002');
+  s=esc(s).replace(/\u0001/g,'<i>').replace(/\u0002/g,'</i>').replace(/\u0004/g,'<span class="ov">').replace(/\u0005/g,'</span>');
+  s=s.replace(/\^\{([^}]*)\}/g,'<sup>$1</sup>').replace(/_\{([^}]*)\}/g,'<sub>$1</sub>');
+  s=s.replace(/(√|∛)⟪([^⟪⟫]*)⟫/g,'<span class="rad">$1<span class="rad-in">$2</span></span>');
+  s=s.replace(/(√|∛)(\d+|<i>[^<]+<\/i>)/g,'<span class="rad">$1<span class="rad-in">$2</span></span>');
+  s=s.replace(/⟨([^⟨⟩|]*)\|([^⟨⟩]*)⟩/g,'<span class="frac"><span>$1</span><span>$2</span></span>');
+  s=s.replace(/⌒⟦([^⟦⟧]*)⟧/g,'<span class="arc">$1</span>');
+  return s.replace(/ⓘ/g,'<span class="i" title="名称或归属待对照课本核实">ⓘ</span>');
+}
+const paren=x=>/[ +−±·]/.test(x.trim())?`(${x.trim()})`:x.trim();
+function toPlain(s){
+  return String(s).replace(/(√|∛)⟪([^⟪⟫]*)⟫/g,(m,r,x)=>r+paren(x))
+    .replace(/⟨([^⟨⟩|]*)\|([^⟨⟩]*)⟩/g,(m,a,b)=>paren(a)+'/'+paren(b))
+    .replace(/⌒⟦([^⟦⟧]*)⟧/g,'弧$1').replace(/\^\{([^}]*)\}/g,'^$1').replace(/_\{([^}]*)\}/g,'$1').replace(/ⓘ/g,'（待核实）');
+}
+const weakTag=w=>'';
+
+const allIds=Object.keys(CH);
+const nKp=allIds.reduce((a,id)=>a+CH[id].secs.reduce((b,s)=>b+s.kps.length,0),0);
+const nCh=allIds.filter(id=>!CH[id].practice).length, nPr=allIds.length-nCh;
+const nSec=allIds.filter(id=>!CH[id].practice&&!CH[id].noSecNo).reduce((a,id)=>a+CH[id].secs.length,0);
+const nGrp=allIds.filter(id=>CH[id].noSecNo).reduce((a,id)=>a+CH[id].secs.length,0);
+const nWeak=allIds.reduce((a,id)=>a+weakOf(CH[id]),0);
+const SEC_TXT=()=>`${nSec} 节（另有九下 3 章按内容分的 ${nGrp} 组）`;
+
+/* ---------- SVG 小工具（沿用物理、生物导图的画法） ---------- */
+const SANS="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',sans-serif";
+const SERIF="'Songti SC','STSong','Noto Serif CJK SC','Source Han Serif SC','SimSun',serif";
+const MATHF="'Times New Roman','STIX Two Math',serif";
+const INK='#1f2430', INK2='#4b5262', INK3='#6b7282';
+const f1=n=>Math.round(n*10)/10;
+const tw=(s,size)=>{let w=0;for(const ch of String(s)) w+=(/[ -~]/.test(ch)?(/[0-9]/.test(ch)?0.56:0.5):/[²³₁₂√∛≌∽⊥∥·±−×÷°′″Δπ]/.test(ch)?0.6:1)*size;return w;};
+const tint=(hex,a)=>{const n=parseInt(hex.slice(1),16),m=x=>Math.round(255-(255-x)*a);return `rgb(${m(n>>16)},${m(n>>8&255)},${m(n&255)})`;};
+const T=(x,y,size,fill,txt,extra)=>`<text x="${f1(x)}" y="${f1(y)}" font-family="${SANS}" font-size="${size}" fill="${fill}"${extra||''}>${txt}</text>`;
+const taper=(x1,y1,x2,y2,w1,w2)=>{const m=(x1+x2)/2;return `M${f1(x1)} ${f1(y1-w1/2)}C${f1(m)} ${f1(y1-w1/2)} ${f1(m)} ${f1(y2-w2/2)} ${f1(x2)} ${f1(y2-w2/2)}L${f1(x2)} ${f1(y2+w2/2)}C${f1(m)} ${f1(y2+w2/2)} ${f1(m)} ${f1(y1+w1/2)} ${f1(x1)} ${f1(y1+w1/2)}Z`;};
+function cloud(x,y,w,h,step){
+  const nx=Math.max(2,Math.round(w/step)),ny=Math.max(1,Math.round(h/step)),sx=w/nx,sy=h/ny,rx=f1(sx*.62),ry=f1(sy*.62);
+  let d=`M${f1(x)} ${f1(y)}`;
+  for(let i=0;i<nx;i++) d+=`a${rx} ${rx} 0 0 1 ${f1(sx)} 0`;
+  for(let i=0;i<ny;i++) d+=`a${ry} ${ry} 0 0 1 0 ${f1(sy)}`;
+  for(let i=0;i<nx;i++) d+=`a${rx} ${rx} 0 0 1 ${f1(-sx)} 0`;
+  for(let i=0;i<ny;i++) d+=`a${ry} ${ry} 0 0 1 0 ${f1(-sy)}`;
+  return d+'Z';
+}
+/* 排版：叶子从上往下排，父节点取子节点的中点；左右两侧各自居中 */
+function layoutMap(kids,o){
+  const all=[];
+  ['R','L'].forEach(sd=>{
+    const top=kids.filter(n=>n.side===sd);if(!top.length)return;
+    const mine=[];let cur=0;
+    const place=(n,d,first)=>{
+      n.d=d;n.side=sd;all.push(n);mine.push(n);
+      if(!first) cur+=o.gap[d]||0;
+      const ch=n.children||[];
+      if(!ch.length){n.cy=cur+n.h/2;cur+=n.h;return;}
+      const start=cur,from=mine.length;
+      ch.forEach((c,i)=>place(c,d+1,i===0));
+      const span=cur-start;
+      if(span<n.h){const sh=(n.h-span)/2;mine.slice(from).forEach(m=>m.cy+=sh);cur=start+n.h;}
+      n.cy=(ch[0].cy+ch[ch.length-1].cy)/2;
+    };
+    top.forEach((n,i)=>place(n,1,i===0));
+    mine.forEach(n=>n.cy-=cur/2);
+    const maxW=[];mine.forEach(n=>maxW[n.d]=Math.max(maxW[n.d]||0,n.w));
+    let e=o.half;const inner=[];
+    for(let d=1;d<maxW.length;d++){e+=o.col[d];inner[d]=e;e+=maxW[d];}
+    mine.forEach(n=>{const x=inner[n.d];
+      if(sd==='R'){n.left=x;n.inX=x;n.outX=x+n.w;}else{n.left=-x-n.w;n.inX=-x;n.outX=-x-n.w;}});
+  });
+  return all;
+}
+function linkSVG(p,n,o){
+  if(n.d===1) return `<path d="${taper(n.side==='R'?o.root:-o.root,0,n.inX,n.cy,o.t0,o.t1)}" fill="${n.color}"/>`;
+  const x1=p.outX,y1=p.cy,x2=n.inX,y2=n.ul?n.cy+n.ulY:n.cy,m=(x1+x2)/2;
+  let d=`M${f1(x1)} ${f1(y1)}C${f1(m)} ${f1(y1)} ${f1(m)} ${f1(y2)} ${f1(x2)} ${f1(y2)}`;
+  if(n.ul) d+=`H${f1(n.side==='R'?n.left+n.w:n.left)}`;
+  return `<path d="${d}" fill="none" stroke="${n.color}" stroke-width="${o.sw[n.d]}"${n.ul?' stroke-opacity=".7"':''} stroke-linecap="round"/>`;
+}
+function flowLegend(groups,x,y,maxW){
+  let cx=x,cy=y,s='';const LH=27;
+  groups.forEach(g=>{
+    if(g==='br'){cx=x;cy+=LH;return;}
+    const gw=g.reduce((a,it)=>a+it.w,0)+10*(g.length-1);
+    if(cx>x&&cx+gw>x+maxW){cx=x;cy+=LH;}
+    g.forEach((it,i)=>{if(i)cx+=10;s+=it.d(cx,cy);cx+=it.w;});
+    cx+=30;
+  });
+  return {svg:s,h:cy-y+LH};
+}
+const LG={
+  txt:(s,size,fill,extra)=>{size=size||13.5;return {w:tw(s,size),d:(x,y)=>T(x,y+size*.36,size,fill||INK2,esc(s),extra)};},
+  dot:c=>({w:12,d:(x,y)=>`<circle cx="${f1(x+6)}" cy="${f1(y)}" r="6" fill="${c}"/>`}),
+  weak:()=>({w:38,d:(x,y)=>`<rect x="${f1(x)}" y="${f1(y-9)}" width="38" height="18" rx="4" fill="#fff1f3" stroke="${WEAK_C}" stroke-width="1"/>`+T(x+19,y+4.3,12,WEAK_C,'薄弱',' text-anchor="middle"')}),
+  pair:(a,b)=>({w:a.w+5+b.w,d:(x,y)=>a.d(x,y)+b.d(x+a.w+5,y)}),
+  pie:s=>({w:13,d:(x,y)=>pieSVG(x+6.5,y,6.5,s)}),
+  states:()=>[LG.txt('我的状态：')].concat([0,1,2,3].map(i=>LG.pair(LG.pie(i),LG.txt(names[i]))))
+};
+function drawMap(o){
+  const all=layoutMap(o.kids,o);
+  let [x0,y0,x1,y1]=o.center.box;
+  all.forEach(n=>{x0=Math.min(x0,n.left);x1=Math.max(x1,n.left+n.w);y0=Math.min(y0,n.cy-n.h/2);y1=Math.max(y1,n.cy+n.h/2);});
+  let clouds='';
+  if(o.clouds) all.filter(n=>n.d===1).forEach(b=>{
+    const g=all.filter(m=>m===b||m.k.startsWith(b.k+'-')),P=18;
+    const a=Math.min(...g.map(m=>m.left))-P,z=Math.max(...g.map(m=>m.left+m.w))+P,t=Math.min(...g.map(m=>m.cy-m.h/2))-P,u=Math.max(...g.map(m=>m.cy+m.h/2))+P;
+    b.bb=[a-16,t-16,z-a+32,u-t+32].map(f1).join(' ');
+    clouds+=`<g class="mm-g" data-k="${b.k}"><path d="${cloud(a,t,z-a,u-t,42)}" fill="${b.color}" fill-opacity=".055" stroke="${b.color}" stroke-opacity=".32" stroke-width="1.4"/></g>`;
+    x0=Math.min(x0,a-12);x1=Math.max(x1,z+12);y0=Math.min(y0,t-12);y1=Math.max(y1,u+12);
+  });
+  const byK={};all.forEach(n=>byK[n.k]=n);
+  const layers=[];
+  all.forEach(n=>{const p=n.d>1?byK[n.k.slice(0,n.k.lastIndexOf('-'))]:null;
+    (layers[n.d]=layers[n.d]||[]).push(`<g class="mm-g" data-k="${n.k}">${linkSVG(p,n,o)}${n.draw(n)}</g>`);});
+  const P=36,lg=o.legend(x0,y1+46,x1-x0);
+  const vx=x0-P,vy=y0-P,vw=x1-x0+2*P,vh=y1+46+lg.h-y0+P-6;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${f1(vx)} ${f1(vy)} ${f1(vw)} ${f1(vh)}" role="group" aria-label="${esc(o.label)}">
+<defs><pattern id="grid-${o.id}" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#ebebe4" stroke-width="1"/></pattern></defs>
+<rect x="${f1(vx)}" y="${f1(vy)}" width="${f1(vw)}" height="${f1(vh)}" fill="#fcfcfa"/><rect x="${f1(vx)}" y="${f1(vy)}" width="${f1(vw)}" height="${f1(vh)}" fill="url(#grid-${o.id})"/>
+${clouds}${o.center.back?o.center.back():''}${layers.slice(1).map(l=>l.join('')).join('')}${o.center.draw()}${lg.svg}</svg>`;
+}
+const itemsW=(c,d)=>{const a=c.concat(d);return a.reduce((s,it)=>s+it.w,0)+6*(a.length-1);};
+function drawItems(n){const seq=n.side==='L'?n.deco.concat(n.core):n.core.concat(n.deco);let x=n.left,s='';seq.forEach((it,i)=>{if(i)x+=6;s+=it.d(x);x+=it.w;});return s;}
+function drawLeaf(n){
+  const inner=`<title>${esc(n.title)}</title><rect x="${f1(n.left)}" y="${f1(n.cy-n.h/2)}" width="${f1(n.w)}" height="${n.h}" fill="transparent"/>`+drawItems(n);
+  return n.href?`<a href="${n.href}" class="mm-node" data-k="${n.k}">${inner}</a>`:`<g class="mm-node" data-k="${n.k}">${inner}</g>`;
+}
+function drawBoard(n){
+  return `<g class="mm-node" data-k="${n.k}"${n.bb?` data-bb="${n.bb}"`:''}><title>${esc(n.title+(n.bb?'｜点一下放大这一块':''))}</title>
+<rect x="${f1(n.left)}" y="${f1(n.cy-n.h/2)}" width="${f1(n.w)}" height="${n.h}" rx="${n.h/2}" fill="${n.color}"/>
+<path transform="translate(${f1(n.left+11)} ${f1(n.cy-12)})" d="${n.icon}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="${f1(n.left+42)}" y="${f1(n.cy+7.6)}" font-family="${SERIF}" font-size="22" font-weight="700" fill="#fff">${esc(n.label)}</text></g>`;
+}
+const WK_W=n=>n?tw(`薄弱 ${n}`,11.5)+10:0;
+/* 小标记（SVG）：考频圆点 + 文字、★ */
+const SV={
+  dots:(x,cy,f)=>{const c=TIER_C[f.tier];let s='';for(let i=0;i<5;i++)s+=i<f.n?`<circle cx="${f1(x+3.4+i*9.2)}" cy="${f1(cy)}" r="3.4" fill="${c}"/>`:`<circle cx="${f1(x+3.4+i*9.2)}" cy="${f1(cy)}" r="3" fill="#fff" stroke="#c3ccd8" stroke-width="1.2"/>`;
+    const t=f.tier+(f.count.indexOf('?')>0?'?':'');return s+T(x+5*9.2+3,cy+4.3,12,c,esc(t),' font-weight="700"');},
+  dotsW:f=>5*9.2+3+tw(f.tier+(f.count.indexOf('?')>0?'?':''),12),
+  star:(x,cy,n,size)=>T(x,cy+(size||12.5)*.36,size||12.5,STAR_C,starTxt(n),' letter-spacing=".5"'),
+  starW:(n,size)=>tw(starTxt(n),size||12.5)*0.98+n*.5,
+  prog:(x,cy,p)=>{const t=PROG_NAME[p],w=tw(t,11.5)+10;return `<rect x="${f1(x)}" y="${f1(cy-9)}" width="${f1(w)}" height="18" rx="4" fill="#fff" stroke="${p===1?INK:'#9aa0a8'}" stroke-width="1"${p===2?' stroke-dasharray="3 2"':''}/>`+T(x+w/2,cy+4.2,11.5,p===1?INK:INK3,esc(t),' text-anchor="middle"'+(p===1?' font-weight="700"':''));},
+  progW:p=>p?tw(PROG_NAME[p],11.5)+10:0,
+  weak:(x,cy,n)=>{const w=WK_W(n);return `<rect x="${f1(x)}" y="${f1(cy-9)}" width="${f1(w)}" height="18" rx="4" fill="#fff1f3" stroke="${WEAK_C}" stroke-width="1"/>`+T(x+w/2,cy+4.2,11.5,WEAK_C,`薄弱 ${n}`,' text-anchor="middle"');}
+};
+function chapW(c,wk){const f=FREQ.ch[c.id],p=PROG[c.book];
+  return 42+tw(c.name,17)+10+tw(c.book,12.5)+8+(p?SV.progW(p)+6:0)+(c.practice?0:SV.dotsW(f)+8+SV.starW(f.star)+8)+(wk?WK_W(wk)+6:0)+8;}
+function drawChap(n){
+  const c=n.c,bx=n.left+21,p=PROG[c.book],code=c.practice?'实':String(c.no),f=FREQ.ch[n.id];
+  let s=`<title>${esc(chShort(c)+'（'+c.book+'）'+(c.practice?'':`｜近 5 年河南中考：${f.tier} ${f.count}，★${f.star}`)+('')+'｜点一下看本章导图')}</title>
+<rect x="${f1(n.left)}" y="${f1(n.cy-n.h/2)}" width="${f1(n.w)}" height="${n.h}" rx="20" fill="#fff" stroke="${n.color}" stroke-width="1.6"/>
+<circle cx="${f1(bx)}" cy="${f1(n.cy)}" r="12" fill="${n.color}"/><g data-ring="${n.id}" data-cx="${f1(bx)}" data-cy="${f1(n.cy)}" data-r="15.6"></g>`+T(bx,n.cy+4.4,code.length>1?11.5:13,'#fff',esc(code),' text-anchor="middle" font-weight="700"');
+  s+=`<text x="${f1(n.left+42)}" y="${f1(n.cy+6)}" font-family="${SERIF}" font-size="17" font-weight="700" fill="${INK}">${esc(c.name)}</text>`;
+  let x=n.left+42+tw(c.name,17)+10;
+  s+=T(x,n.cy+4.6,12.5,INK3,esc(c.book),' font-weight="700"');x+=tw(c.book,12.5)+8;
+  if(p){s+=SV.prog(x,n.cy,p);x+=SV.progW(p)+6;}
+  if(!c.practice){s+=SV.dots(x,n.cy,f);x+=SV.dotsW(f)+8;s+=SV.star(x,n.cy,f.star);x+=SV.starW(f.star)+8;}
+  if(n.wk) s+=SV.weak(x,n.cy,n.wk);
+  return `<a href="#cmap" data-ch="${n.id}" class="mm-node" data-k="${n.k}">${s}</a>`;
+}
+function secNode(k,label,color,href,keys){
+  const n={k,color,ul:true,ulY:10.2,h:26,draw:drawLeaf,href,title:`${label}｜点名称在文字版里看这一节，小圆饼是各知识点的学习状态`};
+  n.core=[{w:tw(label,14.5),d:x=>T(x,n.cy+5.2,14.5,INK,esc(label))}];
+  n.deco=keys&&keys.length?[{w:keys.length*13-2,d:x=>keys.map((key,i)=>`<g data-pie="${key}" data-cx="${f1(x+5+i*13)}" data-cy="${f1(n.cy)}" data-r="5"></g>`).join('')}]:[];
+  n.w=itemsW(n.core,n.deco);
+  return n;
+}
+function buildAtlas(depth){
+  const kids=[];
+  BOARDS.forEach((b,bi)=>{
+    const bk='b'+bi;
+    const bn={k:bk,side:b.side,color:b.color,h:44,w:42+tw(b.name,22)+20,draw:drawBoard,label:b.name,icon:b.icon,
+      title:`${DOMAINS[b.domain]} · ${b.name}：`+b.items.map(id=>chShort(CH[id])).join('、')};
+    bn.children=b.items.map((id,ci)=>{
+      const c=CH[id],ck=bk+'-c'+ci,wk=weakOf(c);
+      const n={k:ck,color:b.color,c,id,wk,h:40,draw:drawChap};
+      n.w=chapW(c,wk);
+      if(depth>=3&&!c.practice) n.children=c.secs.map((s,si)=>secNode(ck+'-s'+si,(c.noSecNo?'':`${c.no}.${si+1} `)+s.name+(c.noSecNo?' ⓘ':''),b.color,`#s-${id}-${si+1}`,s.kps.map((kp,j)=>kpKey(id,si,j))));
+      return n;
+    });
+    kids.push(bn);
+  });
+  const doms=[['num','数与代数'],['stat','统计与概率'],['geo','图形与几何'],['prac','综合与实践']];
+  return drawMap({id:'atlas',kids,half:104,col:[0,70,46,40],gap:[0,60,12,0],sw:[0,0,3,1.4],t0:18,t1:9,root:44,clouds:true,
+    label:`初中数学知识地图：8 个主题和综合与实践，${nCh} 章、${SEC_TXT()}，另有 ${nPr} 个综合与实践项目`,
+    center:{box:[-150,-112,150,112],
+      back:()=>`<g aria-hidden="true" fill="none" stroke-linecap="round"><path d="M-136 0H130M0 136V-130" stroke="#c9cbc4" stroke-width="1.3"/><path d="M124 -5 132 0 124 5M-5 -124 0 -132 5 -124" stroke="#c9cbc4" stroke-width="1.3"/><circle cx="0" cy="0" r="112" stroke="#d9ab2a" stroke-width="1.3" stroke-dasharray="1 7"/><path d="M78 -80A112 112 0 0 1 112 -2" stroke="#d9ab2a" stroke-width="2"/><path d="M-112 6A112 112 0 0 0 -60 95" stroke="#c9cbc4" stroke-width="1.3"/><circle cx="78" cy="-80" r="3" fill="#3b4049"/></g>`,
+      draw:()=>`<circle cx="0" cy="0" r="94" fill="#fff" stroke="${INK}" stroke-width="2.4"/><circle cx="0" cy="0" r="86" fill="none" stroke="#e3dbd0"/>`+
+        T(0,-36,13,INK3,'人教版新版',' text-anchor="middle" letter-spacing="1"')+
+        `<text x="0" y="10" text-anchor="middle" font-family="${SERIF}" font-size="30" font-weight="700" fill="${INK}" letter-spacing="1">初中数学</text>`+
+        T(0,40,15,INK3,'知识地图',' text-anchor="middle" letter-spacing="5"')},
+    legend:(x,y,w)=>flowLegend([
+      [LG.txt('考频（近 5 年河南中考考到的年数）：',13.5,INK2)].concat(['必考','高频','中频','低频'].map(t=>({w:SV.dotsW({tier:t,count:'',n:0})+0,d:(xx,yy)=>SV.dots(xx,yy,{tier:t,n:{'必考':5,'高频':4,'中频':2,'低频':0}[t],count:''})}))),
+      [LG.txt('?＝2026 年原卷没取全，可能还更多',12.5,INK3)],'br',
+      [{w:SV.starW(5),d:(xx,yy)=>SV.star(xx,yy,5)},LG.txt('重要度 1–5 星')],
+      
+      'br',
+      LG.states(),
+      [{w:34,d:(xx,yy)=>`<circle cx="${f1(xx+17)}" cy="${f1(yy)}" r="12" fill="${INK2}"/>`+ringSVG(xx+17,yy,15.6,[3,3,2,1,0,0])+T(xx+17,yy+4.4,12,'#fff','21',' text-anchor="middle" font-weight="700"')},LG.txt('章号外的彩色圈：这一章每个知识点的状态')],'br',
+      [LG.txt('四个领域：',13.5,INK2)].concat(doms.map(([d,nm])=>({w:12+5+tw(nm,13.5)+4+tw('（'+BOARDS.filter(b=>b.domain===d).map(b=>b.name).join('、')+'）',12.5)+6,
+        d:(xx,yy)=>LG.dot(BOARDS.find(b=>b.domain===d).color).d(xx,yy)+T(xx+17,yy+4.9,13.5,INK,esc(nm),' font-weight="700"')+T(xx+17+tw(nm,13.5)+4,yy+4.5,12.5,INK3,esc('（'+BOARDS.filter(b=>b.domain===d).map(b=>b.name).join('、')+'）'))}))),'br',
+      [LG.txt('主题＝《义务教育数学课程标准（2022 年版）》第四学段的主题；章、节＝人教版新版教材目录（全书连续编章）。“实”表示综合与实践项目。',13,INK2)],'br',
+      [LG.txt('点章打开“本章导图”（画到每个知识点）；点节跳到文字版；点主题名放大这一块。',13,INK2)],'br',
+      [LG.txt(`共 ${nCh} 章、${SEC_TXT()}、${nPr} 个综合与实践项目、${nKp} 个知识点。`,12.5,INK3)]
+    ],x,y,w)});
+}
+/* 长名称折成两行 */
+const split2=(s,max)=>{
+  max=max||11;if(s.length<=max) return [s];
+  const n=s.length,mid=n/2;let best=Math.ceil(mid),bs=1e9;
+  for(let p=2;p<=n-2;p++){
+    let sc=Math.abs(p-mid);const a=s[p-1],b=s[p];
+    if('，、'.includes(a)||(a==='—'&&b!=='—')) sc-=3; else if('与和对或'.includes(a)) sc-=2.5;
+    if(b==='的'||'，、'.includes(b)||(a==='—'&&b==='—')) sc+=10;
+    if(sc<bs){bs=sc;best=p;}
+  }
+  return [s.slice(0,best),s.slice(best)];
+};
+function drawSecPill(n){
+  const hasNo=!!n.no,bw=hasNo?Math.max(23,tw(n.no,12.5)+10):0,bx=n.left+5+bw/2;
+  let s=`<title>${esc(n.title)}</title><rect x="${f1(n.left)}" y="${f1(n.cy-n.h/2)}" width="${f1(n.w)}" height="${n.h}" rx="${n.lines.length>1?16:20}" fill="${n.color}"/>`;
+  if(hasNo) s+=`<rect x="${f1(bx-bw/2)}" y="${f1(n.cy-11.5)}" width="${f1(bw)}" height="23" rx="11.5" fill="#fff"/>`+T(bx,n.cy+4.4,12.5,n.color,esc(n.no),' text-anchor="middle" font-weight="700"');
+  const tx=n.left+(hasNo?bw+13:18);
+  n.lines.forEach((l,i)=>{s+=T(tx,n.cy+5.6+(i-(n.lines.length-1)/2)*21,15.5,'#fff',esc(l),' font-weight="700"');});
+  return `<a href="${n.href}" class="mm-node" data-k="${n.k}">${s}</a>`;
+}
+function kpNode(k,kp,color,href,key){
+  const t=kp[0]+(kp[1].indexOf('ⓘ')>=0?' ⓘ':''),f=FREQ.kp[key],tt=f.tier+(f.n?' '+f.n+'/5':'');
+  const n={k,color,ul:true,ulY:10.5,h:30,draw:drawLeaf,href,title:kp[0]+`（★${f.star}，近 5 年 ${f.tier} ${f.count}${f.hits.length?'：'+f.hits.map(h=>h.y+'-'+h.q).join('、'):''}）：`+toPlain(kp[1])+('')};
+  n.core=[{w:13,d:x=>`<g data-pie="${key}" data-cx="${f1(x+6.5)}" data-cy="${f1(n.cy)}" data-r="6.5"></g>`},{w:tw(t,15),d:x=>T(x,n.cy+5.4,15,INK,esc(t),' font-weight="600"')}];
+  n.deco=[{w:SV.starW(f.star,11.5),d:x=>SV.star(x,n.cy,f.star,11.5)},{w:tw(tt,11.5),d:x=>T(x,n.cy+4.2,11.5,TIER_C[f.tier],esc(tt),' font-weight="700"')}];
+  if(kp[2]) n.deco.push({w:38,d:x=>LG.weak().d(x,n.cy)});
+  n.w=itemsW(n.core,n.deco);
+  return n;
+}
+function buildChapterMap(id){
+  const c=CH[id],b=boardOf(id),color=b.color,p=PROG[c.book],f=FREQ.ch[id];
+  const kids=c.secs.map((s,i)=>{
+    const lines=split2(s.name),no=(c.practice||c.noSecNo)?'':`${c.no}.${i+1}`;
+    const n={k:'s'+i,side:'R',color,lines,no,h:lines.length>1?58:40,href:`#s-${id}-${i+1}`,draw:drawSecPill,title:`${secLabel(c,i)}｜点一下在文字版里看这一节`};
+    const bw=no?Math.max(23,tw(no,12.5)+10):0;
+    n.w=(no?bw+13:18)+Math.max(...lines.map(l=>tw(l,15.5)))+18;
+    n.children=s.kps.map((kp,j)=>kpNode('s'+i+'-k'+j,kp,color,`#k-${id}-${i+1}-${j+1}`,kpKey(id,i,j)));
+    return n;
+  });
+  const nameLines=split2(c.name,9);
+  const fl=c.practice?'课本项目 · ★1':`${f.tier} ${f.count} · ★${f.star}`;
+  const half=Math.max(104,Math.max(...nameLines.map(l=>tw(l,25)))/2+22,tw(fl,13.5)/2+20),hh=nameLines.length>1?84:72;
+  const top=c.practice?'综合与实践':`${BOOKFULL[c.book]}　第${cn(c.no)}章`;
+  return drawMap({id:'cm',kids,half,col:[0,56,44],gap:[0,18,0],sw:[0,0,1.8],t0:14,t1:7,root:half-18,clouds:false,
+    label:`${chShort(c)}导图：各节与知识点`,
+    center:{box:[-half,-hh,half,hh],
+      draw:()=>`<rect x="${f1(-half)}" y="${-hh}" width="${f1(2*half)}" height="${2*hh}" rx="18" fill="#fff" stroke="${INK}" stroke-width="2.2"/>`+
+        T(0,-hh+26,13.5,INK3,esc(top),' text-anchor="middle" letter-spacing="1"')+
+        nameLines.map((l,i)=>`<text x="0" y="${f1(2+(i-(nameLines.length-1)/2)*30)}" text-anchor="middle" font-family="${SERIF}" font-size="25" font-weight="700" fill="${INK}">${esc(l)}</text>`).join('')+
+        T(0,hh-38,13.5,c.practice?INK3:TIER_C[f.tier],esc(fl),' text-anchor="middle" font-weight="700"')+
+        T(0,hh-16,13,p===1?INK:INK3,esc(c.book),' text-anchor="middle"'+(p===1?' font-weight="700"':''))},
+    legend:(x,y,w)=>flowLegend([
+      [LG.txt(`所属：${DOMAINS[b.domain]} · ${b.name}　｜　点节名、知识点可跳到文字版看详细内容、改学习状态。`,13.5,INK2)],'br',
+      LG.states(),
+      [{w:SV.starW(4,11.5),d:(xx,yy)=>SV.star(xx,yy,4,11.5)},LG.txt('知识点重要度',13,INK2),{w:tw('高频 3/5',11.5),d:(xx,yy)=>T(xx,yy+4.2,11.5,TIER_C['高频'],'高频 3/5',' font-weight="700"')},LG.txt('近 5 年河南中考考到的年数',13,INK2)],
+      'br',
+      [LG.txt('知识点按课标和教材通行内容整理，归入哪一节以课本为准；带 ⓘ 的待对照课本核实。',12.5,INK3)]
+    ],x,y,w)});
+}
+
+/* ---------- 竖版（手机） ---------- */
+const vmVars=c=>`--c:${c};--t:${tint(c,.06)};--tb:${tint(c,.3)};--l:${tint(c,.5)};--tp:${tint(c,.16)}`;
+const vmBadge=(c,color)=>{const code=c.practice?'实':String(c.no);return `<svg class="vm-badge" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="12.5" fill="${color}"/><g data-ring="${c.id}" data-cx="18" data-cy="18" data-r="16.2"></g><text x="18" y="22.4" text-anchor="middle" font-size="${code.length>1?11.5:13}" font-weight="700" fill="#fff">${esc(code)}</text></svg>`;};
+const vmPie=k=>`<svg class="vm-pie" viewBox="0 0 16 16" aria-hidden="true" style="width:15px;height:15px;flex:none;vertical-align:-2px"><g data-pie="${k}" data-cx="8" data-cy="8" data-r="6.5"></g></svg>`;
+const vmPieS=s=>`<svg viewBox="0 0 16 16" aria-hidden="true" style="width:15px;height:15px;vertical-align:-2px">${pieSVG(8,8,6.5,s)}</svg>`;
+const vmFreq=f=>`<span class="vm-book" style="white-space:nowrap"><span class="tier" data-t="${f.tier}">${f.tier}${f.count.indexOf('?')>0?'?':''}</span> <span class="stars">${starTxt(f.star)}</span></span>`;
+function buildAtlasList(depth){
+  let h=`<div class="vmap"><div class="vm-root"><b>初中数学</b><span>知识地图</span></div>`,lastDom='';
+  BOARDS.forEach(b=>{
+    if(b.domain!==lastDom){lastDom=b.domain;h+=`<div class="vm-dom">${esc(DOMAINS[b.domain])}</div>`;}
+    h+=`<section class="vm-board" style="${vmVars(b.color)}"><button class="vm-bhead" type="button" aria-expanded="true"><svg class="vm-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${b.icon}"/></svg>${esc(b.name)}<small>${b.items.length} 项</small></button><ol class="vm-chaps">`;
+    b.items.forEach(id=>{
+      const c=CH[id],open=depth>=3&&!c.practice,wk=weakOf(c);
+      h+=`<li class="vm-chap"><div class="vm-crow"><a class="vm-cname" href="#cmap" data-ch="${id}" title="看本章导图">${vmBadge(c,b.color)}<span>${esc(c.name)}</span></a><span class="vm-book" style="color:${INK3}">${c.book}</span>${progTag(c)}${c.practice?'':vmFreq(FREQ.ch[id])}${wk?`<span class="vm-wk">薄弱 ${wk}</span>`:''}`;
+      if(!c.practice) h+=`<button class="vm-tog" type="button" aria-expanded="${open}" aria-label="展开或收起各节"></button></div><ul class="vm-secs"${open?'':' hidden'}>`+
+        c.secs.map((s,si)=>`<li><a href="#s-${id}-${si+1}">${c.noSecNo?'':c.no+'.'+(si+1)+' '}${esc(s.name)}</a> ${s.kps.map((kp,j)=>vmPie(kpKey(id,si,j))).join('')}</li>`).join('')+'</ul>';
+      else h+='</div>';
+      h+='</li>';
+    });
+    h+='</ol></section>';
+  });
+  h+=`<div class="vm-legend"><span><span class="tier" data-t="高频">高频</span>：近 5 年河南中考考到的年数（必考 5、高频 3–4、中频 1–2、低频 0）；“?”＝2026 年原卷没取全</span><span><span class="stars">★★★★★</span> 重要度</span><span>我的状态：${[0,1,2,3].map(i=>`${vmPieS(i)}${esc(names[i])}`).join('　')}</span><span>点章名看本章导图；点右边箭头展开各节；点节名跳到文字版。</span></div>`;
+  return h+'</div>';
+}
+function buildChapterList(id){
+  const c=CH[id],b=boardOf(id),p=PROG[c.book],f=FREQ.ch[id];
+  let h=`<div class="vmap" style="${vmVars(b.color)}"><div class="vm-root ch"><small>${esc(c.practice?'综合与实践':BOOKFULL[c.book]+'　第'+cn(c.no)+'章')}</small><b>${esc(c.name)}</b><span style="letter-spacing:0">${c.practice?'课本项目':tierHTML(f)+' '+starHTML(f.star)}</span><span style="letter-spacing:0;color:${p===1?INK:INK3}${p===1?';font-weight:700':''}">${c.book}</span></div><ol class="vm-chaps">`;
+  c.secs.forEach((s,i)=>{
+    const no=(c.practice||c.noSecNo)?'':`<span class="vm-sno">${c.no}.${i+1}</span>`;
+    h+=`<li class="vm-chap"><div class="vm-crow"><a class="vm-sname" href="#s-${id}-${i+1}">${no}${esc(s.name)}</a></div><ul class="vm-secs vm-kplist">`+
+      s.kps.map((kp,j)=>{const k=kpKey(id,i,j),g=FREQ.kp[k];return `<li><a href="#k-${id}-${i+1}-${j+1}" style="display:inline-flex;align-items:center;gap:6px">${vmPie(k)}${esc(kp[0])}${kp[1].indexOf('ⓘ')>=0?' <span class="i">ⓘ</span>':''}</a> <span class="stars" style="font-size:12.5px">${starTxt(g.star)}</span>${kp[2]?' <span class="vm-wk">薄弱</span>':''}</li>`;}).join('')+'</ul></li>';
+  });
+  return h+`</ol><div class="vm-legend"><span>所属：${esc(DOMAINS[b.domain])} · ${esc(b.name)}</span><span>点知识点跳到文字版看详细内容。</span></div></div>`;
+}
+
+/* ---------- 交互：放大、拖动、全屏、悬停高亮、保存为图片 ---------- */
+const MAPS=[];
+function bindHover(svg){
+  const gs=Array.from(svg.querySelectorAll('.mm-g'));
+  const rel=(a,b)=>a===b||a.startsWith(b+'-')||b.startsWith(a+'-');
+  const on=el=>{const k=el.dataset.k;svg.classList.add('mm-focus');gs.forEach(g=>g.classList.toggle('on',rel(g.dataset.k,k)));};
+  const off=()=>svg.classList.remove('mm-focus');
+  svg.addEventListener('pointerover',e=>{const n=e.target.closest('.mm-node');if(n)on(n);});
+  svg.addEventListener('pointerout',e=>{const n=e.target.closest('.mm-node');if(n&&!(e.relatedTarget&&n.contains(e.relatedTarget)))off();});
+  svg.addEventListener('focusin',e=>{const n=e.target.closest('.mm-node');if(n)on(n);});
+  svg.addEventListener('focusout',off);
+}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);}
+function exportPNG(build,fname){
+  const tmp=document.createElement('div');tmp.style.cssText='position:absolute;left:-99999px;top:0;width:1200px';
+  tmp.innerHTML=build();document.body.appendChild(tmp);paintPies(tmp);
+  const c=tmp.querySelector('svg'),b=c.getAttribute('viewBox').split(' ').map(Number),S=2;
+  c.setAttribute('width',Math.round(b[2]*S));c.setAttribute('height',Math.round(b[3]*S));
+  const xml=new XMLSerializer().serializeToString(c);tmp.remove();
+  const fallback=()=>download(new Blob([xml],{type:'image/svg+xml'}),fname+'.svg');
+  const img=new Image();
+  img.onload=()=>{try{const cv=document.createElement('canvas');cv.width=Math.round(b[2]*S);cv.height=Math.round(b[3]*S);
+      const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);ctx.drawImage(img,0,0,cv.width,cv.height);
+      cv.toBlob(bl=>bl?download(bl,fname+'.png'):fallback(),'image/png');}catch(err){fallback();}};
+  img.onerror=fallback;
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);
+}
+function mapTools(withDepth){
+  return `<div class="mm-tools no-print"><span class="seg" role="group" aria-label="版式"><button type="button" data-view="map">横版</button><button type="button" data-view="list">竖版</button></span>${withDepth?'<span class="seg" role="group" aria-label="显示到哪一层"><button type="button" data-depth="2">只看到章</button><button type="button" data-depth="3">展开到节</button></span>':''}<span class="mm-zoom map-only"><button class="btn" type="button" data-act="in">放大</button><button class="btn" type="button" data-act="out">缩小</button><button class="btn" type="button" data-act="fit">复位</button><button class="btn" type="button" data-act="full">全屏</button></span><button class="btn" type="button" data-act="png">保存为图片</button><span class="mm-hint map-only">放大后可拖动画面；全屏时可用滚轮缩放，按 Esc 退出</span></div>`;
+}
+function mountMap(wrap,opt){
+  const stage=wrap.querySelector('.mm-stage'),vstage=wrap.querySelector('.vm-stage'),M={wrap};
+  M.svg=()=>stage.querySelector('svg');
+  const set=()=>{M.svg().setAttribute('viewBox',M.vb.map(f1).join(' '));wrap.classList.toggle('zoomed',M.vb[2]<M.base[2]-.5);};
+  const clamp=()=>{const b=M.base,v=M.vb;v[0]=Math.min(Math.max(v[0],b[0]),b[0]+b[2]-v[2]);v[1]=Math.min(Math.max(v[1],b[1]),b[1]+b[3]-v[3]);};
+  M.render=()=>{stage.innerHTML=opt.svg();vstage.innerHTML=opt.list();M.base=M.svg().getAttribute('viewBox').split(' ').map(Number);M.vb=M.base.slice();wrap.classList.remove('zoomed');bindHover(M.svg());paintPies(wrap);};
+  M.zoomTo=bb=>{const b=M.base,r=b[3]/b[2];let [x,y,w,h]=bb;
+    if(h/w>r){const nw=h/r;x-=(nw-w)/2;w=nw;}else{const nh=w*r;y-=(nh-h)/2;h=nh;}
+    if(w>b[2]){w=b[2];h=b[3];}
+    M.vb=[x,y,w,h];clamp();set();};
+  vstage.addEventListener('click',e=>{
+    const t=e.target.closest('.vm-tog');
+    if(t){const ul=t.closest('.vm-chap').querySelector('.vm-secs');const on=t.getAttribute('aria-expanded')!=='true';t.setAttribute('aria-expanded',String(on));ul.hidden=!on;return;}
+    const bh=e.target.closest('.vm-bhead');
+    if(bh){const ol=bh.nextElementSibling;const on=bh.getAttribute('aria-expanded')!=='true';bh.setAttribute('aria-expanded',String(on));ol.hidden=!on;}
+  });
+  M.fit=()=>{if(!M.base)return;M.vb=M.base.slice();set();};
+  M.zoom=(k,px,py)=>{const b=M.base,v=M.vb,nw=Math.min(b[2],Math.max(b[2]/10,v[2]/k)),r=nw/v[2];
+    if(px==null){px=v[0]+v[2]/2;py=v[1]+v[3]/2;}
+    M.vb=[px-(px-v[0])*r,py-(py-v[1])*r,nw,nw*b[3]/b[2]];clamp();set();};
+  M.full=on=>{if(on===wrap.classList.contains('mm-full'))return;
+    wrap.classList.toggle('mm-full',on);document.documentElement.classList.toggle('mm-lock',on);
+    const btn=wrap.querySelector('[data-act="full"]');if(btn){btn.textContent=on?'退出全屏':'全屏';btn.focus({preventScroll:true});}
+    if(!on)M.fit();};
+  wrap.querySelector('.mm-tools').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;
+    const a=b.dataset.act;
+    if(a==='in')M.zoom(1.5);else if(a==='out')M.zoom(1/1.5);else if(a==='fit')M.fit();
+    else if(a==='full')M.full(!wrap.classList.contains('mm-full'));else if(a==='png')exportPNG(opt.svg,opt.fname());});
+  const pt=(x,y,inv)=>{const p=M.svg().createSVGPoint();p.x=x;p.y=y;return p.matrixTransform(inv);};
+  let drag=null,moved=false,swallow=false;
+  stage.addEventListener('pointerdown',e=>{if(e.button!==0||!wrap.classList.contains('zoomed'))return;
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,inv:M.svg().getScreenCTM().inverse(),vb:M.vb.slice()};moved=false;});
+  stage.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;
+    if(!moved){if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<5)return;moved=true;stage.setPointerCapture(e.pointerId);wrap.classList.add('dragging');}
+    const p0=pt(drag.x,drag.y,drag.inv),p1=pt(e.clientX,e.clientY,drag.inv);
+    M.vb[0]=drag.vb[0]-(p1.x-p0.x);M.vb[1]=drag.vb[1]-(p1.y-p0.y);clamp();set();});
+  const end=()=>{if(!drag)return;if(moved){swallow=true;setTimeout(()=>{swallow=false;},80);wrap.classList.remove('dragging');}drag=null;};
+  stage.addEventListener('pointerup',end);stage.addEventListener('pointercancel',end);
+  stage.addEventListener('click',e=>{if(swallow){e.preventDefault();e.stopPropagation();swallow=false;}},true);
+  stage.addEventListener('click',e=>{const bn=e.target.closest('.mm-node[data-bb]');if(bn)M.zoomTo(bn.dataset.bb.split(' ').map(Number));});
+  stage.addEventListener('wheel',e=>{if(!wrap.classList.contains('mm-full')&&!e.ctrlKey)return;e.preventDefault();
+    const p=pt(e.clientX,e.clientY,M.svg().getScreenCTM().inverse());M.zoom(e.deltaY<0?1.25:1/1.25,p.x,p.y);},{passive:false});
+  MAPS.push(M);M.render();
+  return M;
+}
+
+/* ---------- 文字版（可标学习状态） ---------- */
+const batchSel=(scope,label)=>`<select class="batch no-print" data-batch="${scope}" aria-label="${esc(label)}"><option value="">${esc(label)}</option>${names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('')}</select>`;
+function hitsHTML(f){
+  if(!f.hits.length) return '<p class="note" style="margin:2px 0">已核对的题目中未见单独设问。</p>';
+  return '<ul>'+f.hits.map(h=>`<li><span class="yr">${h.y}-${esc(h.q)}</span>${esc(h.desc)}${h.v==='p'?'<span class="pend" title="只有一个来源，或具体知识点靠题干推断">待核</span>':''}</li>`).join('')+'</ul>';
+}
+function kpHTML(id,si,j,kp){
+  const k=kpKey(id,si,j),f=FREQ.kp[k];
+  return `<li class="ok" id="k-${id}-${si+1}-${j+1}" data-key="${k}" data-star="${f.star}" data-tier="${f.tier}"${kp[2]?' data-weak="1"':''}>
+<div class="kh"><b class="kn">${fmtMath(kp[0])}</b><span class="st" data-st-for="${k}"></span>${kp[2]?weakTag(kp[2]):''}<label class="status-pick no-print">我的状态 <select data-id="${k}" aria-label="${esc(toPlain(kp[0]))}的学习状态"></select></label></div>
+<div class="km">${starHTML(f.star)}<span>考频 ${tierHTML(f)}</span>${f.newOnly?'<span class="newc">新教材内容 · 2027 年起可考</span>':''}<details><summary>近 5 年河南卷（${f.hits.length} 处）· 为什么是 ${f.star} 星</summary><span class="hb">${hitsHTML(f)}<span class="note">评星：${esc(f.why)}</span></span></details></div>
+<div class="kt">${fmtMath(kp[1])}</div></li>`;
+}
+function renderOutline(){
+  let h=`<h2 id="bookTitle">总导图（文字版）</h2><p class="note">内容与上面的两张图相同，这里写出每个知识点的完整内容：领域 → 主题 → 章 → 节 → 知识点，点“＋”展开。共 ${nKp} 个知识点。每个知识点右边可以标“我的状态”；章、节标题后的“全部标为…”可以一次标一整章或一整节。</p><ul class="tree" id="tree">`;
+  let lastDom='';
+  BOARDS.forEach((b,bi)=>{
+    if(b.domain!==lastDom){lastDom=b.domain;h+=`<li class="dom" aria-hidden="true">${esc(DOMAINS[b.domain])}</li>`;}
+    h+=`<li class="ob" style="--c:${b.color}"><details open id="b-${bi}"><summary><span class="board">${esc(b.name)}</span><span class="cnt">${b.items.length} 项</span></summary><ul>`;
+    b.items.forEach(id=>{
+      const c=CH[id],wk=weakOf(c),f=FREQ.ch[id];
+      h+=`<li class="oc"><details id="c-${id}"><summary><span class="chap">${esc(chTitle(c))}</span><span class="bk">${c.book}</span>${progTag(c)}${c.practice?'':`<span class="chsum">${tierHTML(f)} ${starHTML(f.star)}</span>`}${wk?`<span class="wk">薄弱 ${wk}</span>`:''}<span class="chsum" data-chst="${id}"></span><a href="#cmap" data-ch="${id}" class="go no-print">看本章导图</a></summary>`+
+        (c.where?`<p class="note cnote">位置：${fmtMath(c.where)}</p>`:'')+(c.note?`<p class="note cnote">${fmtMath(c.note)}</p>`:'')+
+        (c.practice?`<p class="note cnote">${esc(f.why)}</p>`:`<p class="note cnote">本章考频：${tierHTML(f)}（${f.years.length?f.years.join('、')+' 年':'近 5 年未见'}）；${esc(f.why)}。题号见“题号地图”。</p>`)+`<p class="note cnote no-print">${batchSel(id,'本章全部标为…')}</p><ul>`;
+      c.secs.forEach((s,si)=>{
+        h+=`<li class="os"><details open id="s-${id}-${si+1}"><summary>${fmtMath(secLabel(c,si))}</summary><div class="no-print" style="margin:0 0 2px 1.3em">${batchSel(id+'#'+si,'本节全部标为…')}</div><ul>`+
+          s.kps.map((kp,j)=>kpHTML(id,si,j,kp)).join('')+`</ul></details></li>`;
+      });
+      h+='</ul></details></li>';
+    });
+    h+='</ul></details></li>';
+  });
+  return h+'</ul>';
+}
+/* ---------- 题号地图：每年每道题考了哪一章 ---------- */
+function renderQmap(){
+  const EX=window.EXAM,EM=window.EXAM_META,Y=EM.years,by={};
+  EX.forEach(r=>{by[r[0]+'-'+r[1]]=r;});
+  const chName=id=>CH[id].practice?CH[id].name:`第${cn(CH[id].no)}章 ${CH[id].name}`;
+  const cell=r=>{
+    if(!r) return '<td class="u">—</td>';
+    const [y,q,kind,v,desc,refs]=r;
+    if(v==='u') return `<td class="u">${esc(desc)}</td>`;
+    const chs=[...new Set(refs.map(x=>x.split(':')[0]))];
+    return `<td>${esc(desc)}${v==='p'?'<span class="pend" title="只有一个来源，或具体知识点靠题干推断">待核</span>':''}<br>`+chs.map(id=>`<a class="cl" href="#c-${id}" style="--c:${boardOf(id).color}">${esc(chName(id))}</a>`).join('')+'</td>';};
+  let h=`<h2 id="qmTitle">题号地图（河南中考数学 2022–2026）</h2>
+<p class="note">卷面：满分 120 分、100 分钟、23 题；选择题 1–10、填空题 11–15 每题 3 分，解答题 16–23 共 75 分。第 10、15、22、23 题是压轴题位（左边有黄线）。每格写这道题考了什么，下面是用到的章，点章名跳到文字版。灰色斜纹＝原卷没取得。${esc(EM.partial2026)}</p>
+<div class="qm-wrap"><table class="qm"><thead><tr><th style="width:5.5em">题号</th>${Y.map(y=>`<th>${y}</th>`).join('')}</tr></thead><tbody>`;
+  for(let q=1;q<=23;q++){
+    const kind=q<=10?'选择':q<=15?'填空':'解答',hard=EM.hard.includes(String(q));
+    h+=`<tr${hard?' class="hard"':''}><th>第 ${q} 题<small>${kind}${hard?'<span class="hardtag">压轴</span>':''}</small></th>${Y.map(y=>cell(by[y+'-'+q])).join('')}</tr>`;
+  }
+  h+=`</tbody></table></div>`;
+  /* 章级考频表 */
+  const rows=ORDER.filter(id=>!CH[id].practice).map(id=>({id,f:FREQ.ch[id]})).sort((a,b)=>b.f.star-a.f.star||b.f.n-a.f.n||ORDER.indexOf(a.id)-ORDER.indexOf(b.id));
+  h+=`<h3 style="font-size:19px;margin:22px 0 4px">各章考频与重要度</h3><p class="note">按 ★ 从高到低排。“解答”“压轴”＝有几年出现在解答题、压轴题位。</p><div class="qm-wrap"><table class="chtab"><thead><tr><th>章</th><th>册</th><th>考频</th><th>★</th><th>考到的年份</th><th>解答</th><th>压轴</th></tr></thead><tbody>`+
+    rows.map(({id,f})=>`<tr><td><a href="#c-${id}">${esc(chName(id))}</a></td><td>${CH[id].book}${progTag(CH[id])}</td><td>${tierHTML(f)}</td><td>${starHTML(f.star)}</td><td>${f.years.join('、')||'—'}</td><td>${f.ans}</td><td>${f.hard}</td></tr>`).join('')+`</tbody></table></div>`;
+  h+=`<h3 style="font-size:19px;margin:22px 0 4px">尺规作图与综合与实践</h3><ul>`+
+    EM.ruler.map(r=>`<li>尺规作图 ${r[0]}-${esc(r[1])}：${esc(r[2])}（记在${esc(chName(r[3]))}）</li>`).join('')+
+    EM.practice.map(r=>`<li>综合与实践 ${r[0]}-${esc(r[1])}：${esc(r[2])}</li>`).join('')+`</ul>`;
+  return h;
+}
+function renderWeak(){
+  return `<h2 id="weakTitle">我的错题</h2><p class="note">登录后，每个知识点旁有「＋错题」，可以把自己做错的题记在这个知识点下，只有自己能看到；左下角「我的错题」查看全部。错题保存在自己的账号里，换电脑、手机登录同一个账号也能看到。</p><p><button class="btn primary" type="button" data-open-mistakes>打开我的错题本</button></p>`;
+}
+function renderAbout(){
+  const pend=[];
+  ORDER.forEach(id=>{const c=CH[id];if(c.note) pend.push(`${chShort(c)}：${c.note}`);});
+  return `<h2 id="aboutTitle">说明与依据</h2>
+<ul>
+<li>教材：人教版《义务教育教科书 数学》新版（依据 2022 年版课标修订），全书章号连续编排：七上（2024 年秋起用，第一至六章）、七下（2025 年春，第七至十二章）、八上（2025 年秋，第十三至十八章）、八下（2026 年春，第十九至二十四章）、九上（2026 年秋，第二十五至三十章）、九下（2027 年春，第三十一至三十四章）。</li>
+<li>主题：《义务教育数学课程标准（2022 年版）》第四学段——数与代数（数与式、方程与不等式、函数）、图形与几何（图形的性质、图形的变化、图形与坐标）、统计与概率（抽样与数据分析、随机事件的概率），以及综合与实践。每章只归一个主题；锐角三角函数按课标归入“图形的变化”中的“图形的相似”。</li>
+<li>知识点：按课标和教材通行内容用自己的话整理，归入哪一节以课本为准。项目里还没有新版课本正文，带 <span class="i">ⓘ</span> 的内容（名称、归属或个别说法）要对照课本核实。标“解题方法，非课标条目”的是常用思路，不是课本定理。</li>
+<li>我的错题：登录后自己记录，只保存在自己的账号里，别人看不到。</li>
+<li>考频：只统计 2022–2026 年河南中考数学真题，按“年”计——一章或一个知识点在某年任意一道题里<b>必须用到</b>就记 1 年（只记必须用到的定理和方法；压轴题每小问分别归章；尺规作图记在依据定理所在的章；综合与实践按设问用到的知识记）。必考 5/5、高频 3–4/5、中频 1–2/5、低频 0/5。旧教材的题按知识对应到新教材的章。</li>
+<li>★：★5＝近 5 年有 3 年以上出现在解答题（第 16–23 题）或压轴题位（第 10、15、22、23 题）；★4＝必考或高频但主要在选择、填空；★3＝中频；★2＝已核对的题目中未见单独设问；★1＝新教材内容（2027 年起可考）或课本项目。另有 ${Object.values(FREQ.kp).filter(f=>f.base).length} 个基础方法（如去括号、解方程的步骤、全等的判定、因式分解、待定系数法）按规则 g 人工提到 ★4，理由写在各知识点的“为什么是几星”里，规则 g 待确认。</li>
+<li>${esc(window.EXAM_META.partial2026)}标“待核”的题只有一个来源，或具体知识点是按题干推断的。高中衔接暂不做。</li>
+</ul>
+<h3 style="font-size:18px;margin:16px 0 4px">待核实（ⓘ）</h3><ul>${pend.map(p=>`<li>${fmtMath(p)}</li>`).join('')}
+<li>九下（第三十一至三十四章）：只有第三方汇总的章名和综合与实践名称，节名要等 2027 年春新课本。</li>
+<li>新教材是否把十字相乘法、根与系数的关系作为正文内容。</li>
+<li>各综合与实践项目的具体任务：只核对了名称，任务内容是按名称推的。</li></ul>
+<h3 style="font-size:18px;margin:16px 0 4px">目录来源</h3><ul class="srcs">
+<li>七上至八上、九上第二十五至二十六章：本项目《初中数学知识体系_提示词》中 2026-11-16 已核对的目录（dzkbw.com、dzkbw.org、time.dzskb.com 等）</li>
+<li>八下：教习网人教版（2024）八年级下册课文目录（51jiaoxi.com/books/3002635/）；21 世纪教育网同步练习目录（mip.21cnjy.com/P/24725313.html）</li>
+<li>九上第二十七至三十章：九年级数学上册电子课本目录 2024 审定版（time.dzskb.com/rjbsx9sc-2024.html，搜索摘要）</li>
+<li>九下：cn-math-taxonomy 第三方汇总（github.com/xiaoyang111222/cn-math-taxonomy），汇总者自己标注为待核</li>
+<li>课标第四学段主题与锐角三角函数归属：2022 版课标内容要求转录（publish.obsidian.md/shenzhenk12math；万维书刊课标对比 eshukan.com）</li>
+<li>2022–2025 年逐题考点：21 世纪教育网真题解析（zy.21cnjy.com/13306028、/16333004 不用〔页面为模拟卷〕、/22957482、/23377143）；教习网解析摘要（51jiaoxi.com/doc-15493063）；教育宝、原卷文字（2023 第 1–3 题）</li>
+<li>官方或教研评析：2023 年（郑州市教育局，k.sina.cn/article_2608223021_9b76532d02701ohl6.html；web.chinamcloud.com/yszh32/APP/414xw/62701061.shtml）；2025 年（www.163.com/dy/article/K2O7UMD70516CTLE.html）；2026 年（河南省教育厅评析，m.sohu.com/a/1040627891_121124332、zz.bendibao.com/edu/2026623/152461.shtm）</li>
+<li>2026 年原卷片段：原创力文档（max.book118.com/html/2026/0625/7166201052011125.shtm，第 1 题）；第 23 题解法要点（知乎“各地 2026 中考几何压轴大赏”，搜索摘要）</li></ul>
+<h3 style="font-size:18px;margin:16px 0 4px">修改记录</h3>
+<table><thead><tr><th style="width:7em">日期</th><th>改动</th></tr></thead><tbody>
+<tr><td>2026-11-17</td><td>v2：加四档学习状态（和化学同一套：要预习／学习中／要巩固／已掌握，可改名称；章、节可批量标；导出导入“数学进度.json”，键名前缀 sxzs.）；地图章号外加状态彩色圈、节和知识点加小圆饼；按 2022–2026 年河南中考给 ${nCh} 章和 ${nKp} 个知识点标考频和 ★；新增“题号地图”（逐年逐题对应到章）和各章考频表；筛选可按状态、重要度、考频；小标记颜色按四科统一方案（考频、状态、★ 都配文字）。</td></tr>
+<tr><td>2026-11-17</td><td>v1：新建。8 个主题和综合与实践、${nCh} 章、${SEC_TXT()}、${nPr} 个综合与实践项目、${nKp} 个知识点；知识地图（到章／到节）、本章导图（到知识点）、竖版、文字版搜索（中文和符号）、数学排版、保存为图片。</td></tr>
+</tbody></table>`;
+}
+
+/* ---------- 搜索（中文名和符号都能搜） ---------- */
+const SYN={'全等':['≌'],'≌':['全等'],'相似':['∽'],'∽':['相似'],'垂直':['⊥'],'⊥':['垂直'],'平行':['∥'],'∥':['平行'],'根号':['√'],'√':['根号','二次根式'],'判别式':['Δ'],'Δ':['判别式'],'圆周率':['π'],'π':['圆周率']};
+function markText(el,terms){
+  const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);const nodes=[];while(w.nextNode())nodes.push(w.currentNode);
+  nodes.forEach(t=>{const s=t.nodeValue;let hits=[];
+    terms.forEach(q=>{let i=s.indexOf(q);while(i>=0){hits.push([i,i+q.length]);i=s.indexOf(q,i+q.length);}});
+    if(!hits.length)return;hits.sort((a,b)=>a[0]-b[0]);
+    const f=document.createDocumentFragment();let p=0;
+    hits.forEach(([a,b])=>{if(a<p)return;f.append(s.slice(p,a));const m=document.createElement('mark');m.textContent=s.slice(a,b);f.append(m);p=b;});
+    f.append(s.slice(p));t.replaceWith(f);});
+}
+let weakOnly=false;
+function applySearch(){
+  const q=$('#q').value.trim(),fst=$('#fSt').value,fstar=+$('#fStar').value,ftier=$('#fTier').value;
+  $$('.ok .kn,.ok .kt').forEach(el=>{if(el.dataset.raw===undefined)el.dataset.raw=el.innerHTML;else el.innerHTML=el.dataset.raw;});
+  $$('#tree summary .chap,#tree .os>details>summary').forEach(el=>{if(el.dataset.raw===undefined)el.dataset.raw=el.innerHTML;else el.innerHTML=el.dataset.raw;});
+  const filt=fst!==''||fstar||ftier;
+  const nOn=[q,weakOnly,fst!=='',fstar,ftier].filter(Boolean).length;
+  $('#toolsBtn').textContent='筛选与进度'+((fst!==''||fstar||ftier)?`（${[fst!=='',fstar,ftier].filter(Boolean).length}）`:'');
+  if(!nOn){$$('.ok,.os,.oc,.ob,.dom').forEach(e=>{e.hidden=false;});$$('.oc>details').forEach(d=>{d.open=false;});$('#qInfo').textContent='';return;}
+  const terms=q?[q].concat(SYN[q]||[]):[];
+  const has=el=>!!el&&terms.some(t=>el.textContent.includes(t));
+  const pass=li=>(!weakOnly||li.dataset.weak==='1')&&(fst===''||String(stOf(li.dataset.key))===fst)&&(!fstar||+li.dataset.star>=fstar)&&(!ftier||li.dataset.tier===ftier);
+  let n=0;
+  $$('.oc').forEach(oc=>{
+    const chHit=!!q&&has(oc.querySelector('summary .chap'));
+    let any=false;
+    oc.querySelectorAll('.os').forEach(os=>{
+      const sum=os.querySelector('details>summary'),secHit=!!q&&has(sum);
+      let v=0;
+      os.querySelectorAll('.ok').forEach(li=>{
+        const textHit=!!q&&(has(li.querySelector('.kn'))||has(li.querySelector('.kt')));
+        const hit=(!q||chHit||secHit||textHit)&&pass(li);
+        li.hidden=!hit;if(hit){v++;if(!q||textHit){n++;if(q){markText(li.querySelector('.kn'),terms);markText(li.querySelector('.kt'),terms);}}}});
+      os.hidden=!v;if(v){any=true;os.querySelector('details').open=true;}
+      if(secHit&&v) markText(sum,terms);
+    });
+    oc.hidden=!any;oc.querySelector('details').open=any;
+    if(chHit&&any) markText(oc.querySelector('summary .chap'),terms);
+  });
+  $$('.ob').forEach(ob=>{const v=ob.querySelectorAll('.oc:not([hidden])').length;ob.hidden=!v;if(v)ob.querySelector('details').open=true;});
+  $$('.dom').forEach(d=>{let e=d.nextElementSibling,v=false;while(e&&!e.classList.contains('dom')){if(!e.hidden)v=true;e=e.nextElementSibling;}d.hidden=!v;});
+  $('#qInfo').textContent=n?`文字版里${!q?'符合条件的':'找到'} ${n} 条`:'没有符合的，换个关键词或筛选条件试试';
+}
+/* ---------- 学习状态：显示、批量标、统计 ---------- */
+function fillOptions(){
+  const opts=names.map((n,i)=>`<option value="${i}">${esc(n)}</option>`).join('');
+  $$('select[data-id]').forEach(sel=>{sel.innerHTML=opts;});
+  $$('select[data-batch]').forEach(sel=>{const first=sel.options[0].text;sel.innerHTML=`<option value="">${esc(first)}</option>`+opts;});
+  const f=$('#fSt'),keep=f.value;f.innerHTML='<option value="">全部</option>'+opts;f.value=keep;
+}
+function syncStatus(){
+  $$('select[data-id]').forEach(sel=>{sel.value=String(stOf(sel.dataset.id));});
+  $$('.st[data-st-for]').forEach(b=>{const s=stOf(b.dataset.stFor);b.dataset.s=s;b.textContent=names[s];});
+  paintPies();
+  const all=[].concat(...Object.keys(CH).map(id=>KPS_OF[id])),cnt=[0,0,0,0];all.forEach(k=>cnt[stOf(k)]++);
+  $('#progress').textContent=[3,2,1,0].map(i=>`${names[i]} ${cnt[i]}`).join('，')+`（共 ${all.length}）`+(store.ok===false?'。此浏览器不能保存进度，请用“导出进度”':'');
+  $$('[data-chst]').forEach(el=>{const ks=KPS_OF[el.dataset.chst],m=ks.filter(k=>stOf(k)===3).length;el.textContent=`${names[3]} ${m}/${ks.length}`;el.style.color=m===ks.length?'#15803d':'var(--ink-3)';});
+}
+function setStatus(keys,v){keys.forEach(k=>{if(v===0)delete status[k];else status[k]=v;});store.set('sxzs.status',status);syncStatus();if($('#fSt').value!=='')applySearch();}
+
+/* ---------- 初始化 ---------- */
+function init(){
+  $('#atlas').innerHTML=`<div class="atlas-head"><h2 id="atlasTitle">知识地图</h2><p>全书一张图：课标主题 → 章 → 节。右边是数与代数、统计与概率，左边是图形与几何、综合与实践。点章名看“本章导图”，点节名看文字版。第一次用，先点右上角“怎么用”。</p></div><div class="mm" id="atlasMM">${mapTools(true)}<div class="mm-stage"></div><div class="vm-stage"></div></div>`;
+  let depth=store.get('sxzs.atlasDepth',null);
+  if(depth!==2&&depth!==3) depth=window.matchMedia('(max-width:760px)').matches?2:3;
+  const atlasM=mountMap($('#atlasMM'),{svg:()=>buildAtlas(depth),list:()=>buildAtlasList(depth),fname:()=>'初中数学知识地图'});
+  const depthBtns=()=>$$('#atlasMM [data-depth]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.depth===depth)));
+  depthBtns();
+  $('#atlasMM .mm-tools').addEventListener('click',e=>{const b=e.target.closest('[data-depth]');if(!b)return;
+    depth=+b.dataset.depth;store.set('sxzs.atlasDepth',depth);depthBtns();atlasM.render();});
+
+  // 本章导图（默认第二十一章 四边形）
+  let cur=store.get('sxzs.chapter','c21');if(!CH[cur])cur='c21';
+  const groups={};ORDER.forEach(id=>{const bk=CH[id].book;(groups[bk]=groups[bk]||[]).push(id);});
+  $('#cmap').innerHTML=`<div class="cm-head"><h2 id="cmTitle">本章导图</h2><select id="chSel" aria-label="选择章">${Object.keys(groups).map(bk=>`<optgroup label="${BOOKFULL[bk]}">${groups[bk].map(id=>`<option value="${id}">${esc(chShort(CH[id]))}</option>`).join('')}</optgroup>`).join('')}</select><button class="btn" type="button" id="chPrev">上一章</button><button class="btn" type="button" id="chNext">下一章</button></div><p class="note cm-info" id="chInfo"></p><div class="mm" id="chMM">${mapTools(false)}<div class="mm-stage"></div><div class="vm-stage"></div></div>`;
+  const chM=mountMap($('#chMM'),{svg:()=>buildChapterMap(cur),list:()=>buildChapterList(cur),fname:()=>chShort(CH[cur]).replace(/[：:]/g,' ')+'导图'});
+  window.__setChapter=id=>{
+    if(!CH[id])return;cur=id;store.set('sxzs.chapter',id);
+    const c=CH[id],b=boardOf(id),wk=weakOf(c),f=FREQ.ch[id];
+    $('#chSel').value=id;
+    $('#chInfo').innerHTML=`${esc(BOOKFULL[c.book])}　${esc(chTitle(c))}${c.where?'（'+fmtMath(c.where)+'）':''}${progTag(c)}　｜　${c.practice?'课本项目':'近 5 年河南中考 '+tierHTML(f)+' '+starHTML(f.star)}　｜　${esc(DOMAINS[b.domain])} · <span style="color:${b.color};font-weight:700">${esc(b.name)}</span>${wk?`　｜　<span class="wk">薄弱 ${wk}</span>`:''}${c.note?'　｜　'+fmtMath(c.note):''}`;
+    const i=ORDER.indexOf(id);$('#chPrev').disabled=i<=0;$('#chNext').disabled=i>=ORDER.length-1;
+    chM.render();
+  };
+  window.__setChapter(cur);
+  $('#chSel').addEventListener('change',e=>window.__setChapter(e.target.value));
+  $('#chPrev').addEventListener('click',()=>{const i=ORDER.indexOf(cur);if(i>0)window.__setChapter(ORDER[i-1]);});
+  $('#chNext').addEventListener('click',()=>{const i=ORDER.indexOf(cur);if(i<ORDER.length-1)window.__setChapter(ORDER[i+1]);});
+
+  // 文字版、薄弱点、说明
+  $('#book').innerHTML=renderOutline();
+  $('#qmap').innerHTML=renderQmap();
+  $('#weak').innerHTML=renderWeak();
+  $('#about').innerHTML=renderAbout();
+  fillOptions();syncStatus();
+
+  // 学习状态：单个、整节、整章
+  $('#book').addEventListener('change',e=>{
+    const sel=e.target.closest('select[data-id]');
+    if(sel){setStatus([sel.dataset.id],+sel.value);return;}
+    const b=e.target.closest('select[data-batch]');
+    if(b&&b.value!==''){const v=+b.value,sc=b.dataset.batch,i=sc.indexOf('#');
+      const keys=i<0?KPS_OF[sc]:CH[sc.slice(0,i)].secs[+sc.slice(i+1)].kps.map((kp,j)=>kpKey(sc.slice(0,i),+sc.slice(i+1),j));
+      b.value='';setStatus(keys,v);}
+  });
+  ['#fSt','#fStar','#fTier'].forEach(x=>$(x).addEventListener('change',()=>{applySearch();if($(x).value&&$(x).value!=='0')document.getElementById('book').scrollIntoView({behavior:'smooth'});}));
+  $('#toolsBtn').addEventListener('click',()=>{const on=!$('#tools2').classList.contains('open');$('#tools2').classList.toggle('open',on);$('#toolsBtn').setAttribute('aria-expanded',String(on));});
+  // 改状态名称
+  const dlg=$('#namesDlg'),form=$('#namesForm');
+  const fillForm=arr=>arr.forEach((n,i)=>{form.elements['n'+i].value=n;});
+  $('#namesBtn').addEventListener('click',()=>{fillForm(names);if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');});
+  $('#namesReset').addEventListener('click',()=>fillForm(DEFAULT_NAMES));
+  dlg.addEventListener('close',()=>{if(dlg.returnValue!=='save')return;const arr=[0,1,2,3].map(i=>form.elements['n'+i].value.trim());if(arr.some(n=>!n))return;
+    names=arr;store.set('sxzs.statusNames',names);fillOptions();MAPS.forEach(m=>m.render());syncStatus();applySearch();});
+  // 导出、导入：文件里写 app 名称，导入时检查，防止和物理、化学的进度混用
+  $('#exportBtn').addEventListener('click',()=>{
+    download(new Blob([JSON.stringify({app:APP,version:1,exported:new Date().toISOString(),status,names},null,2)],{type:'application/json'}),'数学进度.json');});
+  $('#importBtn').addEventListener('click',()=>$('#importFile').click());
+  $('#importFile').addEventListener('change',e=>{
+    const fl=e.target.files[0];if(!fl)return;const r=new FileReader();
+    r.onload=()=>{try{const d=JSON.parse(r.result);
+        if(!d||d.app!==APP){$('#progress').textContent=d&&d.app?`导入失败：这是“${d.app}”的进度文件，不是数学的`:'导入失败：请选择用“导出进度”保存的“数学进度.json”';return;}
+        if(!d.status||typeof d.status!=='object')throw 0;
+        Object.keys(d.status).forEach(k=>{const v=+d.status[k];if(KP_NAME[k]!==undefined&&v>=1&&v<=3)status[k]=v;});
+        if(Array.isArray(d.names)&&d.names.length===4&&d.names.every(n=>typeof n==='string'&&n.trim())){names=d.names;store.set('sxzs.statusNames',names);fillOptions();MAPS.forEach(m=>m.render());}
+        store.set('sxzs.status',status);syncStatus();applySearch();$('#progress').textContent+='　已导入';}
+      catch(err){$('#progress').textContent='导入失败：文件内容不对';}};
+    r.readAsText(fl,'utf-8');e.target.value='';
+  });
+
+  // 横版／竖版（手机默认竖版，选择会记住）
+  let view=store.get('sxzs.mapView',null);
+  if(view!=='map'&&view!=='list') view=window.matchMedia('(max-width:760px)').matches?'list':'map';
+  const setView=v=>{view=v;store.set('sxzs.mapView',v);MAPS.forEach(m=>{m.full(false);m.wrap.classList.toggle('is-list',v==='list');});
+    $$('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));};
+  setView(view);
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-view]');if(b)setView(b.dataset.view);});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')MAPS.forEach(m=>m.full(false));});
+
+  // 怎么用
+  $('#helpBtn').addEventListener('click',()=>{const on=!$('#help').classList.contains('open');$('#help').classList.toggle('open',on);$('#helpBtn').setAttribute('aria-expanded',String(on));});
+
+  // 搜索、只看薄弱
+  let tmr=0;$('#q').addEventListener('input',()=>{clearTimeout(tmr);tmr=setTimeout(applySearch,150);});
+  $('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){applySearch();document.getElementById('book').scrollIntoView({behavior:'smooth'});}});
+  $('#weakBtn').addEventListener('click',()=>{weakOnly=!weakOnly;$('#weakBtn').setAttribute('aria-pressed',String(weakOnly));applySearch();
+    if(weakOnly)document.getElementById('book').scrollIntoView({behavior:'smooth'});});
+
+  // 跳转：章→本章导图；节、知识点→文字版（先展开折叠、清掉挡住的筛选，再闪一下）
+  const flash=el=>{if(!el)return;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),2000);};
+  document.addEventListener('click',e=>{
+    const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;
+    const ch=a.getAttribute('data-ch');
+    if(ch){e.preventDefault();MAPS.forEach(m=>m.full(false));window.__setChapter(ch);
+      const t=$('#cmap');t.scrollIntoView({behavior:'smooth',block:'start'});flash($('#cmTitle'));return;}
+    const id=decodeURIComponent((a.getAttribute('href')||'').slice(1)),t=id&&document.getElementById(id);if(!t)return;
+    if(t.hidden||t.closest('[hidden]')){$('#q').value='';weakOnly=false;$('#weakBtn').setAttribute('aria-pressed','false');['#fSt','#fTier'].forEach(x=>{$(x).value='';});$('#fStar').value='0';applySearch();}
+    for(let p=t;p;p=p.parentElement) if(p.tagName==='DETAILS') p.open=true;
+    MAPS.forEach(m=>m.full(false));
+    flash(t.tagName==='DETAILS'?t.querySelector('summary'):t);
+  });
+
+  // 打印：展开全部文字版，打印完恢复
+  let closed=[];
+  window.addEventListener('beforeprint',()=>{MAPS.forEach(m=>{m.full(false);m.fit();});closed=$$('#tree details:not([open])');closed.forEach(d=>d.open=true);});
+  window.addEventListener('afterprint',()=>{closed.forEach(d=>d.open=false);closed=[];});
+}
+document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<script src="../shared/mistakes.js" data-subject="math"></script>
+</body>
+</html>
