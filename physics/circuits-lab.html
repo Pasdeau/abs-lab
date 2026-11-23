@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#3B5BDB">
-<title>明馨的电学实验台</title>
+<title>电学实验台 · ABS-LAB</title>
 <style>
 :root{--ink:#2B2D42;--muted:#6B7280;--line:#E3E6EC;--blue:#3B5BDB;--blue-s:#E8EDFF;--coral:#F2643D;--coral-s:#FFEDE6;
 --green:#12956B;--green-s:#DCF5EC;--sun:#FFC83D;--sun-s:#FFF6D6;--red:#D7263D;--red-s:#FDE8EB;--bg:#F6F7FB}
@@ -150,7 +150,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </head>
 <body>
 <script src="../shared/topbar.js" data-root=".." data-page="circuits-lab" data-mode="compact"></script>
-<header><h1>明馨的电学实验台</h1><p class="sub">电路 1–13 · 电与磁 14–21 · 动手拖一拖、点一点</p>
+<header><h1>电学实验台</h1><p class="sub">电路 1–13 · 电与磁 14–21 · 动手拖一拖、点一点</p>
 <details><summary>怎么用？</summary><ul>
 <li>本实验台包含电路（1–13）与电与磁（14–21）共 21 个互动实验；学完任一模块可点标题旁的「标记已学」，仅已学模块会显示绿色“已学”标记。</li>
 <li>电路图里橙色的小点表示电流方向（从电源正极出发），点跑得越快电流越大。</li>
@@ -168,8 +168,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <div class="card ctl"><h3>操作</h3><div class="btns">
 <button data-t="s">开关 S</button><button data-t="sl">用导线短接灯</button><button data-t="sp">用导线短接电源</button></div>
 <div id="o1"></div></div>
-<div class="tip"><b>要点</b><ul><li>通路：处处连通，用电器工作。</li><li>断路：某处断开，哪儿都没有电流。</li><li>短接用电器：电流走“捷径”，那个用电器不工作，但电路里还有别的电阻，安全。</li><li>电源短路：电流不经过任何用电器，电流极大，会烧坏电源，绝对不允许。</li></ul>
-<span class="tag">对应错题：物理第 4 题（安全带指示灯）</span></div>
+<div class="tip"><b>要点</b><ul><li>通路：处处连通，用电器工作。</li><li>断路：某处断开，哪儿都没有电流。</li><li>短接用电器：电流走“捷径”，那个用电器不工作，但电路里还有别的电阻，安全。</li><li>电源短路：电流不经过任何用电器，电流极大，会烧坏电源，绝对不允许。</li></ul></div>
 </div></div>
 </section>
 
@@ -184,8 +183,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <label>L₂ 的电阻 R₂ = <b class="v" id="v2b"></b> Ω<input type="range" id="i2b" min="5" max="30" step="5" value="20"></label>
 </div>
 <div class="card"><h3>读数</h3><div class="read" id="r2"></div><div id="o2"></div></div>
-<div class="tip"><b>要点</b><ul><li>串联：电流处处相等，电压按电阻分——电阻大的分得多（U₁:U₂ = R₁:R₂）。</li><li>并联：各支路电压相等，电流按电阻的反比分——电阻大的电流小（I₁:I₂ = R₂:R₁）。</li><li>拧下一盏灯：串联全灭，并联另一盏照常亮。</li></ul>
-<span class="tag">对应错题：物理第 5、15 题</span></div>
+<div class="tip"><b>要点</b><ul><li>串联：电流处处相等，电压按电阻分——电阻大的分得多（U₁:U₂ = R₁:R₂）。</li><li>并联：各支路电压相等，电流按电阻的反比分——电阻大的电流小（I₁:I₂ = R₂:R₁）。</li><li>拧下一盏灯：串联全灭，并联另一盏照常亮。</li></ul></div>
 </div></div>
 </section>
 
@@ -198,8 +196,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <label>定值电阻 R₀ = <b class="v" id="v3r"></b> Ω<input type="range" id="i3r" min="5" max="20" step="5" value="10"></label>
 <div class="btns"><button data-set="vm:0">电压表测 R₀</button><button data-set="vm:1">电压表测变阻器</button></div></div>
 <div class="card"><h3>电压表示数 U 与电流 I</h3><svg id="g3" viewBox="0 0 300 210" style="width:100%"></svg><div class="read" id="r3"></div></div>
-<div class="tip"><b>要点</b><ul><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul>
-<span class="tag">对应错题：物理第 6、12、14 题</span></div>
+<div class="tip"><b>要点</b><ul><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul></div>
 </div></div>
 </section>
 
@@ -212,8 +209,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <div class="btns"><button data-set="vm4:0">电压表测 R</button><button data-set="vm4:1">电压表测 L</button><button class="go" id="quiz">考考我</button></div>
 <div id="o4"></div></div>
 <div class="card"><h3>读数（正常时 I = 0.3 A）</h3><div class="read" id="r4"></div></div>
-<div class="tip"><b>要点</b><ul><li>先看电流表：还有示数是短路，变为 0 是断路。</li><li>再看电压表“抱”着的元件：它断路，表变大（≈电源电压）；它短路，表变为 0。</li></ul>
-<span class="tag">对应错题：物理第 9 题</span></div>
+<div class="tip"><b>要点</b><ul><li>先看电流表：还有示数是短路，变为 0 是断路。</li><li>再看电压表“抱”着的元件：它断路，表变大（≈电源电压）；它短路，表变为 0。</li></ul></div>
 </div></div>
 </section>
 
@@ -227,8 +223,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <label>变阻器规格：<select id="i5m"><option value="10">最大 10 Ω</option><option value="20" selected>最大 20 Ω</option><option value="30">最大 30 Ω</option></select></label>
 <div class="btns"><button class="go" id="rec">记录这组数据</button><button id="clr">清空</button></div><div id="o5"></div></div>
 <div class="card"><h3>数据与图像</h3><svg id="g5" viewBox="0 0 300 190" style="width:100%"></svg><div id="t5"></div></div>
-<div class="tip"><b>要点</b><ul><li>这个实验里不变的是电阻两端的电压，变的是电阻。</li><li>换大调大：换上更大的电阻，变阻器也要调大。</li><li>电源 10 V、电阻保持 8 V，变阻器分 2 V，阻值是定值电阻的 1/4；用到 60 Ω 时至少需要 15 Ω。</li></ul>
-<span class="tag">对应错题：物理第 8、19 题</span></div>
+<div class="tip"><b>要点</b><ul><li>这个实验里不变的是电阻两端的电压，变的是电阻。</li><li>换大调大：换上更大的电阻，变阻器也要调大。</li><li>电源 10 V、电阻保持 8 V，变阻器分 2 V，阻值是定值电阻的 1/4；用到 60 Ω 时至少需要 15 Ω。</li></ul></div>
 </div></div>
 </section>
 
@@ -259,7 +254,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m8">
-<h2>8 · 去表法——同一个电路的两副面孔</h2><p class="lead">原型是这次考试物理第 5 题。点图里的甲、乙可以把电压表换成电流表，再点开关 S，看电路结构怎么变。</p>
+<h2>8 · 去表法——同一个电路的两副面孔</h2><p class="lead">点图里的甲、乙可以把电压表换成电流表，再点开关 S，看电路结构怎么变。</p>
 <div class="grid"><div class="stage"><svg id="s8" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
@@ -268,26 +263,24 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <label>R₁ = <b class="v" id="v8a"></b> Ω<input type="range" id="i8a" min="5" max="30" step="5" value="10"></label>
 <label>R₂ = <b class="v" id="v8b"></b> Ω<input type="range" id="i8b" min="5" max="30" step="5" value="15"></label></div>
 <div class="card"><h3>读数与结构</h3><div class="read" id="r8"></div><div id="o8"></div></div>
-<div class="tip"><b>分析方法：去表三步</b><ul><li>去表：电流表换成导线，电压表所在的支路直接擦掉（点“去表看结构”）。</li><li>看剩下的电阻是串联、并联，还是有的被短接。</li><li>把表放回去：电流表和谁在同一条路上就测谁；电压表两个接点之间夹着谁就测谁。</li></ul>
-<span class="tag">原型：物理第 5 题（答案 1:1、2:3、2:5 都能在这里验证）</span></div>
+<div class="tip"><b>分析方法：去表三步</b><ul><li>去表：电流表换成导线，电压表所在的支路直接擦掉（点“去表看结构”）。</li><li>看剩下的电阻是串联、并联，还是有的被短接。</li><li>把表放回去：电流表和谁在同一条路上就测谁；电压表两个接点之间夹着谁就测谁。</li></ul></div>
 </div></div>
 </section>
 
 <section id="m9">
-<h2>9 · 动态电路——谁变、谁不变、比值和差值</h2><p class="lead">原型是物理第 12 题。拖动滑片，下面的表会告诉你每个量的变化方向；再切到“串联变形”对比。</p>
+<h2>9 · 动态电路——谁变、谁不变、比值和差值</h2><p class="lead">拖动滑片，下面的表会告诉你每个量的变化方向；再切到“串联变形”对比。</p>
 <div class="grid"><div class="stage"><svg id="s9" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
 <div class="btns"><button data-set="dyn:0">真题：并联版</button><button data-set="dyn:1">变形：串联版</button></div>
 <label>变阻器接入 <b class="v" id="v9p"></b> Ω（向右拖 = 阻值变大）<input type="range" id="i9p" min="5" max="50" step="1" value="25"></label></div>
 <div class="card"><h3>阻值变大时，各个量怎么变</h3><div id="t9"></div><div id="o9"></div></div>
-<div class="tip"><b>分析方法：动态电路四步</b><ul><li>去表看结构：串联还是并联。</li><li>判断每只表测谁。</li><li>先找不变的量：电源电压、定值电阻的阻值。</li><li>比值和差值要“翻译”：两表示数之比通常是某个电阻；两表示数之差通常是另一条支路的电流（或另一个元件的电压）。</li></ul>
-<span class="tag">原型：物理第 12 题</span></div>
+<div class="tip"><b>分析方法：动态电路四步</b><ul><li>去表看结构：串联还是并联。</li><li>判断每只表测谁。</li><li>先找不变的量：电源电压、定值电阻的阻值。</li><li>比值和差值要“翻译”：两表示数之比通常是某个电阻；两表示数之差通常是另一条支路的电流（或另一个元件的电压）。</li></ul></div>
 </div></div>
 </section>
 
 <section id="m10">
-<h2>10 · 填电表挑战</h2><p class="lead">原型是物理第 15 题。点三个圆圈在电流表和电压表之间切换，完成指定的任务。</p>
+<h2>10 · 填电表挑战</h2><p class="lead">点三个圆圈在电流表和电压表之间切换，完成指定的任务。</p>
 <div class="grid"><div class="stage"><svg id="s10" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>任务</h3>
@@ -295,8 +288,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 <div class="btns"><button data-m="m1">切换 上方的表</button><button data-m="m2">切换 右边的表</button><button data-m="m3">切换 中间的表</button></div>
 <div id="o10"></div></div>
 <div class="card"><h3>读数</h3><div class="read" id="r10"></div></div>
-<div class="tip"><b>分析方法：先画路，再填表</b><ul><li>按要求先用手指描出电流要走的路：并联就是每盏灯各有一条独立的路。</li><li>路上经过的圆圈必须让电流通过，填电流表。</li><li>不在路上的圆圈填电压表；填成电流表就会多出一条“捷径”，造成短路。</li></ul>
-<span class="tag">原型：物理第 15 题</span></div>
+<div class="tip"><b>分析方法：先画路，再填表</b><ul><li>按要求先用手指描出电流要走的路：并联就是每盏灯各有一条独立的路。</li><li>路上经过的圆圈必须让电流通过，填电流表。</li><li>不在路上的圆圈填电压表；填成电流表就会多出一条“捷径”，造成短路。</li></ul></div>
 </div></div>
 </section>
 
@@ -329,16 +321,16 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </section>
 
 <section id="m13">
-<h2>13 · 传感器类综合题——风速仪</h2><p class="lead">原型是物理第 21 题。风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
+<h2>13 · 传感器类综合题——风速仪</h2><p class="lead">风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
 <div class="grid"><div class="stage"><svg id="s13" viewBox="0 0 560 280"></svg></div>
 <div class="side">
 <div class="card ctl"><h3>操作</h3>
 <label>风速 v = <b class="v" id="v13v"></b> m/s<input type="range" id="i13v" min="0" max="16" step="0.5" value="6"></label>
-<div class="btns"><button data-set="r13:20">R₀ = 20 Ω（原题）</button><button data-set="r13:100">R₀ = 100 Ω（第 3 问更换后）</button></div>
+<div class="btns"><button data-set="r13:20">R₀ = 20 Ω</button><button data-set="r13:100">R₀ = 100 Ω（更换后）</button></div>
 <div id="o13"></div></div>
 <div class="card"><h3>读数</h3><div class="read" id="r13"></div></div>
 <div class="tip"><b>分析方法：先找“谁在变”</b><ul><li>电压表几乎不通电流，所以电阻丝整根都串在电路里：电流不随风速变化，变的只是电压表量的那一段长度。</li><li>先用已知的一组数据求出常数 k 和电源电压，再回答其他问题。</li><li>“保证安全”就是让电压表最大示数（P 在 N 端时）不超过 15 V。</li></ul>
-<span class="tag">原型：物理第 21 题（验证：9 V 对应 9 m/s；换成 100 Ω 后最大可测 15 m/s）</span></div>
+<span class="tag">验证：9 V 对应 9 m/s；换成 100 Ω 后最大可测 15 m/s</span></div>
 </div></div>
 </section>
 
@@ -1216,5 +1208,6 @@ document.addEventListener('input',e=>{if(e.target.dataset.a){if(S.trip){e.target
 {try{history.scrollRestoration='manual'}catch(e){}let s=0;const h=location.hash.replace(/^#m?/,''),k=/^\d+$/.test(h)?+h-1:-1;if(k>=0&&k<MODS.length)s=k;else{try{const v=+localStorage.getItem('mx_lab_cur');if(v>=0&&v<MODS.length)s=v}catch(e){}}go(s)}
 let _lt=performance.now();setInterval(()=>{const n=performance.now(),dt=Math.min(.1,(n-_lt)/1000);_lt=n;if(document.hidden)return;const f=TK[MODS[cur][0]];if(f&&f(dt))MODS[cur][3]()},40);
 </script>
+<script src="../shared/linker.js" data-mode="lab" data-lab="circuits"></script>
 </body>
 </html>
