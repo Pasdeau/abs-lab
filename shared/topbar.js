@@ -60,6 +60,7 @@
       ".abs-shell-badge{font-size:11.5px;padding:2px 8px;border-radius:999px;font-weight:600}",
       ".abs-shell-badge.cloud{background:#dcfce7;color:#15803d}",
       ".abs-shell-badge.local{background:#eef2ff;color:#3b5bdb}",
+      "@media print{.abs-shell-bar,.abs-shell-backdrop{display:none!important}}",
       "@media (max-width:720px){.abs-shell-in{padding:6px 10px;gap:6px}.abs-shell-nav{order:3;width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px}.abs-shell-link{white-space:nowrap;font-size:12.5px;padding:3px 8px}}"
     ].join("\n");
     var style = document.createElement("style");
@@ -87,9 +88,9 @@
     var navItems = [
       { id: "home", label: "首页", href: url("index.html") },
       { id: "physics", label: "⚡ 物理", href: url("index.html#physics"), match: ["knowledge-map", "circuits-lab", "hs-electricity"] },
-      { id: "chemistry", label: "🧪 化学", href: url("chemistry/neutralization.html"), match: ["neutralization"] },
-      { id: "math", label: "📐 数学", href: url("math/index.html"), match: ["math"] },
-      { id: "biology", label: "🧬 生物", href: url("biology/microscope.html"), match: ["biology", "microscope"] }
+      { id: "chemistry", label: "🧪 化学", href: url("chemistry/neutralization.html"), match: ["neutralization", "chem-map"] },
+      { id: "math", label: "📐 数学", href: url("math/index.html"), match: ["math", "math-map"] },
+      { id: "biology", label: "🧬 生物", href: url("biology/microscope.html"), match: ["biology", "microscope", "bio-map"] }
     ];
 
     var bar = document.createElement("div");

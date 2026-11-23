@@ -37,18 +37,18 @@
       </div>
       <div class="stat-box">
         <div class="lbl">🧪 化学 <span class="en-inline">Chemistry</span></div>
-        <div class="val" id="stat-chem">0 / 3</div>
-        <div class="sub">酸碱中和滴定任务</div>
+        <div class="val" id="stat-chem">0 已掌握</div>
+        <div class="sub" id="stat-chem-sub">知识导图 · 滴定任务 0/3</div>
       </div>
       <div class="stat-box">
         <div class="lbl">📐 数学 <span class="en-inline">Mathematics</span></div>
-        <div class="val" id="stat-math">规划中</div>
-        <div class="sub">三角函数 · 导数 · 向量</div>
+        <div class="val" id="stat-math">0 已掌握</div>
+        <div class="sub" id="stat-math-sub">知识导图</div>
       </div>
       <div class="stat-box">
         <div class="lbl">🧬 生物 <span class="en-inline">Biology</span></div>
-        <div class="val" id="stat-bio">0 / 4</div>
-        <div class="sub">光学显微镜实操任务</div>
+        <div class="val" id="stat-bio">0 已掌握</div>
+        <div class="sub" id="stat-bio-sub">知识导图 · 显微镜任务 0/4</div>
       </div>
     </div>
 
@@ -63,7 +63,7 @@
           <span class="badge badge-ref">物理 · 知识导图</span>
         </div>
         <h3>物理知识体系与导图 <span class="en-sub">Physics Knowledge System &amp; Atlas</span></h3>
-        <p>完整知识地图、关键词搜索、考频与难度筛选、薄弱点标记与「显示高中内容」拓展切换。</p>
+        <p>完整知识地图、近 5 年河南中考考频与重要度、关键词搜索与筛选、「显示高中内容」拓展；登录后可记录自己的错题（仅自己可见）。</p>
         <div class="portal-foot">
           <span id="card-km-status">查看知识体系</span>
           <span>进入 →</span>
@@ -102,6 +102,19 @@
       <h2>🧪 化学 <span class="en-inline">Chemistry</span></h2>
     </div>
     <div class="portal-grid">
+      <a class="portal-card" href="chemistry/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🗺️</div>
+          <span class="badge badge-ref">化学 · 知识导图</span>
+        </div>
+        <h3>化学知识体系与导图 <span class="en-sub">Chemistry Knowledge Atlas</span></h3>
+        <p>人教版新版 11 个单元全部知识点：近 5 年河南中考考频与重要度、化学用语排版、自测模式、高中衔接；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-chem">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
       <a class="portal-card" href="chemistry/neutralization.html">
         <div class="portal-top">
           <div class="portal-icon green">⚗️</div>
@@ -141,6 +154,19 @@
       <h2>📐 数学 <span class="en-inline">Mathematics</span></h2>
     </div>
     <div class="portal-grid">
+      <a class="portal-card" href="math/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon">🗺️</div>
+          <span class="badge badge-ref">数学 · 知识导图</span>
+        </div>
+        <h3>数学知识体系与导图 <span class="en-sub">Mathematics Knowledge Atlas</span></h3>
+        <p>七上至九下全部章节与知识点：课标主题地图、本章导图、近 5 年河南中考题号地图与考频；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-math">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
       <a class="portal-card" href="math/index.html">
         <div class="portal-top">
           <div class="portal-icon">📐</div>
@@ -177,6 +203,19 @@
       <h2>🧬 生物 <span class="en-inline">Biology</span></h2>
     </div>
     <div class="portal-grid">
+      <a class="portal-card" href="biology/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🗺️</div>
+          <span class="badge badge-ref">生物 · 知识导图</span>
+        </div>
+        <h3>生物学知识体系与导图 <span class="en-sub">Biology Knowledge Atlas</span></h3>
+        <p>七上至八下按课标 7 个学习主题整理：知识地图、本章导图、近年真题考频；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-bio">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
       <a class="portal-card" href="biology/microscope.html">
         <div class="portal-top">
           <div class="portal-icon green">🔬</div>
@@ -233,8 +272,15 @@
         document.getElementById("stat-phy").textContent = s.kmMastered + " 知识点已掌握";
         document.getElementById("stat-phy-sub").textContent =
           "实验台已学 " + s.circuitsDone + "/" + s.circuitsTotal + " · 高中电学 " + s.hsDone + "/" + s.hsTotal;
-        document.getElementById("stat-chem").textContent = s.chemDone + " / " + s.chemTotal;
-        document.getElementById("stat-bio").textContent = s.bioDone + " / " + s.bioTotal;
+        var m = s.maps || {};
+        var mm = function (k) { return (m[k] && m[k].mastered) || 0; };
+        var mk = function (k) { return (m[k] && m[k].marked) || 0; };
+        document.getElementById("stat-chem").textContent = mm("chemistry") + " 知识点已掌握";
+        document.getElementById("stat-chem-sub").textContent = "导图已标 " + mk("chemistry") + " · 滴定任务 " + s.chemDone + "/" + s.chemTotal;
+        document.getElementById("stat-math").textContent = mm("math") + " 知识点已掌握";
+        document.getElementById("stat-math-sub").textContent = "导图已标 " + mk("math") + " 个知识点";
+        document.getElementById("stat-bio").textContent = mm("biology") + " 知识点已掌握";
+        document.getElementById("stat-bio-sub").textContent = "导图已标 " + mk("biology") + " · 显微镜任务 " + s.bioDone + "/" + s.bioTotal;
 
         if (s.circuitsDone > 0) {
           document.getElementById("card-mx-status").textContent = "已学 " + s.circuitsDone + " / " + s.circuitsTotal + " 节";
@@ -244,6 +290,10 @@
         document.getElementById("card-hs-status").textContent = "已完成 " + s.hsDone + " / " + s.hsTotal;
         document.getElementById("card-chem-status").textContent = "已完成 " + s.chemDone + " / " + s.chemTotal;
         document.getElementById("card-bio-status").textContent = "已完成 " + s.bioDone + " / " + s.bioTotal;
+        [["physics", "card-km-status"], ["chemistry", "card-km-chem"], ["math", "card-km-math"], ["biology", "card-km-bio"]].forEach(function (x) {
+          var el = document.getElementById(x[1]);
+          if (el) el.textContent = mk(x[0]) ? "已掌握 " + mm(x[0]) + " · 已标 " + mk(x[0]) : "查看知识体系";
+        });
       }
 
       document.getElementById("heroAuthBtn").addEventListener("click", function () {
