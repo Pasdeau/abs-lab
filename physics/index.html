@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物理 · ABS-LAB</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <script src="../shared/auth.js"></script>
+</head>
+<body class="lang-bilingual">
+  <script src="../shared/topbar.js" data-root=".." data-page="physics" data-bilingual="true"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>物理 <span class="en-sub">Physics</span></h1>
+        <p>人教版初中物理：知识导图和两个互动实验台。导图里点「动手」去做实验，实验页里点「对应知识点」回到导图。</p>
+      </div>
+      <a class="hero-pill-btn" href="../index.html">← 返回首页</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <button type="button" class="search-launch" data-open-search="physics">🔍 <b>搜索物理</b>知识点、章节或实验……<kbd>Ctrl K</kbd></button>
+    <div class="section-head">
+      <h2>知识导图 <span class="en-inline">Knowledge Atlas</span></h2>
+      <span class="section-note">知识点旁的「动手」标签可以直接打开对应的实验</span>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="knowledge-map.html">
+        <div class="portal-top"><div class="portal-icon">🗺️</div><span class="badge badge-ref">知识导图</span></div>
+        <h3>物理知识体系与导图</h3>
+        <p>全书 22 章的知识地图与目录（第十七章已细化到知识点）、近 5 年河南中考考频与重要度、「显示高中内容」拓展；登录后可记录自己的错题（仅自己可见）。</p>
+        <div class="portal-foot"><span id="hub-km">查看知识体系</span><span>进入 →</span></div>
+      </a>
+    </div>
+
+    <div class="section-head">
+      <h2>互动实验 <span class="en-inline">Interactive Labs</span></h2>
+      <span class="section-note">每个实验标着「初中」「高中」（按人教版教材划分），实验页里的每个任务也有标注</span>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="circuits-lab.html">
+        <div class="portal-top"><div class="portal-icon sun">💡</div><span class="badge badge-live">电学 · 21 个实验</span></div>
+        <h3>电学实验台 <span class="en-sub">21-in-1 Circuits &amp; Electromagnetism</span></h3>
+        <p>通路与短路、串并联、滑动变阻器 U-I 图像、故障侦探、动态电路、磁场、电动机、发电机与电磁继电器。</p>
+        <div data-lk-lab="circuits"></div>
+        <div class="portal-foot"><span id="hub-mx">动手拖一拖、点一点</span><span>进入 →</span></div>
+      </a>
+      <a class="portal-card" href="hs-electricity.html">
+        <div class="portal-top"><div class="portal-icon coral">🔬</div><span class="badge badge-hs">电学 · 中英双语</span></div>
+        <h3>电流的微观本质 <span class="en-sub">Current Formation &amp; Electron Drift</span></h3>
+        <p>宏观电路与金属导体微观放大镜联动：规定电流方向与自由电子流向、无规则热运动、电场的建立。</p>
+        <div data-lk-lab="hs-elec"></div>
+        <div class="portal-foot"><span id="hub-hs">4 个互动探究任务</span><span>进入 →</span></div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="../shared/linker.js" data-mode="home"></script>
+  <script>
+    (function () {
+      function render() {
+        if (!window.ABSLabAuth) return;
+        var s = window.ABSLabAuth.getSummary(), m = (s.maps || {})["physics"] || {};
+        var el = document.getElementById("hub-km");
+        if (el) el.textContent = m.marked ? "已掌握 " + (m.mastered || 0) + " · 已标 " + m.marked : "查看知识体系";
+        var mx = document.getElementById("hub-mx"), hs = document.getElementById("hub-hs");
+        if (mx && s.circuitsDone) mx.textContent = "已学 " + s.circuitsDone + " / " + s.circuitsTotal + " 个";
+        if (hs && s.hsDone) hs.textContent = "已完成 " + s.hsDone + " / " + s.hsTotal;
+      }
+      window.addEventListener("abs-auth-changed", render);
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render); else render();
+    })();
+  </script>
+</body>
+</html>

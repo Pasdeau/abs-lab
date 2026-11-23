@@ -25,133 +25,43 @@
   <main class="container">
     <!-- 按四大学科分类的学习进度 -->
     <div class="section-head">
-      <h2>学习进度 <span class="en-inline">Learning Progress</span></h2>
+      <h2>学科与学习进度 <span class="en-inline">Subjects &amp; Progress</span></h2>
       <span id="homeAccountHint" style="font-size:0.86rem;color:var(--muted)">游客模式</span>
     </div>
 
     <div class="progress-strip">
-      <div class="stat-box">
-        <div class="lbl">⚡ 物理 <span class="en-inline">Physics</span></div>
-        <div class="val" id="stat-phy">0 已掌握</div>
-        <div class="sub" id="stat-phy-sub">实验台 0/21 · 高中电学 0/4</div>
-      </div>
-      <div class="stat-box">
-        <div class="lbl">🧪 化学 <span class="en-inline">Chemistry</span></div>
-        <div class="val" id="stat-chem">0 已掌握</div>
-        <div class="sub" id="stat-chem-sub">知识导图 · 滴定任务 0/3</div>
-      </div>
-      <div class="stat-box">
+      <a class="stat-box" href="math/index.html">
         <div class="lbl">📐 数学 <span class="en-inline">Mathematics</span></div>
         <div class="val" id="stat-math">0 已掌握</div>
         <div class="sub" id="stat-math-sub">知识导图</div>
-      </div>
-      <div class="stat-box">
+        <span class="go">进入数学 →</span>
+      </a>
+      <a class="stat-box" href="physics/index.html">
+        <div class="lbl">⚡ 物理 <span class="en-inline">Physics</span></div>
+        <div class="val" id="stat-phy">0 已掌握</div>
+        <div class="sub" id="stat-phy-sub">实验台 0/21 · 高中电学 0/4</div>
+        <span class="go">进入物理 →</span>
+      </a>
+      <a class="stat-box" href="chemistry/index.html">
+        <div class="lbl">🧪 化学 <span class="en-inline">Chemistry</span></div>
+        <div class="val" id="stat-chem">0 已掌握</div>
+        <div class="sub" id="stat-chem-sub">知识导图 · 中和任务 0/3</div>
+        <span class="go">进入化学 →</span>
+      </a>
+      <a class="stat-box" href="biology/index.html">
         <div class="lbl">🧬 生物 <span class="en-inline">Biology</span></div>
         <div class="val" id="stat-bio">0 已掌握</div>
         <div class="sub" id="stat-bio-sub">知识导图 · 显微镜任务 0/4</div>
-      </div>
-    </div>
-
-    <!-- ==================== 1. 物理 Physics ==================== -->
-    <div class="section-head" id="physics">
-      <h2>⚡ 物理 <span class="en-inline">Physics</span></h2>
-    </div>
-    <div class="portal-grid">
-      <a class="portal-card" href="physics/knowledge-map.html">
-        <div class="portal-top">
-          <div class="portal-icon">🗺️</div>
-          <span class="badge badge-ref">物理 · 知识导图</span>
-        </div>
-        <h3>物理知识体系与导图 <span class="en-sub">Physics Knowledge System &amp; Atlas</span></h3>
-        <p>完整知识地图、近 5 年河南中考考频与重要度、关键词搜索与筛选、「显示高中内容」拓展；登录后可记录自己的错题（仅自己可见）。</p>
-        <div class="portal-foot">
-          <span id="card-km-status">查看知识体系</span>
-          <span>进入 →</span>
-        </div>
-      </a>
-
-      <a class="portal-card" href="physics/circuits-lab.html">
-        <div class="portal-top">
-          <div class="portal-icon sun">💡</div>
-          <span class="badge badge-live">电学 · 21 个实验</span>
-        </div>
-        <h3>电学与磁学交互实验台 <span class="en-sub">21-in-1 Circuits &amp; Electromagnetism</span></h3>
-        <p>涵盖通路与短路、串并联、滑动变阻器 U-I 图像、故障侦探、动态电路、磁场、电动机、发电机与电磁继电器。</p>
-        <div class="portal-foot">
-          <span id="card-mx-status">动手拖一拖、点一点</span>
-          <span>进入 →</span>
-        </div>
-      </a>
-
-      <a class="portal-card" href="physics/hs-electricity.html">
-        <div class="portal-top">
-          <div class="portal-icon coral">🔬</div>
-          <span class="badge badge-hs">电学 · 高中双语</span>
-        </div>
-        <h3>电流的形成与自由电子漂移 <span class="en-sub">Current Formation &amp; Electron Drift</span></h3>
-        <p>宏观电路与金属导体微观放大镜双视角联动，直观辨析无规则热运动、电场建立、规定电流方向与自由电子流向。</p>
-        <div class="portal-foot">
-          <span id="card-hs-status">4 个互动探究任务</span>
-          <span>进入 →</span>
-        </div>
+        <span class="go">进入生物 →</span>
       </a>
     </div>
 
-    <!-- ==================== 2. 化学 Chemistry ==================== -->
-    <div class="section-head" id="chemistry">
-      <h2>🧪 化学 <span class="en-inline">Chemistry</span></h2>
-    </div>
-    <div class="portal-grid">
-      <a class="portal-card" href="chemistry/knowledge-map.html">
-        <div class="portal-top">
-          <div class="portal-icon green">🗺️</div>
-          <span class="badge badge-ref">化学 · 知识导图</span>
-        </div>
-        <h3>化学知识体系与导图 <span class="en-sub">Chemistry Knowledge Atlas</span></h3>
-        <p>人教版新版 11 个单元全部知识点：近 5 年河南中考考频与重要度、化学用语排版、自测模式、高中衔接；登录后可记录错题（仅自己可见）。</p>
-        <div class="portal-foot">
-          <span id="card-km-chem">查看知识体系</span>
-          <span>进入 →</span>
-        </div>
-      </a>
+    <button type="button" class="search-launch" data-open-search="">🔍 <b>搜索</b>四科知识点和全部实验：欧姆定律、pH、显微镜、反比例函数……<kbd>Ctrl K</kbd></button>
 
-      <a class="portal-card" href="chemistry/neutralization.html">
-        <div class="portal-top">
-          <div class="portal-icon green">⚗️</div>
-          <span class="badge badge-live">高中双语实验</span>
-        </div>
-        <h3>酸碱中和滴定与微观离子视图 <span class="en-sub">Acid-Base Neutralization &amp; Ions</span></h3>
-        <p>模拟 HCl 与 NaOH 滴定全过程：切换酚酞、石蕊与甲基橙观察变色，实时绘制 pH 突跃曲线并透视微观离子。</p>
-        <div class="portal-foot">
-          <span id="card-chem-status">3 个互动探究任务</span>
-          <span>进入 →</span>
-        </div>
-      </a>
-
-      <div class="portal-card is-soon">
-        <div class="portal-top">
-          <div class="portal-icon">🔋</div>
-          <span class="badge badge-soon">规划中</span>
-        </div>
-        <h3>原电池与电子转移 <span class="en-sub">Galvanic Cell (Zn-Cu)</span></h3>
-        <p>展示铜锌原电池外电路电子流向、盐桥离子迁移与电极反应式。</p>
-        <div class="portal-foot"><span>敬请期待</span><span></span></div>
-      </div>
-
-      <div class="portal-card is-soon">
-        <div class="portal-top">
-          <div class="portal-icon sun">⚖️</div>
-          <span class="badge badge-soon">规划中</span>
-        </div>
-        <h3>化学平衡与勒夏特列原理 <span class="en-sub">Chemical Equilibrium</span></h3>
-        <p>调节温度、压强与浓度，直观观察正逆反应速率与平衡移动方向。</p>
-        <div class="portal-foot"><span>敬请期待</span><span></span></div>
-      </div>
-    </div>
-
-    <!-- ==================== 3. 数学 Mathematics ==================== -->
+    <!-- ==================== 1. 数学 Mathematics ==================== -->
     <div class="section-head" id="math">
       <h2>📐 数学 <span class="en-inline">Mathematics</span></h2>
+      <a class="section-go" href="math/index.html">进入数学 →</a>
     </div>
     <div class="portal-grid">
       <a class="portal-card" href="math/knowledge-map.html">
@@ -198,9 +108,112 @@
       </div>
     </div>
 
+    <!-- ==================== 2. 物理 Physics ==================== -->
+    <div class="section-head" id="physics">
+      <h2>⚡ 物理 <span class="en-inline">Physics</span></h2>
+      <a class="section-go" href="physics/index.html">进入物理 →</a>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="physics/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon">🗺️</div>
+          <span class="badge badge-ref">物理 · 知识导图</span>
+        </div>
+        <h3>物理知识体系与导图 <span class="en-sub">Physics Knowledge System &amp; Atlas</span></h3>
+        <p>完整知识地图、近 5 年河南中考考频与重要度、关键词搜索与筛选、「显示高中内容」拓展；登录后可记录自己的错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-status">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="physics/circuits-lab.html">
+        <div class="portal-top">
+          <div class="portal-icon sun">💡</div>
+          <span class="badge badge-live">电学 · 21 个实验</span>
+        </div>
+        <h3>电学与磁学交互实验台 <span class="en-sub">21-in-1 Circuits &amp; Electromagnetism</span></h3>
+        <p>涵盖通路与短路、串并联、滑动变阻器 U-I 图像、故障侦探、动态电路、磁场、电动机、发电机与电磁继电器。</p>
+        <div data-lk-lab="circuits"></div>
+        <div class="portal-foot">
+          <span id="card-mx-status">动手拖一拖、点一点</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="physics/hs-electricity.html">
+        <div class="portal-top">
+          <div class="portal-icon coral">🔬</div>
+          <span class="badge badge-hs">电学 · 中英双语</span>
+        </div>
+        <h3>电流的形成与自由电子漂移 <span class="en-sub">Current Formation &amp; Electron Drift</span></h3>
+        <p>宏观电路与金属导体微观放大镜双视角联动，直观辨析无规则热运动、电场建立、规定电流方向与自由电子流向。</p>
+        <div data-lk-lab="hs-elec"></div>
+        <div class="portal-foot">
+          <span id="card-hs-status">4 个互动探究任务</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- ==================== 3. 化学 Chemistry ==================== -->
+    <div class="section-head" id="chemistry">
+      <h2>🧪 化学 <span class="en-inline">Chemistry</span></h2>
+      <a class="section-go" href="chemistry/index.html">进入化学 →</a>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="chemistry/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🗺️</div>
+          <span class="badge badge-ref">化学 · 知识导图</span>
+        </div>
+        <h3>化学知识体系与导图 <span class="en-sub">Chemistry Knowledge Atlas</span></h3>
+        <p>人教版新版 11 个单元全部知识点：近 5 年河南中考考频与重要度、化学用语排版、自测模式、高中衔接；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-chem">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="chemistry/neutralization.html">
+        <div class="portal-top">
+          <div class="portal-icon green">⚗️</div>
+          <span class="badge badge-live">中英双语实验</span>
+        </div>
+        <h3>酸碱中和滴定与微观离子视图 <span class="en-sub">Acid-Base Neutralization &amp; Ions</span></h3>
+        <p>模拟 HCl 与 NaOH 滴定全过程：切换酚酞、石蕊与甲基橙观察变色，实时绘制 pH 突跃曲线并透视微观离子。</p>
+        <div data-lk-lab="neut"></div>
+        <div class="portal-foot">
+          <span id="card-chem-status">3 个互动探究任务</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon">🔋</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>原电池与电子转移 <span class="en-sub">Galvanic Cell (Zn-Cu)</span></h3>
+        <p>展示铜锌原电池外电路电子流向、盐桥离子迁移与电极反应式。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon sun">⚖️</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>化学平衡与勒夏特列原理 <span class="en-sub">Chemical Equilibrium</span></h3>
+        <p>调节温度、压强与浓度，直观观察正逆反应速率与平衡移动方向。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+    </div>
+
     <!-- ==================== 4. 生物 Biology ==================== -->
     <div class="section-head" id="biology">
       <h2>🧬 生物 <span class="en-inline">Biology</span></h2>
+      <a class="section-go" href="biology/index.html">进入生物 →</a>
     </div>
     <div class="portal-grid">
       <a class="portal-card" href="biology/knowledge-map.html">
@@ -223,6 +236,7 @@
         </div>
         <h3>光学显微镜实操实验台 <span class="en-sub">Compound Light Microscope</span></h3>
         <p>洋葱表皮、人口腔上皮、黑藻叶片与人血涂片 4 种真实标本：切换 4×/10×/40× 物镜、旋转粗/细准焦螺旋与调节光圈。</p>
+        <div data-lk-lab="micro"></div>
         <div class="portal-foot">
           <span id="card-bio-status">4 个实操任务</span>
           <span>进入 →</span>
@@ -252,6 +266,7 @@
   </main>
 
   <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="shared/linker.js" data-mode="home"></script>
 
   <script>
     (function () {
@@ -276,7 +291,7 @@
         var mm = function (k) { return (m[k] && m[k].mastered) || 0; };
         var mk = function (k) { return (m[k] && m[k].marked) || 0; };
         document.getElementById("stat-chem").textContent = mm("chemistry") + " 知识点已掌握";
-        document.getElementById("stat-chem-sub").textContent = "导图已标 " + mk("chemistry") + " · 滴定任务 " + s.chemDone + "/" + s.chemTotal;
+        document.getElementById("stat-chem-sub").textContent = "导图已标 " + mk("chemistry") + " · 中和任务 " + s.chemDone + "/" + s.chemTotal;
         document.getElementById("stat-math").textContent = mm("math") + " 知识点已掌握";
         document.getElementById("stat-math-sub").textContent = "导图已标 " + mk("math") + " 个知识点";
         document.getElementById("stat-bio").textContent = mm("biology") + " 知识点已掌握";

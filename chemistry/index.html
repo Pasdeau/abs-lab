@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>化学 · ABS-LAB</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <script src="../shared/auth.js"></script>
+</head>
+<body class="lang-bilingual">
+  <script src="../shared/topbar.js" data-root=".." data-page="chemistry" data-bilingual="true"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>化学 <span class="en-sub">Chemistry</span></h1>
+        <p>人教版初中化学：知识导图和中和反应实验台。实验里哪些是初中、哪些是高中，每个任务都标出来了。</p>
+      </div>
+      <a class="hero-pill-btn" href="../index.html">← 返回首页</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <button type="button" class="search-launch" data-open-search="chemistry">🔍 <b>搜索化学</b>知识点、章节或实验……<kbd>Ctrl K</kbd></button>
+    <div class="section-head">
+      <h2>知识导图 <span class="en-inline">Knowledge Atlas</span></h2>
+      <span class="section-note">知识点旁的「动手」标签可以直接打开对应的实验</span>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="knowledge-map.html">
+        <div class="portal-top"><div class="portal-icon green">🗺️</div><span class="badge badge-ref">知识导图</span></div>
+        <h3>化学知识体系与导图</h3>
+        <p>人教版新版 11 个单元全部知识点：近 5 年河南中考考频与重要度、化学用语排版、自测模式、高中衔接；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot"><span id="hub-km">查看知识体系</span><span>进入 →</span></div>
+      </a>
+    </div>
+
+    <div class="section-head">
+      <h2>互动实验 <span class="en-inline">Interactive Labs</span></h2>
+      <span class="section-note">每个实验标着「初中」「高中」（按人教版教材划分），实验页里的每个任务也有标注</span>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="neutralization.html">
+        <div class="portal-top"><div class="portal-icon green">⚗️</div><span class="badge badge-live">中英双语实验</span></div>
+        <h3>中和反应实验台 <span class="en-sub">Acid-Base Neutralization &amp; Ions</span></h3>
+        <p>向稀盐酸中逐滴加入氢氧化钠溶液：看指示剂变色、pH 变化曲线和微观离子的变化。</p>
+        <div data-lk-lab="neut"></div>
+        <div class="portal-foot"><span id="hub-neut">3 个互动探究任务</span><span>进入 →</span></div>
+      </a>
+      <div class="portal-card is-soon">
+        <div class="portal-top"><div class="portal-icon">🔋</div><span class="badge badge-soon">规划中 · 高中</span></div>
+        <h3>原电池与电子转移 <span class="en-sub">Galvanic Cell (Zn-Cu)</span></h3>
+        <p>展示铜锌原电池外电路电子流向、盐桥离子迁移与电极反应式。</p>
+      </div>
+      <div class="portal-card is-soon">
+        <div class="portal-top"><div class="portal-icon sun">⚖️</div><span class="badge badge-soon">规划中 · 高中</span></div>
+        <h3>化学平衡与勒夏特列原理 <span class="en-sub">Chemical Equilibrium</span></h3>
+        <p>调节温度、压强与浓度，观察正逆反应速率与平衡移动方向。</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="../shared/linker.js" data-mode="home"></script>
+  <script>
+    (function () {
+      function render() {
+        if (!window.ABSLabAuth) return;
+        var s = window.ABSLabAuth.getSummary(), m = (s.maps || {})["chemistry"] || {};
+        var el = document.getElementById("hub-km");
+        if (el) el.textContent = m.marked ? "已掌握 " + (m.mastered || 0) + " · 已标 " + m.marked : "查看知识体系";
+        var n = document.getElementById("hub-neut");
+        if (n && s.chemDone) n.textContent = "已完成 " + s.chemDone + " / " + s.chemTotal;
+      }
+      window.addEventListener("abs-auth-changed", render);
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render); else render();
+    })();
+  </script>
+</body>
+</html>

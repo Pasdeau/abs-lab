@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>光学显微镜实操实验台 · ABS-LAB</title>
+  <title>显微镜实验台 · ABS-LAB</title>
   <link rel="stylesheet" href="../shared/theme.css" />
   <script src="../shared/auth.js"></script>
   <style>
@@ -12,6 +12,10 @@
       grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr);
       gap: 16px;
       align-items: start;
+    }
+    /* 手机、平板：和其他实验页一样改成上下排列（原来这里的两栏会把任务栏挤成一个字宽） */
+    @media (max-width: 960px) {
+      .micro-layout { display: flex; flex-direction: column; }
     }
     .specimen-bar {
       display: grid;
@@ -582,5 +586,6 @@
   <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
   <script src="../shared/mobile-stage.js"></script>
   <script src="js/microscope.js"></script>
+<script src="../shared/linker.js" data-mode="lab" data-lab="micro"></script>
 </body>
 </html>

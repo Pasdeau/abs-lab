@@ -26,6 +26,8 @@
       ".abs-shell-btn:hover{background:rgba(255,255,255,.18)}",
       ".abs-shell-btn-primary{background:#3B5BDB;border-color:#4c6ef5}",
       ".abs-shell-btn-primary:hover{background:#364fc7}",
+      ".abs-shell-kbd{font:600 11px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#cbd5e1;border:1px solid rgba(255,255,255,.25);border-radius:5px;padding:0 5px;margin-left:2px}",
+      "@media (max-width:720px),(hover:none){.abs-shell-kbd{display:none}}",
       ".abs-shell-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block}",
       ".abs-shell-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}",
       ".abs-shell-backdrop.open{display:flex}",
@@ -85,12 +87,13 @@
       window.ABSLabAuth.markVisited(PAGE);
     }
 
+    // 学科按数、理、化、生排列；点学科进入这一科的页面（知识导图 + 实验）
     var navItems = [
       { id: "home", label: "首页", href: url("index.html") },
-      { id: "physics", label: "⚡ 物理", href: url("index.html#physics"), match: ["knowledge-map", "circuits-lab", "hs-electricity"] },
-      { id: "chemistry", label: "🧪 化学", href: url("chemistry/neutralization.html"), match: ["neutralization", "chem-map"] },
       { id: "math", label: "📐 数学", href: url("math/index.html"), match: ["math", "math-map"] },
-      { id: "biology", label: "🧬 生物", href: url("biology/microscope.html"), match: ["biology", "microscope", "bio-map"] }
+      { id: "physics", label: "⚡ 物理", href: url("physics/index.html"), match: ["physics", "knowledge-map", "circuits-lab", "hs-electricity"] },
+      { id: "chemistry", label: "🧪 化学", href: url("chemistry/index.html"), match: ["chemistry", "neutralization", "chem-map"] },
+      { id: "biology", label: "🧬 生物", href: url("biology/index.html"), match: ["biology", "microscope", "bio-map"] }
     ];
 
     var bar = document.createElement("div");
@@ -110,6 +113,7 @@
           '</div>' +
         '</div>' +
         '<div class="abs-shell-right">' +
+          '<button type="button" class="abs-shell-btn" id="absShellSearchBtn" title="搜索知识点和实验（Ctrl / ⌘ K）">🔍 搜索<kbd class="abs-shell-kbd">Ctrl K</kbd></button>' +
           (SUPPORTS_LANG
             ? '<button type="button" class="abs-shell-btn" id="absShellLangBtn"><span class="abs-shell-dot"></span><span id="absShellLangLabel">双语 CN/EN</span></button>'
             : '') +
@@ -158,6 +162,7 @@
       if (!window.ABSLabAuth) return;
       var user = window.ABSLabAuth.getCurrentUser();
       var summary = window.ABSLabAuth.getSummary();
+      var mapsMastered = function (k) { var m = summary.maps && summary.maps[k]; return (m && m.mastered) || 0; };
 
       if (user) {
         modalBody.innerHTML =
@@ -168,10 +173,10 @@
               : '<span class="abs-shell-badge local">本地模式</span>') +
           '</div>' +
           '<div class="abs-shell-stats">' +
+            '<div class="abs-shell-stat"><span>📐 数学</span><b>导图掌握 ' + mapsMastered("math") + '</b></div>' +
             '<div class="abs-shell-stat"><span>⚡ 物理</span><b>导图 ' + summary.kmMastered + ' · 实验台 ' + summary.circuitsDone + '/' + summary.circuitsTotal + ' · 高中 ' + summary.hsDone + '/' + summary.hsTotal + '</b></div>' +
-            '<div class="abs-shell-stat"><span>🧪 化学</span><b>滴定任务 ' + summary.chemDone + ' / ' + summary.chemTotal + '</b></div>' +
-            '<div class="abs-shell-stat"><span>📐 数学</span><b>规划中</b></div>' +
-            '<div class="abs-shell-stat"><span>🧬 生物</span><b>显微镜 ' + summary.bioDone + ' / ' + summary.bioTotal + '</b></div>' +
+            '<div class="abs-shell-stat"><span>🧪 化学</span><b>导图掌握 ' + mapsMastered("chemistry") + ' · 中和 ' + summary.chemDone + '/' + summary.chemTotal + '</b></div>' +
+            '<div class="abs-shell-stat"><span>🧬 生物</span><b>导图掌握 ' + mapsMastered("biology") + ' · 显微镜 ' + summary.bioDone + '/' + summary.bioTotal + '</b></div>' +
           '</div>' +
           '<div class="abs-shell-actions">' +
             '<button type="button" class="abs-shell-act" id="absExportBtn">导出备份</button>' +
@@ -311,6 +316,31 @@
     }
 
     window.ABSLabOpenAuth = openModal;
+
+    // 全站搜索：第一次用时才加载 shared/search.js
+    var searchLoading = null;
+    function openSearch(q, subject) {
+      if (window.ABSLabSearch) { window.ABSLabSearch.open(q, subject); return; }
+      if (!searchLoading) {
+        searchLoading = new Promise(function (resolve, reject) {
+          var sc = document.createElement("script");
+          sc.src = url("shared/search.js");
+          sc.onload = resolve;
+          sc.onerror = function () { searchLoading = null; reject(); };
+          document.head.appendChild(sc);
+        });
+      }
+      searchLoading.then(function () { if (window.ABSLabSearch) window.ABSLabSearch.open(q, subject); });
+    }
+    window.ABSLabOpenSearch = openSearch;
+    document.getElementById("absShellSearchBtn").addEventListener("click", function () { openSearch(); });
+    document.addEventListener("keydown", function (ev) {
+      if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === "k" || ev.key === "K")) { ev.preventDefault(); openSearch(); }
+    });
+    document.addEventListener("click", function (ev) {
+      var b = ev.target.closest && ev.target.closest("[data-open-search]");
+      if (b) { ev.preventDefault(); openSearch("", b.getAttribute("data-open-search") || ""); }
+    });
     window.addEventListener("abs-auth-changed", updateHeaderAuthBtn);
 
     updateHeaderAuthBtn();
