@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABS-LAB · 数理化生互动实验平台</title>
+  <link rel="stylesheet" href="shared/theme.css" />
+  <script src="shared/auth.js"></script>
+</head>
+<body class="lang-bilingual">
+  <script src="shared/topbar.js" data-root="." data-page="home" data-bilingual="true"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>ABS-LAB · 数理化生互动实验平台 <span class="en-sub">Interactive STEM Lab &amp; Knowledge Atlas</span></h1>
+        <p>
+          源于课本，高于课本——在线可视化原理探索与互动实验平台
+        </p>
+      </div>
+      <button type="button" class="hero-pill-btn" id="heroAuthBtn">👤 登录 / 注册</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 按四大学科分类的学习进度 -->
+    <div class="section-head">
+      <h2>学习进度 <span class="en-inline">Learning Progress</span></h2>
+      <span id="homeAccountHint" style="font-size:0.86rem;color:var(--muted)">游客模式</span>
+    </div>
+
+    <div class="progress-strip">
+      <div class="stat-box">
+        <div class="lbl">⚡ 物理 <span class="en-inline">Physics</span></div>
+        <div class="val" id="stat-phy">0 已掌握</div>
+        <div class="sub" id="stat-phy-sub">实验台 0/21 · 高中电学 0/4</div>
+      </div>
+      <div class="stat-box">
+        <div class="lbl">🧪 化学 <span class="en-inline">Chemistry</span></div>
+        <div class="val" id="stat-chem">0 已掌握</div>
+        <div class="sub" id="stat-chem-sub">知识导图 · 滴定任务 0/3</div>
+      </div>
+      <div class="stat-box">
+        <div class="lbl">📐 数学 <span class="en-inline">Mathematics</span></div>
+        <div class="val" id="stat-math">0 已掌握</div>
+        <div class="sub" id="stat-math-sub">知识导图</div>
+      </div>
+      <div class="stat-box">
+        <div class="lbl">🧬 生物 <span class="en-inline">Biology</span></div>
+        <div class="val" id="stat-bio">0 已掌握</div>
+        <div class="sub" id="stat-bio-sub">知识导图 · 显微镜任务 0/4</div>
+      </div>
+    </div>
+
+    <!-- ==================== 1. 物理 Physics ==================== -->
+    <div class="section-head" id="physics">
+      <h2>⚡ 物理 <span class="en-inline">Physics</span></h2>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="physics/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon">🗺️</div>
+          <span class="badge badge-ref">物理 · 知识导图</span>
+        </div>
+        <h3>物理知识体系与导图 <span class="en-sub">Physics Knowledge System &amp; Atlas</span></h3>
+        <p>完整知识地图、近 5 年河南中考考频与重要度、关键词搜索与筛选、「显示高中内容」拓展；登录后可记录自己的错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-status">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="physics/circuits-lab.html">
+        <div class="portal-top">
+          <div class="portal-icon sun">💡</div>
+          <span class="badge badge-live">电学 · 21 个实验</span>
+        </div>
+        <h3>电学与磁学交互实验台 <span class="en-sub">21-in-1 Circuits &amp; Electromagnetism</span></h3>
+        <p>涵盖通路与短路、串并联、滑动变阻器 U-I 图像、故障侦探、动态电路、磁场、电动机、发电机与电磁继电器。</p>
+        <div class="portal-foot">
+          <span id="card-mx-status">动手拖一拖、点一点</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="physics/hs-electricity.html">
+        <div class="portal-top">
+          <div class="portal-icon coral">🔬</div>
+          <span class="badge badge-hs">电学 · 高中双语</span>
+        </div>
+        <h3>电流的形成与自由电子漂移 <span class="en-sub">Current Formation &amp; Electron Drift</span></h3>
+        <p>宏观电路与金属导体微观放大镜双视角联动，直观辨析无规则热运动、电场建立、规定电流方向与自由电子流向。</p>
+        <div class="portal-foot">
+          <span id="card-hs-status">4 个互动探究任务</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- ==================== 2. 化学 Chemistry ==================== -->
+    <div class="section-head" id="chemistry">
+      <h2>🧪 化学 <span class="en-inline">Chemistry</span></h2>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="chemistry/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🗺️</div>
+          <span class="badge badge-ref">化学 · 知识导图</span>
+        </div>
+        <h3>化学知识体系与导图 <span class="en-sub">Chemistry Knowledge Atlas</span></h3>
+        <p>人教版新版 11 个单元全部知识点：近 5 年河南中考考频与重要度、化学用语排版、自测模式、高中衔接；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-chem">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="chemistry/neutralization.html">
+        <div class="portal-top">
+          <div class="portal-icon green">⚗️</div>
+          <span class="badge badge-live">高中双语实验</span>
+        </div>
+        <h3>酸碱中和滴定与微观离子视图 <span class="en-sub">Acid-Base Neutralization &amp; Ions</span></h3>
+        <p>模拟 HCl 与 NaOH 滴定全过程：切换酚酞、石蕊与甲基橙观察变色，实时绘制 pH 突跃曲线并透视微观离子。</p>
+        <div class="portal-foot">
+          <span id="card-chem-status">3 个互动探究任务</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon">🔋</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>原电池与电子转移 <span class="en-sub">Galvanic Cell (Zn-Cu)</span></h3>
+        <p>展示铜锌原电池外电路电子流向、盐桥离子迁移与电极反应式。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon sun">⚖️</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>化学平衡与勒夏特列原理 <span class="en-sub">Chemical Equilibrium</span></h3>
+        <p>调节温度、压强与浓度，直观观察正逆反应速率与平衡移动方向。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+    </div>
+
+    <!-- ==================== 3. 数学 Mathematics ==================== -->
+    <div class="section-head" id="math">
+      <h2>📐 数学 <span class="en-inline">Mathematics</span></h2>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="math/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon">🗺️</div>
+          <span class="badge badge-ref">数学 · 知识导图</span>
+        </div>
+        <h3>数学知识体系与导图 <span class="en-sub">Mathematics Knowledge Atlas</span></h3>
+        <p>七上至九下全部章节与知识点：课标主题地图、本章导图、近 5 年河南中考题号地图与考频；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-math">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="math/index.html">
+        <div class="portal-top">
+          <div class="portal-icon">📐</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>单位圆与三角函数波形 <span class="en-sub">Unit Circle &amp; sin/cos Waves</span></h3>
+        <p>拖动角度 θ，动态关联单位圆坐标与正弦、余弦函数波形。</p>
+        <div class="portal-foot"><span>查看数学目录</span><span>进入 →</span></div>
+      </a>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon sun">📈</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>导数与切线斜率极限 <span class="en-sub">Derivatives &amp; Tangent Slope</span></h3>
+        <p>动态缩放 Δx → 0，直观呈现割线逼近切线的极限过程。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon green">🧭</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>平面向量合成与分解 <span class="en-sub">Vector Addition &amp; Decomposition</span></h3>
+        <p>自由拖拽平面向量，动态演示平行四边形法则与正交分解。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. 生物 Biology ==================== -->
+    <div class="section-head" id="biology">
+      <h2>🧬 生物 <span class="en-inline">Biology</span></h2>
+    </div>
+    <div class="portal-grid">
+      <a class="portal-card" href="biology/knowledge-map.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🗺️</div>
+          <span class="badge badge-ref">生物 · 知识导图</span>
+        </div>
+        <h3>生物学知识体系与导图 <span class="en-sub">Biology Knowledge Atlas</span></h3>
+        <p>七上至八下按课标 7 个学习主题整理：知识地图、本章导图、近年真题考频；登录后可记录错题（仅自己可见）。</p>
+        <div class="portal-foot">
+          <span id="card-km-bio">查看知识体系</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <a class="portal-card" href="biology/microscope.html">
+        <div class="portal-top">
+          <div class="portal-icon green">🔬</div>
+          <span class="badge badge-live">真实标本 · 实操模拟</span>
+        </div>
+        <h3>光学显微镜实操实验台 <span class="en-sub">Compound Light Microscope</span></h3>
+        <p>洋葱表皮、人口腔上皮、黑藻叶片与人血涂片 4 种真实标本：切换 4×/10×/40× 物镜、旋转粗/细准焦螺旋与调节光圈。</p>
+        <div class="portal-foot">
+          <span id="card-bio-status">4 个实操任务</span>
+          <span>进入 →</span>
+        </div>
+      </a>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon">🧫</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>渗透作用与质壁分离 <span class="en-sub">Osmosis &amp; Plasmolysis</span></h3>
+        <p>调节外界蔗糖浓度，动态观察水分子跨膜净流动与植物细胞液泡体积变化。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+
+      <div class="portal-card is-soon">
+        <div class="portal-top">
+          <div class="portal-icon coral">🧬</div>
+          <span class="badge badge-soon">规划中</span>
+        </div>
+        <h3>孟德尔遗传定律模拟 <span class="en-sub">Mendelian Genetics Simulator</span></h3>
+        <p>模拟亲代杂交与大样本统计，对比理论分离比与随机抽样结果。</p>
+        <div class="portal-foot"><span>敬请期待</span><span></span></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+
+  <script>
+    (function () {
+      function renderStats() {
+        if (!window.ABSLabAuth) return;
+        var s = window.ABSLabAuth.getSummary();
+        var hint = document.getElementById("homeAccountHint");
+        var heroBtn = document.getElementById("heroAuthBtn");
+
+        if (s.username) {
+          hint.innerHTML = "当前账号：<strong>" + s.username + "</strong>" + (s.cloud ? " · 云端已同步" : "");
+          heroBtn.textContent = "👤 " + s.username;
+        } else {
+          hint.textContent = "游客模式";
+          heroBtn.textContent = "👤 登录 / 注册";
+        }
+
+        document.getElementById("stat-phy").textContent = s.kmMastered + " 知识点已掌握";
+        document.getElementById("stat-phy-sub").textContent =
+          "实验台已学 " + s.circuitsDone + "/" + s.circuitsTotal + " · 高中电学 " + s.hsDone + "/" + s.hsTotal;
+        var m = s.maps || {};
+        var mm = function (k) { return (m[k] && m[k].mastered) || 0; };
+        var mk = function (k) { return (m[k] && m[k].marked) || 0; };
+        document.getElementById("stat-chem").textContent = mm("chemistry") + " 知识点已掌握";
+        document.getElementById("stat-chem-sub").textContent = "导图已标 " + mk("chemistry") + " · 滴定任务 " + s.chemDone + "/" + s.chemTotal;
+        document.getElementById("stat-math").textContent = mm("math") + " 知识点已掌握";
+        document.getElementById("stat-math-sub").textContent = "导图已标 " + mk("math") + " 个知识点";
+        document.getElementById("stat-bio").textContent = mm("biology") + " 知识点已掌握";
+        document.getElementById("stat-bio-sub").textContent = "导图已标 " + mk("biology") + " · 显微镜任务 " + s.bioDone + "/" + s.bioTotal;
+
+        if (s.circuitsDone > 0) {
+          document.getElementById("card-mx-status").textContent = "已学 " + s.circuitsDone + " / " + s.circuitsTotal + " 节";
+        } else {
+          document.getElementById("card-mx-status").textContent = "21 个互动实验";
+        }
+        document.getElementById("card-hs-status").textContent = "已完成 " + s.hsDone + " / " + s.hsTotal;
+        document.getElementById("card-chem-status").textContent = "已完成 " + s.chemDone + " / " + s.chemTotal;
+        document.getElementById("card-bio-status").textContent = "已完成 " + s.bioDone + " / " + s.bioTotal;
+        [["physics", "card-km-status"], ["chemistry", "card-km-chem"], ["math", "card-km-math"], ["biology", "card-km-bio"]].forEach(function (x) {
+          var el = document.getElementById(x[1]);
+          if (el) el.textContent = mk(x[0]) ? "已掌握 " + mm(x[0]) + " · 已标 " + mk(x[0]) : "查看知识体系";
+        });
+      }
+
+      document.getElementById("heroAuthBtn").addEventListener("click", function () {
+        if (window.ABSLabOpenAuth) window.ABSLabOpenAuth();
+      });
+
+      window.addEventListener("abs-auth-changed", renderStats);
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", renderStats);
+      else renderStats();
+    })();
+  </script>
+</body>
+</html>
