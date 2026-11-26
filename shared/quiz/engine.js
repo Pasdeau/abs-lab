@@ -463,7 +463,8 @@
       return wrap;
     }
     ansWrap.appendChild(optGroup(item.answer, "ans", function (i) { return ANS_KEYS.charAt(i); },
-      isPredict ? "先预测：你认为图象是哪一个？" : "选一个答案"));
+      // 预测关卡的提问可以由题目自己给（item.ask，可选）：不是每个预测都是「选图象」，例如电子秤的刻度疏密
+      isPredict ? (item.ask || "先预测：你认为图象是哪一个？") : "选一个答案"));
     if (item.reason) {
       ansWrap.appendChild(optGroup(item.reason, "rs", function (i) { return String(i + 1); }, "为什么？选一个理由"));
     }
@@ -768,7 +769,8 @@
       ]));
       cmp.appendChild(h("figure", { cls: "qz-cmp-col" }, [
         h("figcaption", { cls: "qz-cmp-title", text: "实际结果" }), real,
-        h("p", { cls: "qz-cmp-note", text: actual ? "你刚才拖出来的图象" : "部件没有给出结果图" })
+        // 说明文字可以由部件给（result().note，可选），例如表盘刻度不是「拖出来的图象」
+        h("p", { cls: "qz-cmp-note", text: actual ? (res.note ? String(res.note) : "你刚才拖出来的图象") : "部件没有给出结果图" })
       ]));
       show(cmp, true);
       if (opt && opt.figure) drawFig(mine, opt.figure);
@@ -1267,10 +1269,11 @@
     if (t === LAST_TOK) return;
     LAST_TOK = t;
     REC = { tok: null, data: null, p: null };
-    if (t) loadRecords();
     CARDS = CARDS.filter(function (c) { return inDoc(c.el); });
-    CARDS.forEach(function (c) { try { c.onAuth(t); } catch (e) { /* 一张卡片出错不影响别的 */ } });
     REVIEWS = REVIEWS.filter(function (r) { return inDoc(r.box); });
+    // 页面上有卡片或重测页时才预取作答记录：只用 ABSLabQuiz.load() 读题库的页面（理解小测）登录时不发 GET api/quiz
+    if (t && (CARDS.length || REVIEWS.length)) loadRecords();
+    CARDS.forEach(function (c) { try { c.onAuth(t); } catch (e) { /* 一张卡片出错不影响别的 */ } });
     REVIEWS.forEach(function (r) { renderReview(r); });
   });
 

@@ -21,7 +21,10 @@ n 名称、c 所在章、x 摘要、t 类型（kp 知识点 / sec 节 / exp 必�
 检查题库：题目 id、题型、正确选项、错误概念标签、知识点、页面等（见 check_quiz），另外两条：
   · 被题目引用的错误概念标签至少要有 2 道题、2 种情境（context），否则判不了稳定迷思、换不了情境重测；
   · 模块完整性：MODULE_RULES 里列出的模块（题目的 module 字段），每个至少要有 1 道预测关卡、
-    6 道二段式题（每道的答案或理由至少有一个选项带错误概念标签 mc）、2 道迁移题、1 道逆向题。
+    6 道二段式题（每道的答案或理由至少有一个选项带错误概念标签 mc）、2 道迁移题、1 道逆向题；
+  · 正确选项的位置（同样只查 MODULE_RULES 里的模块）：按题库顺序，正确答案排在同一个位置（第几个选项）
+    的题不超过一半（题数是奇数时向上取整），也不能连续 3 道题落在同一个位置；正确理由同样检查（只看有理由的题）。
+    否则学生做几题就会发现「总选第一个」，测出来的不是真实想法。
 有问题时列出来并以非 0 退出，避免导图改版后链接悄悄失效、题库写错了没人发现。
 
 生成的文件只随内容变化：导图没变时 search-index.json 保留原来的 built 日期，
@@ -29,6 +32,7 @@ link-names.json 的知识点没变时也保留原日期，题库索引 index.jso
 这样重新运行一遍不会产生无意义的改动。
 """
 import json
+import math
 import re
 import sys
 from datetime import date
@@ -67,6 +71,11 @@ MODULE_MIN = (
     ("transfer", 2, "迁移题"),
     ("inverse", 1, "逆向题"),
 )
+# 正确选项的位置（MODULE_RULES 里的模块）：同一位置的题最多占一半；连续落在同一位置的题最多 2 道。
+# 题数是奇数时「一半」向上取整：例如 pe 模块 9 道有理由的题全是二选一，怎么排都有一个位置占 5 道，
+# 严格的 4.5 道做不到，5 / 9 已经是最均匀的分法
+POS_MAX_SHARE = 0.5
+POS_MAX_RUN = 2
 
 EXTRACT_JS = r"""
 (subject) => {
@@ -281,6 +290,47 @@ def load_quiz():
     return files, items, tags, problems
 
 
+def correct_pos(sec):
+    """正确选项在选项列表里排第几个（从 0 数）；数据不对时返回 None（check_quiz 另外报问题）。"""
+    if not isinstance(sec, dict) or not isinstance(sec.get("options"), list):
+        return None
+    for i, o in enumerate(sec["options"]):
+        if isinstance(o, dict) and o.get("id") == sec.get("correct"):
+            return i
+    return None
+
+
+def check_positions(where, its):
+    """同一模块里正确答案、正确理由的位置不能太集中：按题库顺序（也就是练一练、小测出题的顺序），
+    同一个位置的题不超过一半（POS_MAX_SHARE），也不能连续 3 道（超过 POS_MAX_RUN）落在同一个位置。"""
+    out = []
+    for key, name in (("answer", "正确答案"), ("reason", "正确理由")):
+        seq = []
+        for it in its:
+            pos = correct_pos(it.get(key))
+            if pos is not None:
+                seq.append((it.get("id"), pos))
+        if not seq:
+            continue
+        counts = {}
+        for _, pos in seq:
+            counts[pos] = counts.get(pos, 0) + 1
+        limit = math.ceil(len(seq) * POS_MAX_SHARE)
+        for pos in sorted(counts):
+            if counts[pos] > limit:
+                out.append(where + f"：{name}有 {counts[pos]} / {len(seq)} 道排在第 {pos + 1} 个，超过一半（最多 {limit} 道；学生容易猜出位置）")
+        run = [seq[0]]
+        for cur in seq[1:]:
+            if cur[1] == run[-1][1]:
+                run.append(cur)
+            else:
+                run = [cur]
+            if len(run) == POS_MAX_RUN + 1:
+                ids = "、".join(x[0] for x in run)
+                out.append(where + f"：{name}连续 {len(run)} 道（{ids}）都排在第 {cur[1] + 1} 个")
+    return out
+
+
 def check_quiz(search_items, files, items, tags):
     """题库和标签库的校验。返回 (problems, warnings)。"""
     keys = {(it["s"], it["k"]) for it in search_items}
@@ -429,6 +479,7 @@ def check_quiz(search_items, files, items, tags):
         for it in its:
             if it.get("type") == "twotier" and not item_tags(it):
                 problems.append(where + f"：二段式题 {it.get('id')} 的答案和理由都没有带错误概念标签（mc）的选项")
+        problems.extend(check_positions(where, its))
 
     # 掌握门槛（core.mastery）要同一天做对覆盖这个知识点的二段式题和迁移题；缺一种，导图上的测试标签永远到不了「测试达标」
     types_of = {}

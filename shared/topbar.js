@@ -4,6 +4,9 @@
   var PAGE = (currentScript && currentScript.getAttribute("data-page")) || "home";
   var COMPACT = currentScript && currentScript.getAttribute("data-mode") === "compact";
   var SUPPORTS_LANG = currentScript && currentScript.getAttribute("data-bilingual") === "true";
+  // data-no-visit：这一页不记「访问过」。理解小测页（check.html）说好数据只留在本机，登录用户打开它时
+  // 也不该因为记访问而触发一次进度同步（POST api/progress）
+  var NO_VISIT = !!(currentScript && currentScript.hasAttribute("data-no-visit"));
 
   function url(rel) {
     return ROOT === "." ? rel : ROOT + "/" + rel;
@@ -85,7 +88,7 @@
 
   function mount() {
     injectStyles();
-    if (window.ABSLabAuth && PAGE) {
+    if (window.ABSLabAuth && PAGE && !NO_VISIT) {
       window.ABSLabAuth.markVisited(PAGE);
     }
 
