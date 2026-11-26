@@ -15,8 +15,13 @@ shared/link-names.json、理解测试题库索引 shared/quiz/index.json，并�
 索引里每条：s 学科、k 知识点键（与学习状态、错题本用的键相同）、a 页面锚点 id、
 n 名称、c 所在章、x 摘要、t 类型（kp 知识点 / sec 节 / exp 必做实验 / hs 高中衔接）。
 
-检查关联表：每条关联指向的知识点必须在索引里，指向的实验模块或任务必须在实验页里存在；
-检查题库：题目 id、题型、正确选项、错误概念标签、知识点、页面等（见 check_quiz）。
+检查关联表：每条关联指向的知识点必须在索引里，指向的实验模块或任务必须在实验页里存在。
+实验页的名单从 shared/links.json 的 labs 读（新实验页登记进 labs 就自动进检查范围），
+在每个实验页的源码里找 <section id="mN">（模块）和 data-task="..."（任务）。
+检查题库：题目 id、题型、正确选项、错误概念标签、知识点、页面等（见 check_quiz），另外两条：
+  · 被题目引用的错误概念标签至少要有 2 道题、2 种情境（context），否则判不了稳定迷思、换不了情境重测；
+  · 模块完整性：MODULE_RULES 里列出的模块（题目的 module 字段），每个至少要有 1 道预测关卡、
+    6 道二段式题（每道的答案或理由至少有一个选项带错误概念标签 mc）、2 道迁移题、1 道逆向题。
 有问题时列出来并以非 0 退出，避免导图改版后链接悄悄失效、题库写错了没人发现。
 
 生成的文件只随内容变化：导图没变时 search-index.json 保留原来的 built 日期，
@@ -48,6 +53,20 @@ QID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{2,47}$")
 TAG_RE = re.compile(r"^[a-z][a-z0-9]{5,31}$")
 QUIZ_TYPES = ("predict", "twotier", "transfer", "inverse")
 QUIZ_LEVELS = ("junior", "senior")
+
+# 模块完整性检查的名单：模块代号（题目的 module 字段）→ 名称（只用在报错文字里）。1B 再往里加。
+MODULE_RULES = {
+    "pa": "电学实验台 3 号 · 小灯泡",
+    "pe": "电学实验台 13 号 · 传感器",
+    "m1": "动点与函数图象",
+}
+# 每个模块至少要有的题（研究计划里的完成标准）：题型、道数、名称
+MODULE_MIN = (
+    ("predict", 1, "预测关卡"),
+    ("twotier", 6, "二段式题"),
+    ("transfer", 2, "迁移题"),
+    ("inverse", 1, "逆向题"),
+)
 
 EXTRACT_JS = r"""
 (subject) => {
@@ -127,22 +146,35 @@ def extract():
     return items
 
 
-def experiment_anchors():
-    """实验页里实际存在的模块和任务。"""
+def experiment_anchors(labs):
+    """实验页里实际存在的模块和任务。实验页名单取自 links.json 的 labs，不再写死。
+    每个实验页都收两种锚点：<section id="mN">（电学实验台这类按模块分的页面）和
+    data-task="..."（按任务分的页面；任务名是小写字母、数字、下划线或连字符）。
+    返回 (found, problems)：found 是 页面 → 锚点集合；labs 写错、页面不存在时记为问题。"""
     found = {}
-    cl = (ROOT / "physics/circuits-lab.html").read_text(encoding="utf8")
-    found["physics/circuits-lab.html"] = set(re.findall(r'<section[^>]*\bid="(m\d+)"', cl))
-    for rel in ["physics/hs-electricity.html", "chemistry/neutralization.html", "biology/microscope.html"]:
-        s = (ROOT / rel).read_text(encoding="utf8")
-        found[rel] = set(re.findall(r'data-task="([a-z_]+)"', s))
-    return found
+    problems = []
+    if not isinstance(labs, dict):
+        return found, ["links.json：labs 应是对象"]
+    for lab, info in labs.items():
+        rel = info.get("page") if isinstance(info, dict) else None
+        if not isinstance(rel, str) or not rel or rel.startswith("/") or ".." in rel:
+            problems.append(f"实验页 {lab}：page 应是相对仓库根目录的页面路径")
+            continue
+        if rel in found:
+            continue
+        try:
+            s = (ROOT / rel).read_text(encoding="utf8")
+        except OSError:
+            problems.append(f"实验页 {lab}：页面 {rel} 不存在")
+            continue
+        found[rel] = set(re.findall(r'<section[^>]*\bid="(m\d+)"', s)) | set(re.findall(r'data-task="([a-z0-9_-]+)"', s))
+    return found, problems
 
 
 def check(items):
     links = json.loads((ROOT / "shared/links.json").read_text(encoding="utf8"))
     keys = {(it["s"], it["k"]) for it in items}
-    anchors = experiment_anchors()
-    problems = []
+    anchors, problems = experiment_anchors(links.get("labs", {}))
     targets = links.get("targets", {})
     for tid, t in targets.items():
         page = t.get("page")
@@ -368,7 +400,7 @@ def check_quiz(search_items, files, items, tags):
             problems.append(where + "：预测关卡要有 explain（解释题）")
 
     # 被题目引用的标签：至少 2 道题、context 不止一种，才能按「两种情境都错」判稳定迷思、换情境重测。
-    # 第 0 批只有一道示范题组，先只警告；第 1 批起改成问题（退出码 1）。
+    # 第 0 批只警告；第 1 批起是问题（退出码 1）。
     used = {}
     for rel, it in items:
         if not isinstance(it, dict) or not isinstance(it.get("id"), str):
@@ -379,9 +411,24 @@ def check_quiz(search_items, files, items, tags):
         its = used[tg]
         ctx = {context_of(i) for i in its}
         if len(its) < 2 or len(ctx) < 2:
-            warnings.append(f"错误概念 {tg}：只有 {len(its)} 道题、{len(ctx)} 种情境引用它，判不了稳定迷思（至少 2 道题、2 种情境）")
+            problems.append(f"错误概念 {tg}：只有 {len(its)} 道题、{len(ctx)} 种情境引用它，判不了稳定迷思（至少 2 道题、2 种情境）")
         if not any(i.get("retest") is True and not i.get("widget") for i in its):
             warnings.append(f"错误概念 {tg}：没有能重测的题（retest: true 且没有交互部件），到期后重测页出不了题")
+
+    # 模块完整性：MODULE_RULES 里的每个模块，题型道数够不够；二段式题要带错误概念标签，否则判不出迷思
+    for mod, mname in MODULE_RULES.items():
+        its = [it for _, it in items if isinstance(it, dict) and it.get("module") == mod]
+        where = f"模块 {mod}（{mname}）"
+        if not its:
+            problems.append(where + f"：题库里没有 module 为 {mod} 的题")
+            continue
+        for qtype, need, qname in MODULE_MIN:
+            n = sum(1 for it in its if it.get("type") == qtype)
+            if n < need:
+                problems.append(where + f"：{qname}只有 {n} 道，至少要 {need} 道")
+        for it in its:
+            if it.get("type") == "twotier" and not item_tags(it):
+                problems.append(where + f"：二段式题 {it.get('id')} 的答案和理由都没有带错误概念标签（mc）的选项")
 
     # 掌握门槛（core.mastery）要同一天做对覆盖这个知识点的二段式题和迁移题；缺一种，导图上的测试标签永远到不了「测试达标」
     types_of = {}
