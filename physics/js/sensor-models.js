@@ -112,17 +112,17 @@
   }
 
   /* ==================== 电子秤（压敏电阻） ==================== */
-  // 电源 6 V，R₀ 默认 10 Ω（滑块 5～30 Ω，步长 5），压敏电阻 R_x(F) = 30 − 0.5·F（Ω），F 取 0～50 N
+  // 电源 6 V，R₀ 默认 10 Ω（滑块 5～30 Ω，步长 5），压敏电阻 Rₓ(F) = 30 − 0.5·F（Ω），F 取 0～50 N
   var SCALE = { E: 6, R0: 10, r0Min: 5, r0Max: 30, r0Step: 5, a: 30, b: 0.5, vMin: 0, vMax: 50, step: 10, unit: "N" };
   function scaleRx(F) { F = clamp(num(F, 0), SCALE.vMin, SCALE.vMax); return SCALE.a - SCALE.b * F; }
-  // 串联：I = E / (R₀ + R_x)，U₀ = I·R₀，U_x = I·R_x
+  // 串联：I = E / (R₀ + Rₓ)，U₀ = I·R₀，Uₓ = I·Rₓ
   function series(Rx, R0, E) {
     var I = E / (R0 + Rx);
     return { Rx: Rx, R0: R0, E: E, I: I, U0: I * R0, Ux: I * Rx };
   }
   function scaleState(F, R0, E) { return series(scaleRx(F), num(R0, SCALE.R0), num(E, SCALE.E)); }
-  // 电压表测 R₀、量程 uLim 时最大能称多少：U₀ = E·R₀/(R₀ + R_x) = uLim ⇒ R_x = R₀·(E − uLim)/uLim，再由 R_x 求 F。
-  // E = 6 V、uLim = 3 V 时 R_x = R₀，F_max = 2·(30 − R₀)：R₀ = 5 / 10 / 20 Ω → 50 / 40 / 20 N（不超过 50 N）
+  // 电压表测 R₀、量程 uLim 时最大能称多少：U₀ = E·R₀/(R₀ + Rₓ) = uLim ⇒ Rₓ = R₀·(E − uLim)/uLim，再由 Rₓ 求 F。
+  // E = 6 V、uLim = 3 V 时 Rₓ = R₀，F_max = 2·(30 − R₀)：R₀ = 5 / 10 / 20 Ω → 50 / 40 / 20 N（不超过 50 N）
   function scaleFmax(R0, E, uLim) {
     R0 = num(R0, SCALE.R0); E = num(E, SCALE.E); uLim = num(uLim, 3);
     var Rx = R0 * (E - uLim) / uLim;
@@ -130,7 +130,7 @@
   }
 
   /* ==================== 酒精测试仪（气敏电阻） ==================== */
-  // 电源 6 V，R₀ = 10 Ω，R_x(c) = 60 / (1 + 0.05·c)（Ω），c 是血液酒精含量（mg/100 mL），取 0～80
+  // 电源 6 V，R₀ = 10 Ω，Rₓ(c) = 60 / (1 + 0.05·c)（Ω），c 是血液酒精含量（mg/100 mL），取 0～80
   var ALCOHOL = { E: 6, R0: 10, vMin: 0, vMax: 80, step: 20, drink: 20, drunk: 80, unit: "mg/100 mL" };
   function alcoholRx(c) { c = clamp(num(c, 0), ALCOHOL.vMin, ALCOHOL.vMax); return 60 / (1 + 0.05 * c); }
   function alcoholState(c, R0, E) { return series(alcoholRx(c), num(R0, ALCOHOL.R0), num(E, ALCOHOL.E)); }
@@ -152,7 +152,7 @@
   var METERS = {
     A: { key: "A", name: "电流表", max: 0.6, unit: "A" },
     V0: { key: "V0", name: "电压表测 R₀", max: 3, unit: "V" },
-    Vx: { key: "Vx", name: "电压表测 R_x", max: 15, unit: "V" },
+    Vx: { key: "Vx", name: "电压表测 Rₓ", max: 15, unit: "V" },
     Vh: { key: "Vh", name: "电压表测下段电阻丝", max: 3, unit: "V" }
   };
   var PRESETS = { scale: SCALE, alcohol: ALCOHOL, height: HEIGHT };

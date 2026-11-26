@@ -647,11 +647,11 @@ describe("P-E 传感器：题里的数值和图由 sensor-models.js 重新算出
   it("p-pe-tt-ammeter：I = 6 V ÷ (40 Ω − 0.5F) 不是 F 的一次函数，刻度不均匀（a）", function () {
     var q = BY["p-pe-tt-ammeter"];
     range(0, 50, 5).forEach(function (F) {
-      near(S.scaleRx(F), 30 - 0.5 * F, "R_x(" + F + ")");
+      near(S.scaleRx(F), 30 - 0.5 * F, "Rₓ(" + F + ")");
       near(S.scaleState(F, 10).I, 6 / (40 - 0.5 * F), "I(" + F + ")");
     });
     has(q.stem, "电源 " + S.SCALE.E + " V"); has(q.stem, "R₀ = " + S.SCALE.R0 + " Ω");
-    has(q.stem, "R_x = (" + S.SCALE.a + " − " + S.SCALE.b + "F) Ω");
+    has(q.stem, "Rₓ = (" + S.SCALE.a + " − " + S.SCALE.b + "F) Ω");
     has(rsn(q, "r1").text, "I = 6 V ÷ (40 Ω − 0.5F)");
     var g = S.tickGaps(S.dialTicks("scale", { R0: 10, meter: "A" }));
     assert.ok(strictlyUp(g), "电流表刻度间隔也越来越大");
@@ -681,8 +681,8 @@ describe("P-E 传感器：题里的数值和图由 sensor-models.js 重新算出
     has(opt(q, "a").text, "5 Ω"); has(opt(q, "b").text, "20 Ω");
     assert.ok(S.scaleFmax(5) >= 50 && S.scaleFmax(20) < 50);
     [7, 9, 12].forEach(function (E) { assert.ok(S.scaleFmax(10, E) < S.scaleFmax(10), "电源 " + E + " V 量程反而更小"); });
-    // 满偏时 R_x = R₀
-    [5, 10, 20].forEach(function (r) { near(S.scaleState(S.scaleFmax(r), r).U0, 3, "满偏 R₀ = " + r); near(S.scaleRx(S.scaleFmax(r)), r, "R_x = R₀"); });
+    // 满偏时 Rₓ = R₀
+    [5, 10, 20].forEach(function (r) { near(S.scaleState(S.scaleFmax(r), r).U0, 3, "满偏 R₀ = " + r); near(S.scaleRx(S.scaleFmax(r)), r, "Rₓ = R₀"); });
     has(q.feedback.ref, "F_max = 2 × (30 − R₀)");
     has(q.feedback.ref, "R₀ = 5 Ω 时正好是 " + S.scaleFmax(5) + " N");
     has(q.feedback.ref, "换成 20 Ω 反而只剩 " + S.scaleFmax(20) + " N");
@@ -702,29 +702,29 @@ describe("P-E 传感器：题里的数值和图由 sensor-models.js 重新算出
     assert.ok(S.windState(10, 100).Uv < S.windState(10, 20).Uv);
   });
 
-  it("p-pe-tt-alcohol：c 从 0 到 80，U_x 从约 5.14 V 降到约 3.27 V（a）", function () {
+  it("p-pe-tt-alcohol：c 从 0 到 80，Uₓ 从约 5.14 V 降到约 3.27 V（a）", function () {
     var q = BY["p-pe-tt-alcohol"], A = S.ALCOHOL;
     assert.deepEqual([0, 20, 80].map(function (c) { return S.round(S.alcoholRx(c), 6); }), [60, 30, 12]);
     assert.deepEqual([0, 20, 80].map(function (c) { return S.alcoholState(c).Ux.toFixed(2); }), ["5.14", "4.50", "3.27"]);
-    has(q.feedback.ref, "c 从 0 增大到 " + A.drunk + " 时，U_x 从约 " + S.alcoholState(0).Ux.toFixed(2) + " V 降到约 " + S.alcoholState(A.drunk).Ux.toFixed(2) + " V");
+    has(q.feedback.ref, "c 从 0 增大到 " + A.drunk + " 时，Uₓ 从约 " + S.alcoholState(0).Ux.toFixed(2) + " V 降到约 " + S.alcoholState(A.drunk).Ux.toFixed(2) + " V");
     var ux = range(0, 80, 10).map(function (c) { return S.alcoholState(c).Ux; });
     assert.ok(strictlyDown(ux));
-    range(0, 80, 10).forEach(function (c) { var s = S.alcoholState(c); near(s.Ux, 6 - s.U0, "U_x = 6 V − U₀"); });
+    range(0, 80, 10).forEach(function (c) { var s = S.alcoholState(c); near(s.Ux, 6 - s.U0, "Uₓ = 6 V − U₀"); });
     has(q.stem, "电源 " + A.E + " V"); has(q.stem, "R₀ = " + A.R0 + " Ω");
     assert.equal(opt(q, q.answer.correct).text, "变小");
   });
 
-  it("p-pe-tt-scale-vx：F 从 0 到 50 N，U_x 从 4.5 V 降到 2.0 V（a）", function () {
+  it("p-pe-tt-scale-vx：F 从 0 到 50 N，Uₓ 从 4.5 V 降到 2.0 V（a）", function () {
     var q = BY["p-pe-tt-scale-vx"];
     assert.equal(S.scaleState(0).Ux, 4.5);
     assert.equal(S.scaleState(50).Ux.toFixed(1), "2.0");
-    has(q.feedback.ref, "F 从 0 增大到 " + S.SCALE.vMax + " N 时，U_x 从 " + S.scaleState(0).Ux + " V 降到 " + S.scaleState(50).Ux.toFixed(1) + " V");
+    has(q.feedback.ref, "F 从 0 增大到 " + S.SCALE.vMax + " N 时，Uₓ 从 " + S.scaleState(0).Ux + " V 降到 " + S.scaleState(50).Ux.toFixed(1) + " V");
     assert.ok(strictlyDown(range(0, 50, 5).map(function (F) { return S.scaleState(F).Ux; })));
     has(q.stem, "电源 " + S.SCALE.E + " V"); has(q.stem, "R₀ = " + S.SCALE.R0 + " Ω");
     assert.equal(opt(q, q.answer.correct).text, "变小");
   });
 
-  it("p-pe-tr-design：压力越大，I、U₀ 越大，U_x 越小 → 电流表或电压表测 R₀（a）", function () {
+  it("p-pe-tr-design：压力越大，I、U₀ 越大，Uₓ 越小 → 电流表或电压表测 R₀（a）", function () {
     var st = range(0, 50, 5).map(function (F) { return S.scaleState(F); });
     assert.ok(strictlyUp(st.map(function (s) { return s.I; })));
     assert.ok(strictlyUp(st.map(function (s) { return s.U0; })));
@@ -741,7 +741,7 @@ describe("P-E 传感器：题里的数值和图由 sensor-models.js 重新算出
       assert.ok(u5 < u6);
       near(u5 / u6, 5 / 6, "示数与电源电压成正比");
     });
-    // 按 6 V 刻的表盘把示数 U 换回压力：R_x = R₀·(6 − U)/U，F = (30 − R_x)/0.5
+    // 按 6 V 刻的表盘把示数 U 换回压力：Rₓ = R₀·(6 − U)/U，F = (30 − Rₓ)/0.5
     function shown(U) { var Rx = 10 * (6 - U) / U; return (S.SCALE.a - Rx) / S.SCALE.b; }
     near(shown(S.scaleState(20, 10, 6).U0), 20, "6 V 时显示正确");
     var u5 = S.scaleState(20, 10, 5).U0;
@@ -754,10 +754,10 @@ describe("P-E 传感器：题里的数值和图由 sensor-models.js 重新算出
     assert.equal(opt(q, q.answer.correct).text, "偏小");
   });
 
-  it("p-pe-inv-force：总电阻 30 Ω、R_x = 20 Ω、F = 20 N（a）；题图是 R_x–F 直线 (0, 30) → (50, 5)", function () {
+  it("p-pe-inv-force：总电阻 30 Ω、Rₓ = 20 Ω、F = 20 N（a）；题图是 Rₓ–F 直线 (0, 30) → (50, 5)", function () {
     var q = BY["p-pe-inv-force"], I = 0.2;
     var Rtot = S.round(S.SCALE.E / I, 6), Rx = Rtot - S.SCALE.R0, F = (S.SCALE.a - Rx) / S.SCALE.b;
-    near(Rtot, 30, "总电阻"); near(Rx, 20, "R_x"); near(F, 20, "F");
+    near(Rtot, 30, "总电阻"); near(Rx, 20, "Rₓ"); near(F, 20, "F");
     near(S.scaleState(F).I, I, "回代");
     has(q.stem, "(0 N, " + S.scaleRx(0) + " Ω) 到 (50 N, " + S.scaleRx(50) + " Ω)");
     has(q.stem, "电源 " + S.SCALE.E + " V"); has(q.stem, "R₀ = " + S.SCALE.R0 + " Ω"); has(q.stem, I + " A");
@@ -769,13 +769,13 @@ describe("P-E 传感器：题里的数值和图由 sensor-models.js 重新算出
       if (o.id !== q.answer.correct) assert.ok(Math.abs(S.scaleState(f).I - I) > 0.01, o.text + " 给不出 0.2 A");
     });
     // 理由只写方法、不写结果（用户决定）
-    assert.equal(rsn(q, "r1").text, "用电源电压除以电流得到总电阻，减去 R₀ 得到 R_x，再到图像上找对应的压力");
-    assert.equal(rsn(q, "r2").text, "用电源电压除以电流，直接当作 R_x 去图像上找");
+    assert.equal(rsn(q, "r1").text, "用电源电压除以电流得到总电阻，减去 R₀ 得到 Rₓ，再到图像上找对应的压力");
+    assert.equal(rsn(q, "r2").text, "用电源电压除以电流，直接当作 Rₓ 去图像上找");
     q.reason.options.forEach(function (o) { assert.ok(!/\d/.test(o.text), o.id + " 不该写出数值"); });
     var fig = q.figures[0];
-    nearPts(lines(fig)[0], [[0, S.scaleRx(0)], [50, S.scaleRx(50)]], "R_x–F 直线");
+    nearPts(lines(fig)[0], [[0, S.scaleRx(0)], [50, S.scaleRx(50)]], "Rₓ–F 直线");
     range(0, 50, 5).forEach(function (x) { near(S.scaleRx(x), 30 - 25 * x / 50, "直线上"); });
-    assert.equal(fig.axes.x, "F/N"); assert.equal(fig.axes.y, "R_x/Ω");
+    assert.equal(fig.axes.x, "F/N"); assert.equal(fig.axes.y, "Rₓ/Ω");
     assert.ok(fig.axes.xt.indexOf(20) >= 0 && fig.axes.yt.indexOf(20) >= 0, "刻度上能读出 20 Ω ↔ 20 N");
   });
 });

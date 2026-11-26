@@ -169,14 +169,14 @@ describe("风速仪：与 circuits-lab.html 的 r13() 同一套式子", function
   });
 });
 
-describe("电子秤：R_x = 30 − 0.5F，电源 6 V", function () {
-  it("SPEC 5.1 核对值（R₀ = 10 Ω）：F = 0～50 N 时 I、U₀、U_x", function () {
+describe("电子秤：Rₓ = 30 − 0.5F，电源 6 V", function () {
+  it("SPEC 5.1 核对值（R₀ = 10 Ω）：F = 0～50 N 时 I、U₀、Uₓ", function () {
     var F = [0, 10, 20, 30, 40, 50];
     var st = F.map(function (f) { return S.scaleState(f, 10); });
     assert.deepEqual(st.map(function (s) { return S.round(s.I, 3); }), [0.15, 0.171, 0.2, 0.24, 0.3, 0.4]);
     assert.deepEqual(st.map(function (s) { return S.round(s.U0, 3); }), [1.5, 1.714, 2, 2.4, 3, 4]);
     assert.deepEqual(st.map(function (s) { return S.round(s.Ux, 3); }), [4.5, 4.286, 4, 3.6, 3, 2]);
-    st.forEach(function (s) { near(s.U0 + s.Ux, 6, "U₀ + U_x = 6 V"); });
+    st.forEach(function (s) { near(s.U0 + s.Ux, 6, "U₀ + Uₓ = 6 V"); });
   });
   it("F 的边界：F = 0 / 50 精确；F < 0、F > 50、非数字截断", function () {
     assert.equal(S.scaleRx(0), 30);
@@ -198,8 +198,8 @@ describe("电子秤：R_x = 30 − 0.5F，电源 6 V", function () {
   });
 });
 
-describe("酒精测试仪：R_x = 60 / (1 + 0.05c)", function () {
-  it("SPEC 5.1 核对值：c = 0 / 20 / 80 时 R_x = 60 / 30 / 12 Ω，U_x = 5.14 / 4.50 / 3.27 V", function () {
+describe("酒精测试仪：Rₓ = 60 / (1 + 0.05c)", function () {
+  it("SPEC 5.1 核对值：c = 0 / 20 / 80 时 Rₓ = 60 / 30 / 12 Ω，Uₓ = 5.14 / 4.50 / 3.27 V", function () {
     assert.deepEqual([0, 20, 80].map(function (c) { return S.round(S.alcoholRx(c), 9); }), [60, 30, 12]);
     assert.deepEqual([0, 20, 80].map(function (c) { return S.alcoholState(c).Ux.toFixed(2); }), ["5.14", "4.50", "3.27"]);
   });
@@ -273,11 +273,11 @@ describe("改装表盘：角度、刻度、量程", function () {
     S.tickGaps(t).forEach(function (g) { near(g, 45, "间隔"); });
     assert.ok(t.every(function (x) { return x.inRange; }));
   });
-  it("电流表、电压表测 R_x、酒精仪：刻度不均匀；未知预设返回空", function () {
+  it("电流表、电压表测 Rₓ、酒精仪：刻度不均匀；未知预设返回空", function () {
     var gA = S.tickGaps(S.dialTicks("scale", { R0: 10, meter: "A" }));
     assert.ok(strictlyUp(gA));
     var tx = S.dialTicks("scale", { R0: 10, meter: "Vx" });
-    assert.ok(strictlyDown(tx.map(function (x) { return x.angle; })), "测 R_x：压力越大示数越小");
+    assert.ok(strictlyDown(tx.map(function (x) { return x.angle; })), "测 Rₓ：压力越大示数越小");
     var ta = S.dialTicks("alcohol", { R0: 10, meter: "Vx" });
     assert.deepEqual(ta.map(function (x) { return x.v; }), [0, 20, 40, 60, 80]);
     assert.deepEqual(S.dialTicks("nothing", {}), []);
