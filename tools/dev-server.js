@@ -14,7 +14,7 @@ const FAKE = "http://fake-redis.local";
 process.env.UPSTASH_REDIS_REST_URL = FAKE;
 process.env.UPSTASH_REDIS_REST_TOKEN = "dev-token";
 
-// ---- 内存 Redis：只实现 api 用到的命令 ----
+// ---- 内存 Redis：只实现 api 用到的命令（HGET、DEL 给 api/quiz 用；语义照 Upstash/Redis）----
 const db = new Map();
 function hash(key) { if (!db.has(key)) db.set(key, new Map()); return db.get(key); }
 function run(cmd) {
@@ -27,6 +27,8 @@ function run(cmd) {
     case "HDEL": { const h = db.get(key); let n = 0; if (h instanceof Map) rest.forEach((f) => { if (h.delete(f)) n++; }); return n; }
     case "HLEN": { const h = db.get(key); return h instanceof Map ? h.size : 0; }
     case "HEXISTS": { const h = db.get(key); return h instanceof Map && h.has(rest[0]) ? 1 : 0; }
+    case "HGET": { const h = db.get(key); return h instanceof Map && h.has(rest[0]) ? h.get(rest[0]) : null; }
+    case "DEL": { let n = 0; [key, ...rest].forEach((k) => { if (db.delete(k)) n++; }); return n; }
     default: throw new Error("dev-server 未实现的 Redis 命令：" + op);
   }
 }

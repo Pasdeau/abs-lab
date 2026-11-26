@@ -1,0 +1,114 @@
+{
+ "v": 1,
+ "files": [
+  "items/math-demo.json"
+ ],
+ "kps": {
+  "math:c22-2-2": [
+   {
+    "id": "m-dd-area-poe",
+    "type": "predict",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-dd-st-twotier",
+    "type": "twotier",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-dd-area-transfer",
+    "type": "transfer",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-dd-area-inverse",
+    "type": "inverse",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   }
+  ],
+  "math:c23-4-2": [
+   {
+    "id": "m-dd-area-poe",
+    "type": "predict",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-dd-st-twotier",
+    "type": "twotier",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-dd-area-transfer",
+    "type": "transfer",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-dd-area-inverse",
+    "type": "inverse",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   }
+  ]
+ },
+ "items": {
+  "m-dd-area-poe": {
+   "subject": "math",
+   "type": "predict",
+   "kp": [
+    "math:c23-4-2",
+    "math:c22-2-2"
+   ],
+   "page": "math/demo-poe.html",
+   "level": "junior",
+   "retest": false,
+   "context": "动点面积",
+   "module": "demo"
+  },
+  "m-dd-st-twotier": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c22-2-2",
+    "math:c23-4-2"
+   ],
+   "page": "math/demo-poe.html",
+   "level": "junior",
+   "retest": true,
+   "context": "距离—时间读图",
+   "module": "demo"
+  },
+  "m-dd-area-transfer": {
+   "subject": "math",
+   "type": "transfer",
+   "kp": [
+    "math:c23-4-2",
+    "math:c22-2-2"
+   ],
+   "page": "math/demo-poe.html",
+   "level": "junior",
+   "retest": true,
+   "context": "动点面积",
+   "module": "demo"
+  },
+  "m-dd-area-inverse": {
+   "subject": "math",
+   "type": "inverse",
+   "kp": [
+    "math:c23-4-2",
+    "math:c22-2-2"
+   ],
+   "page": "math/demo-poe.html",
+   "level": "junior",
+   "retest": true,
+   "context": "动点面积",
+   "module": "demo"
+  }
+ }
+}

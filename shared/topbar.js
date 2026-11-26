@@ -57,6 +57,8 @@
       ".abs-shell-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}",
       ".abs-shell-act{flex:1;min-width:110px;border:1.5px solid #cbd5e1;background:#fff;color:#1e293b;padding:8px 10px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}",
       ".abs-shell-act:hover{border-color:#3B5BDB;color:#3B5BDB}",
+      // 链接版的按钮（今日重测）：外观同按钮；一整行只有它，顺便做到 44px 高，手机上好点
+      "a.abs-shell-act{display:inline-block;text-align:center;text-decoration:none;box-sizing:border-box;min-height:44px;line-height:25px}",
       ".abs-shell-act.danger{color:#b91c1c;border-color:#fecaca}",
       ".abs-shell-act.danger:hover{background:#fef2f2;border-color:#f87171}",
       ".abs-shell-badge{font-size:11.5px;padding:2px 8px;border-radius:999px;font-weight:600}",
@@ -177,6 +179,10 @@
             '<div class="abs-shell-stat"><span>⚡ 物理</span><b>导图 ' + summary.kmMastered + ' · 实验台 ' + summary.circuitsDone + '/' + summary.circuitsTotal + ' · 高中 ' + summary.hsDone + '/' + summary.hsTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>🧪 化学</span><b>导图掌握 ' + mapsMastered("chemistry") + ' · 中和 ' + summary.chemDone + '/' + summary.chemTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>🧬 生物</span><b>导图掌握 ' + mapsMastered("biology") + ' · 显微镜 ' + summary.bioDone + '/' + summary.bioTotal + '</b></div>' +
+          '</div>' +
+          // 理解测试到期的错误概念在重测页统一做；放在账号窗里，哪一页都能进
+          '<div class="abs-shell-actions">' +
+            '<a class="abs-shell-act" id="absReviewLink" href="' + url("review.html") + '">📅 今日重测</a>' +
           '</div>' +
           '<div class="abs-shell-actions">' +
             '<button type="button" class="abs-shell-act" id="absExportBtn">导出备份</button>' +

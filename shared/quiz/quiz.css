@@ -1,0 +1,942 @@
+@charset "UTF-8";
+/* ABS-LAB 理解测试 · 样式（shared/quiz/engine.js 渲染的卡片和 review.html）
+ * 类名一律 qz- 开头，不碰页面已有的样式。颜色只用 shared/theme.css 的变量；
+ * 每个变量都带回退值：万一被挂到没加载 theme.css 的页面上，也不会变成透明或黑色。
+ * 外观沿用现有的 .card / .portal-card：白底、--line 描边、--radius 圆角、轻阴影。
+ * 手机优先：390px 宽不出横向滚动（长词可断行），按钮至少 44px 高，减弱动效时不做过渡。
+ *
+ * 间距：flex 容器一律不用 gap。flex 的 gap 要 iOS 14.5 / Chrome 84 才支持，目标里的 iOS 13–14.4、安卓 Chrome 80–83
+ * 会把项目挤在一起（grid 的 gap 它们都支持，所以 grid 照用 gap）。flex 行改成：子项带上（或下）、左（或右）外边距，
+ * 容器用同样大小的负外边距抵掉多出来的那一份，效果和 gap 一样，新浏览器上也不会多出一倍间距。
+ *   - 负外边距放在原来就是 0 的那一侧：负值和兄弟元素的外边距合并时是相加的，正值合并只取大的，会多出间距；
+ *   - 水平方向优先用负的左外边距：往左伸出去不会撑出横向滚动条；
+ *   - 自己有底色、边框的容器（.qz-record）不能往外伸，改为把自己的内边距减掉同样大小。
+ */
+
+/* 隐藏用 hidden 属性；下面不少元素设了 display:flex/grid，要压过它们 */
+.qz-card [hidden],
+.qz-review [hidden] {
+  display: none !important;
+}
+
+/* ---------- 卡片 ---------- */
+.qz-card {
+  position: relative;
+  min-width: 0;
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  background: var(--surface, #fff);
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: var(--radius, 16px);
+  box-shadow: var(--shadow, 0 2px 10px rgba(43, 45, 66, 0.05));
+  color: var(--ink, #2b2d42);
+  /* 长的英文、公式、网址也能断行，不撑出横向滚动（anywhere 老浏览器不认，前两行兜底） */
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.qz-card:last-child {
+  margin-bottom: 0;
+}
+.qz-card * {
+  box-sizing: border-box;
+}
+
+/* 行距 6px、项距 10px（不用 gap 的写法见文件开头）；它是卡片第一个子元素，卡片有内边距，负的上外边距不会和外面合并 */
+.qz-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: -6px 0 8px -10px;
+}
+.qz-head > * {
+  margin: 6px 0 0 10px;
+}
+.qz-kind,
+.qz-lv {
+  flex: none;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.5;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--blue-soft, #e8edff);
+  color: var(--blue, #3b5bdb);
+}
+.qz-card[data-mode="retest"] .qz-kind {
+  background: var(--sun-soft, #fff6d6);
+  color: var(--ink, #2b2d42);
+}
+.qz-lv {
+  background: var(--coral-soft, #ffede6);
+  color: var(--coral, #f2643d);
+}
+
+/* 预测关卡的步骤条：预测 → 动手 → 对比 → 解释 */
+/* 步骤之间 4px（不用 gap）：每个步骤带 4px 上、左外边距，步骤条自己用 -4px 抵掉 */
+.qz-steps {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -4px 0 0 -4px;
+  padding: 0;
+  list-style: none;
+  counter-reset: qzstep;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+/* 步骤条在 .qz-head 里：外层给的 6px / 10px 减去自己要抵掉的 4px */
+.qz-head > .qz-steps {
+  margin: 2px 0 0 6px;
+}
+.qz-steps li {
+  margin: 4px 0 0 4px;
+  counter-increment: qzstep;
+  padding: 1px 9px 1px 4px;
+  border-radius: 999px;
+  border: 1px solid var(--line, #e3e6ec);
+  color: var(--muted, #5c667a);
+  background: var(--surface-soft, #f8fafc);
+  white-space: nowrap;
+}
+.qz-steps li::before {
+  content: counter(qzstep);
+  display: inline-block;
+  min-width: 1.4em;
+  margin-right: 3px;
+  border-radius: 999px;
+  text-align: center;
+  font-weight: 700;
+  background: var(--line, #e3e6ec);
+  color: var(--ink, #2b2d42);
+}
+.qz-steps li.is-done {
+  color: var(--green, #12956b);
+  border-color: var(--green-soft, #dcf5ec);
+  background: var(--green-soft, #dcf5ec);
+}
+.qz-steps li[aria-current="step"] {
+  color: var(--blue, #3b5bdb);
+  border-color: var(--blue, #3b5bdb);
+  background: var(--blue-soft, #e8edff);
+  font-weight: 700;
+}
+.qz-steps li[aria-current="step"]::before {
+  background: var(--blue, #3b5bdb);
+  color: var(--surface, #fff);
+}
+
+.qz-stem {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+/* ---------- 图 ---------- */
+.qz-figs {
+  display: grid;
+  /* 两张图时 390px 下也能并排（各约 165px）；一张图就占满一行，但不超过 460px */
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.qz-figs[data-n="1"] {
+  max-width: 460px;
+}
+.qz-fig {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.qz-figs > .qz-fig {
+  padding: 4px;
+  border: 1px solid var(--line, #e3e6ec);
+  border-radius: 12px;
+  background: var(--surface-soft, #f8fafc);
+}
+.qz-fig svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ---------- 作答 ---------- */
+.qz-answer {
+  margin-top: 4px;
+}
+.qz-part {
+  margin: 0 0 14px;
+}
+.qz-q {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink, #2b2d42);
+}
+.qz-opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.qz-opt,
+.qz-cf {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  color: var(--ink, #2b2d42);
+  font: inherit;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.qz-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+/* 文字行和缩略图之间 6px（不用 gap）：放在上面那项的下外边距上，缩略图自己的 margin-top:auto 照常把它推到底 */
+.qz-opt > :not(:last-child) {
+  margin-bottom: 6px;
+}
+.qz-opt-row {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+.qz-opt-row > * + * {
+  margin-left: 8px;
+}
+.qz-opt-key {
+  flex: none;
+  display: inline-block;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 999px;
+  border: 1px solid var(--line, #e3e6ec);
+  background: var(--surface-soft, #f8fafc);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+}
+.qz-opt-text {
+  min-width: 0;
+  flex: 1;
+}
+/* 缩略图只是图示：不接指针事件，点图就等于点按钮；
+ * 贴着按钮底边放，同一行两个选项的文字折行数不同时，两张图仍然上下对齐，方便比较 */
+.qz-opt .qz-thumb {
+  margin-top: auto;
+  pointer-events: none;
+  border-radius: 8px;
+  background: var(--surface-soft, #f8fafc);
+}
+@media (hover: hover) {
+  .qz-opt:not(:disabled):hover,
+  .qz-cf:not(:disabled):hover {
+    border-color: var(--blue, #3b5bdb);
+  }
+}
+.qz-opt[aria-pressed="true"],
+.qz-cf[aria-pressed="true"] {
+  border-color: var(--blue, #3b5bdb);
+  background: var(--blue-soft, #e8edff);
+  box-shadow: inset 0 0 0 1px var(--blue, #3b5bdb);
+}
+.qz-opt[aria-pressed="true"] .qz-opt-key {
+  border-color: var(--blue, #3b5bdb);
+  background: var(--blue, #3b5bdb);
+  color: var(--surface, #fff);
+}
+.qz-opt:disabled,
+.qz-cf:disabled {
+  cursor: default;
+}
+/* 提交后：没选、也不是正确答案的选项淡一点，视线落在「我选的」和「正确的」上 */
+.qz-opt:disabled:not([aria-pressed="true"]):not([data-mark]),
+.qz-cf:disabled:not([aria-pressed="true"]) {
+  opacity: 0.62;
+}
+.qz-opt[data-mark="right"] {
+  border-color: var(--green, #12956b);
+  background: var(--green-soft, #dcf5ec);
+  box-shadow: inset 0 0 0 1px var(--green, #12956b);
+}
+.qz-opt[data-mark="right"] .qz-opt-key {
+  border-color: var(--green, #12956b);
+  background: var(--green, #12956b);
+  color: var(--surface, #fff);
+}
+.qz-opt[data-mark="wrong"] {
+  border-color: var(--red, #d7263d);
+  background: var(--coral-soft, #ffede6);
+  box-shadow: inset 0 0 0 1px var(--red, #d7263d);
+}
+.qz-opt[data-mark="wrong"] .qz-opt-key {
+  border-color: var(--red, #d7263d);
+  background: var(--red, #d7263d);
+  color: var(--surface, #fff);
+}
+/* 不只靠颜色区分对错：右上角加 ✓ / ✗。选项文字 flex:1 占满剩下的宽度，✓ 自然靠右；左边 8px 就是原来 gap 给的间距 */
+.qz-opt[data-mark] .qz-opt-row::after {
+  flex: none;
+  margin-left: 8px;
+  font-weight: 700;
+}
+.qz-opt[data-mark="right"] .qz-opt-row::after {
+  content: "✓";
+  color: var(--green, #12956b);
+}
+.qz-opt[data-mark="wrong"] .qz-opt-row::after {
+  content: "✗";
+  color: var(--red, #d7263d);
+}
+
+/* 宽屏上带图的选项排成一行（3 或 4 个），缩略图不至于大得占满半屏，也方便左右比较 */
+@media (min-width: 720px) {
+  .qz-opts-fig[data-n="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .qz-opts-fig[data-n="4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+/* 纵向堆叠和并排两格都用 grid 排：iOS 13 的 Safari 不支持 flex 的 gap，grid 的 gap 支持 */
+.qz-cfs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.qz-cf {
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ---------- 按钮 ---------- */
+/* 行距 8px、项距 12px（不用 gap）：子项带下、左外边距（规则在 .qz-btn 后面，才压得过它的 margin:0），
+ * 容器用 -8px 下外边距、-12px 左外边距抵掉；上外边距原来就是正的 10px，保持不动，和上面元素的外边距照旧合并 */
+.qz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px 0 -8px -12px;
+}
+.qz-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  max-width: 100%;
+  margin: 0;
+  padding: 8px 18px;
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--ink, #2b2d42);
+  font: inherit;
+  font-size: 0.93rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+}
+/* 按钮里以后若放图标 + 文字，两者之间 6px（不用 gap） */
+.qz-btn > * + * {
+  margin-left: 6px;
+}
+.qz-actions > * {
+  margin: 0 0 8px 12px;
+}
+/* 里面一个可见的子项都没有时，子项的 8px 没了，容器的 -8px 却还在，会把后面的内容拉上来 8px。
+ * 真空的去掉负值；下面两行任何时候最多只露出一个按钮、按钮又常常整个藏起来，用不到项距，直接保持原来的外边距：
+ * 部件下的按钮行（「看对比」或「重新预测」，对比、解释阶段两个都不在）、重测页的「下一题」（作答前藏着） */
+.qz-actions:empty {
+  margin-bottom: 0;
+}
+.qz-actions.qz-wacts {
+  margin: 8px 0 0;
+}
+.qz-actions.qz-run-nav {
+  margin: 10px 0 0;
+}
+.qz-wacts > *,
+.qz-run-nav > * {
+  margin: 0;
+}
+@media (hover: hover) {
+  .qz-btn:not(:disabled):hover {
+    border-color: var(--blue, #3b5bdb);
+    color: var(--blue, #3b5bdb);
+  }
+  .qz-primary:not(:disabled):hover {
+    background: var(--blue-hover, #304cc4);
+    border-color: var(--blue-hover, #304cc4);
+    color: var(--surface, #fff);
+  }
+}
+.qz-primary {
+  background: var(--blue, #3b5bdb);
+  border-color: var(--blue, #3b5bdb);
+  color: var(--surface, #fff);
+}
+.qz-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.qz-need {
+  font-size: 0.82rem;
+  color: var(--muted, #5c667a);
+}
+
+/* 键盘操作时清楚地看到焦点在哪 */
+.qz-card :focus-visible,
+.qz-review :focus-visible {
+  outline: 3px solid var(--blue, #3b5bdb);
+  outline-offset: 2px;
+}
+/* 判定框、题号、小结标题是脚本移过去的焦点（tabindex=-1，给读屏软件定位用），点按时不画框；
+ * 只在认识 :focus-visible 的浏览器里去掉：老浏览器不认这条，整条作废，保留默认焦点框，键盘用户不至于看不到焦点 */
+.qz-verdict:focus:not(:focus-visible),
+.qz-run-head:focus:not(:focus-visible),
+.qz-panel-title:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---------- 预测关卡：部件、遮罩、进度 ---------- */
+.qz-stage {
+  margin: 0 0 14px;
+}
+.qz-widget {
+  position: relative;
+  min-width: 0;
+}
+.qz-wait {
+  margin: 0;
+  padding: 18px 12px;
+  border: 1.5px dashed var(--line, #e3e6ec);
+  border-radius: 12px;
+  color: var(--muted, #5c667a);
+  text-align: center;
+  font-size: 0.9rem;
+}
+/* 锁定遮罩：盖住整个部件，挡住所有指针事件（拖不动 P），但手指在上面照常可以上下滚动页面 */
+.qz-lock {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1.5px dashed var(--blue, #3b5bdb);
+  border-radius: 12px;
+  color: var(--blue, #3b5bdb);
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  pointer-events: auto;
+  touch-action: pan-y;
+  cursor: not-allowed;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* 半透明底：用伪元素 + opacity，颜色仍然只取主题变量（不写 rgba 常量） */
+.qz-lock::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--surface, #fff);
+  opacity: 0.78;
+}
+/* 提示写在伪元素里，遮罩本身的文字保持「先预测，再动手」（e2e 按文字找）；和上面那行字隔 4px（不用 gap） */
+.qz-lock::after {
+  margin-top: 4px;
+  content: "在下面选出你的预测并提交 ↓";
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--muted, #5c667a);
+}
+.qz-progress {
+  margin: 8px 0 0;
+  font-size: 0.86rem;
+  color: var(--muted, #5c667a);
+  font-variant-numeric: tabular-nums;
+}
+.qz-card[data-stage="operate"] .qz-progress {
+  color: var(--ink, #2b2d42);
+  font-weight: 600;
+}
+.qz-free-note {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--surface-soft, #f8fafc);
+  border: 1px solid var(--line, #e3e6ec);
+  font-size: 0.86rem;
+  color: var(--muted, #5c667a);
+}
+
+/* ---------- 对比 ---------- */
+.qz-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 14px;
+}
+/* 左右不留内边距：390px 下每张对比图尽量接近 170px 宽 */
+.qz-cmp-col {
+  min-width: 0;
+  margin: 0;
+  padding: 6px 0 8px;
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: 12px;
+  background: var(--surface-soft, #f8fafc);
+}
+.qz-cmp-col:last-child {
+  border-color: var(--green, #12956b);
+}
+.qz-cmp-title {
+  margin: 0 8px 4px;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+.qz-cmp-note {
+  margin: 4px 8px 0;
+  font-size: 0.78rem;
+  color: var(--muted, #5c667a);
+}
+
+/* ---------- 解释 ---------- */
+.qz-explain {
+  margin: 0 0 14px;
+}
+.qz-explain textarea {
+  display: block;
+  width: 100%;
+  min-height: 84px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--ink, #2b2d42);
+  font: inherit;
+  /* 16px：iOS Safari 在输入框字号小于 16px 时会自动放大页面 */
+  font-size: 16px;
+  line-height: 1.6;
+  resize: vertical;
+}
+/* 输入框的焦点提示是变蓝的边框。去掉轮廓线只写在 :focus-visible 里（输入框获得焦点时新浏览器总是匹配它）：
+ * 老浏览器不认，这条作废，保留默认焦点框，不会出现「焦点在哪看不出来」 */
+.qz-explain textarea:focus {
+  border-color: var(--blue, #3b5bdb);
+}
+.qz-explain textarea:focus-visible {
+  outline: none;
+}
+.qz-explain textarea:disabled {
+  background: var(--surface-soft, #f8fafc);
+  color: var(--muted, #5c667a);
+}
+.qz-ex-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--muted, #5c667a);
+  font-variant-numeric: tabular-nums;
+}
+/* 字数和「至少 6 个字」两头对齐，中间至少隔 8px（不用 gap） */
+.qz-ex-foot > * + * {
+  margin-left: 8px;
+}
+
+/* ---------- 反馈 ---------- */
+.qz-feedback:empty {
+  display: none;
+}
+.qz-feedback {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+}
+.qz-feedback p {
+  margin: 0;
+}
+.qz-verdict {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line, #e3e6ec);
+  background: var(--surface-soft, #f8fafc);
+  line-height: 1.6;
+}
+.qz-verdict-tag {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 1.02rem;
+}
+.qz-verdict[data-cls="pass"] {
+  border-color: var(--green, #12956b);
+  background: var(--green-soft, #dcf5ec);
+}
+.qz-verdict[data-cls="pass"] .qz-verdict-tag {
+  color: var(--green, #12956b);
+}
+.qz-verdict[data-cls="unsure"] {
+  border-color: var(--sun, #ffc83d);
+  background: var(--sun-soft, #fff6d6);
+}
+.qz-verdict[data-cls="mc"],
+.qz-verdict[data-cls="gap"] {
+  border-color: var(--coral, #f2643d);
+  background: var(--coral-soft, #ffede6);
+}
+.qz-verdict[data-cls="mc"] .qz-verdict-tag,
+.qz-verdict[data-cls="gap"] .qz-verdict-tag {
+  color: var(--red, #d7263d);
+}
+.qz-key {
+  padding: 0 2px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.qz-refute,
+.qz-mine,
+.qz-ref-main {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-soft, #f8fafc);
+  border-left: 4px solid var(--line, #e3e6ec);
+}
+.qz-refute {
+  border-left-color: var(--coral, #f2643d);
+}
+.qz-ref {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.qz-mine {
+  border-left-color: var(--purple, #7a36a6);
+}
+.qz-ref-main {
+  border-left-color: var(--blue, #3b5bdb);
+}
+.qz-fb-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  margin-bottom: 2px !important;
+}
+.qz-refute .qz-fb-title {
+  color: var(--coral, #f2643d);
+}
+.qz-mine .qz-fb-title {
+  color: var(--purple, #7a36a6);
+}
+.qz-ref-main .qz-fb-title {
+  color: var(--blue, #3b5bdb);
+}
+.qz-fb-text {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+.qz-hint {
+  font-size: 0.84rem;
+  color: var(--muted, #5c667a);
+}
+/* 行距 8px、项距 12px（不用 gap）。它有底色和边框，不能用负外边距往外伸：
+ * 子项带下、左外边距，自己的下、左内边距减掉同样大小（原来是 8px 12px，四边看起来不变） */
+.qz-record {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 12px 0 0;
+  border-radius: 10px;
+  border: 1px solid var(--line, #e3e6ec);
+  background: var(--surface, #fff);
+  font-size: 0.88rem;
+  color: var(--muted, #5c667a);
+}
+.qz-record > * {
+  margin: 0 0 8px 12px;
+}
+.qz-record-text {
+  min-width: 0;
+  flex: 1 1 12em;
+}
+.qz-record[data-state="saved"] {
+  color: var(--green, #12956b);
+  border-color: var(--green-soft, #dcf5ec);
+  background: var(--green-soft, #dcf5ec);
+  font-weight: 600;
+}
+.qz-record[data-state="error"] {
+  color: var(--red, #d7263d);
+  border-color: var(--coral, #f2643d);
+  background: var(--coral-soft, #ffede6);
+  font-weight: 600;
+}
+.qz-record[data-state="guest"] {
+  background: var(--blue-soft, #e8edff);
+  border-color: var(--blue-soft, #e8edff);
+  color: var(--ink, #2b2d42);
+}
+/* 按钮之间 8px（不用 gap）；它是 .qz-feedback 这个 grid 的最后一项，负外边距不会和别的外边距合并 */
+.qz-after {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 -8px -8px;
+}
+.qz-after > * {
+  margin: 0 0 8px 8px;
+}
+
+.qz-loading,
+.qz-error {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px dashed var(--line, #e3e6ec);
+  background: var(--surface, #fff);
+  color: var(--muted, #5c667a);
+}
+.qz-error {
+  color: var(--red, #d7263d);
+  border-color: var(--coral, #f2643d);
+}
+
+/* ---------- 今日重测（review.html） ---------- */
+.qz-review {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.qz-panel {
+  padding: 18px;
+  background: var(--surface, #fff);
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: var(--radius, 16px);
+  box-shadow: var(--shadow, 0 2px 10px rgba(43, 45, 66, 0.05));
+}
+.qz-panel > p {
+  margin: 0 0 10px;
+}
+.qz-panel-title {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+.qz-muted {
+  color: var(--muted, #5c667a);
+  font-size: 0.88rem;
+}
+.qz-empty-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+/* 文字和徽标之间、折行后上下都是 6px（不用 gap）。上面一段的下外边距是正的 10px，
+ * 所以负值放在上外边距（和 10px 合并时相加），下外边距保持 .qz-panel > p 的 10px */
+.qz-next-due {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--ink, #2b2d42);
+}
+.qz-panel > .qz-next-due {
+  margin: -6px 0 10px -6px;
+}
+.qz-next-due > * {
+  margin: 6px 0 0 6px;
+}
+.qz-due-list,
+.qz-sum-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+}
+.qz-due-item,
+.qz-sum-item {
+  padding: 10px 12px;
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: 12px;
+  background: var(--surface-soft, #f8fafc);
+}
+.qz-due-item[data-none="true"] {
+  opacity: 0.8;
+}
+/* 行距 6px、项距 8px（不用 gap）。项距放在右外边距：「通过」等结果徽标用 margin-left:auto 靠右，
+ * 它前面那项的右外边距仍保证两者至少隔 8px；条目有 12px 内边距，-8px 右外边距伸不出条目 */
+.qz-due-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: -6px -8px 0 0;
+}
+.qz-due-main > * {
+  margin: 6px 8px 0 0;
+}
+.qz-due-name {
+  font-size: 1rem;
+}
+.qz-due-meta {
+  margin-top: 2px;
+  font-size: 0.86rem;
+  color: var(--muted, #5c667a);
+}
+.qz-due-none {
+  margin-top: 4px;
+  font-size: 0.86rem;
+  color: var(--coral, #f2643d);
+}
+.qz-badge-stable {
+  flex: none;
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.5;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--coral-soft, #ffede6);
+  color: var(--red, #d7263d);
+  border: 1px solid var(--coral, #f2643d);
+}
+/* 已经掌握的稳定迷思：记录保留，徽标变灰 */
+.qz-badge-stable.qz-badge-past {
+  background: var(--surface-soft, #f8fafc);
+  color: var(--muted, #5c667a);
+  border-color: var(--line, #e3e6ec);
+  font-weight: 600;
+}
+.qz-sum-res {
+  flex: none;
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 1px 9px;
+  border-radius: 999px;
+  background: var(--coral-soft, #ffede6);
+  color: var(--red, #d7263d);
+}
+.qz-sum-res[data-cls="pass"] {
+  background: var(--green-soft, #dcf5ec);
+  color: var(--green, #12956b);
+}
+.qz-sum-res[data-cls="unsure"] {
+  background: var(--sun-soft, #fff6d6);
+  color: var(--ink, #2b2d42);
+}
+.qz-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--blue, #3b5bdb);
+  font-weight: 600;
+  text-decoration: none;
+}
+.qz-link:hover {
+  text-decoration: underline;
+}
+.qz-run-head {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: var(--muted, #5c667a);
+  font-variant-numeric: tabular-nums;
+}
+.qz-run-bar {
+  height: 6px;
+  margin: 0 0 12px;
+  border-radius: 999px;
+  background: var(--line, #e3e6ec);
+  overflow: hidden;
+}
+.qz-run-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--blue, #3b5bdb);
+}
+.qz-run-nav {
+  justify-content: flex-end;
+}
+
+/* ---------- 手机 ---------- */
+@media (max-width: 600px) {
+  .qz-card {
+    padding: 12px;
+    border-radius: 13px;
+  }
+  .qz-panel {
+    padding: 14px 12px;
+    border-radius: 13px;
+  }
+  .qz-stem {
+    font-size: 0.98rem;
+  }
+  .qz-opt {
+    padding: 8px;
+  }
+  /* 纯文字选项一行一个：长句子在半宽的格子里要折好几行，读起来费劲 */
+  .qz-opts-text {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .qz-compare {
+    gap: 8px;
+  }
+  .qz-cmp-col {
+    padding: 4px 0 6px;
+  }
+  .qz-actions > .qz-btn.qz-primary {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---------- 减弱动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .qz-card *,
+  .qz-card *::before,
+  .qz-card *::after,
+  .qz-review *,
+  .qz-review *::before,
+  .qz-review *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .qz-lock,
+  .qz-actions,
+  .qz-after {
+    display: none !important;
+  }
+}

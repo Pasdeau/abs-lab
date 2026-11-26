@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>画板组件自测 · ABS-LAB</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <script src="../shared/auth.js"></script>
+  <style>
+    /* 开发自测页：每张卡片只放一个可拖动对象（手机上一屏一个），宽屏两列 */
+    .sd-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+    .sd-wide { grid-column: 1 / -1; }
+    .sd-card h3 { margin: 0 0 4px; font-size: 1.02rem; }
+    .sd-cap { margin: 0 0 8px; font-size: 0.86rem; color: var(--muted); }
+    .sd-board { display: block; width: 100%; }
+    .sd-readout { margin-top: 6px; font-size: 0.95rem; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; min-height: 1.6em; }
+    .sd-sub { margin-top: 2px; font-size: 0.86rem; color: var(--muted); min-height: 1.4em; }
+    .sd-sub.is-warn { color: var(--coral); font-weight: 600; }
+    /* 会换行的按钮行、图例不用 flex 的 gap（iOS 14.5 以前、Chrome 84 以前不认，元素会挤在一起）：
+       子元素四周给 margin，容器用负 margin 抵掉多出来的那一圈，现代浏览器上看起来和原来的 gap 一样 */
+    .sd-row { display: flex; flex-wrap: wrap; margin: 0 -8px 0 0; }
+    .sd-row > * { margin: 8px 8px 0 0; }
+    .sd-btn { min-height: 44px; flex: 0 1 auto; padding: 8px 16px; }
+    .sd-legend { display: flex; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); margin: -6px -12px 0 0; }
+    .sd-legend > * { margin: 12px 12px 0 0; }
+    /* theme.css 在 600px 以下把返回按钮缩成约 36px 高；手机上按钮至少 44px 高，和 review.html 一致 */
+    .hero-pill-btn { min-height: 44px; }
+    .sd-legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
+    .sd-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+    .sd-thumb { border: 1px solid var(--line); border-radius: 10px; padding: 6px; background: var(--surface-soft); min-width: 0; }
+    .sd-thumb p { margin: 0 0 4px; font-size: 0.78rem; color: var(--muted); }
+    .sd-perf { font-size: 0.84rem; color: var(--ink); font-variant-numeric: tabular-nums; margin: 0; }
+    @media (max-width: 819px) {
+      .sd-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <script src="../shared/topbar.js" data-root=".." data-page="math"></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>画板组件自测</h1>
+        <p>开发用页面：检查手机上单指拖动是否跟手、题目里的小图是否清楚。不在导航里。</p>
+      </div>
+      <a class="hero-pill-btn" href="index.html">← 返回数学</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="sd-grid">
+      <section class="card sd-card" id="sd-card-grid">
+        <h3>坐标系与吸附</h3>
+        <p class="sd-cap">拖动点 P，它只会停在 0.5 的整数倍上。虚线是 P 到两条坐标轴的垂线段。</p>
+        <div class="sd-board" id="sd-b1"></div>
+        <div class="sd-readout" id="sd-r1" aria-live="polite"></div>
+      </section>
+
+      <section class="card sd-card" id="sd-card-circle">
+        <h3>圆上的点</h3>
+        <p class="sd-cap">点 A 只能沿圆走。不管拖到哪里，OA 都等于半径。旋转角：从 x 轴正方向逆时针转到 OA。</p>
+        <div class="sd-board" id="sd-b2"></div>
+        <div class="sd-readout" id="sd-r2" aria-live="polite"></div>
+      </section>
+
+      <section class="card sd-card" id="sd-card-quad">
+        <h3>二次函数 y = a(x − h)² + k</h3>
+        <p class="sd-cap">先只改 a，看开口怎么变。红点是顶点，虚线是对称轴。h、k 在「进阶」里。</p>
+        <div class="sd-board" id="sd-b3"></div>
+        <div class="sd-readout" id="sd-r3" aria-live="polite"></div>
+        <div class="sd-sub" id="sd-s3"></div>
+        <div id="sd-c3"></div>
+      </section>
+
+      <section class="card sd-card" id="sd-card-tri">
+        <h3>三角形的高与垂足</h3>
+        <p class="sd-cap">拖动顶点。AH 是 BC 边上的高，H 是垂足。把 ∠B 或 ∠C 拖成钝角，看看 H 跑到哪里。</p>
+        <div class="sd-board" id="sd-b4"></div>
+        <div class="sd-readout" id="sd-r4" aria-live="polite"></div>
+        <div class="sd-sub" id="sd-s4"></div>
+      </section>
+
+      <section class="card sd-card" id="sd-card-sketch">
+        <h3>先画再看：手绘预测</h3>
+        <p class="sd-cap">正方形的边长 x 从 0 均匀增大到 10，面积 y 怎样变化？用手指在格子里从左往右画出你的预测，松手后显示真实图象。</p>
+        <div class="sd-board" id="sd-b5"></div>
+        <div class="sd-legend"><span><i style="background:var(--purple)"></i>你的预测</span><span><i style="background:var(--green)"></i>真实图象</span></div>
+        <div class="sd-sub" id="sd-s5" aria-live="polite">格子里画时页面不会滚动，格子外照常能滑动页面。</div>
+        <div class="sd-row"><button type="button" class="btn btn-outline sd-btn" id="sd-redo">重画</button></div>
+      </section>
+
+      <section class="card sd-card" id="sd-card-perf">
+        <h3>拖动性能（开发用）</h3>
+        <p class="sd-cap">每次 move 事件和每个拖动帧的平均耗时。手机上 move 应远小于 4 ms。</p>
+        <p class="sd-perf" id="sd-perf">还没有拖动。</p>
+        <div class="sd-row"><button type="button" class="btn btn-outline sd-btn" id="sd-perf-reset">清零</button></div>
+      </section>
+
+      <section class="card sd-card sd-wide" id="sd-card-figs">
+        <h3>静态图（题目和选项里的小图）</h3>
+        <p class="sd-cap">直接读示范题的题库，用 ABSLabSVG.figure 画。手机上两列，每张约 170 px 宽，刻度数字要看得清。</p>
+        <div class="sd-thumbs" id="sd-figs"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+
+  <script src="../shared/svgkit.js"></script>
+  <script>
+    (function () {
+      var SK = window.ABSLabSVG, on = SK.on, geo = SK.geo;
+      function $(id) { return document.getElementById(id); }
+      // 读数：最多两位小数，去掉多余的 0，负号用 −
+      function num(v) { return SK.fmt(Math.round(v * 100) / 100); }
+      function deg(v) { return Math.round(v) + "°"; }
+
+      function perfShow() {
+        var p = SK.perf;
+        if (!p.moves && !p.frames) { $("sd-perf").textContent = "还没有拖动。"; return; }
+        $("sd-perf").textContent = "move 事件 " + p.moves + " 次，平均 " + (p.moves ? (p.moveMs / p.moves).toFixed(3) : "0") +
+          " ms；拖动帧 " + p.frames + " 个，平均 " + (p.frames ? (p.frameMs / p.frames).toFixed(3) : "0") + " ms";
+      }
+      $("sd-perf-reset").addEventListener("click", function () { SK.perf.reset(); perfShow(); });
+
+      /* ---------- 1 坐标系与吸附 ---------- */
+      (function () {
+        var V = [-5, 5, -4, 4];
+        var b = SK.board($("sd-b1"), { view: V, aspect: "equal", grid: true, axes: { x: "x", y: "y" }, maxHeight: "40vh" });
+        var P = b.point([2, 1.5], {
+          label: "P", draggable: true, step: 0.5,
+          constrain: on.all(on.box(V), on.grid(0.5)),
+          ariaLabel: "可拖动的点 P，只停在 0.5 的整数倍上"
+        });
+        b.segment(P, function () { return [P.get()[0], 0]; }, { dash: true, color: "muted", width: 1.5 });
+        b.segment(P, function () { return [0, P.get()[1]]; }, { dash: true, color: "muted", width: 1.5 });
+        function where(p) {
+          if (p[0] === 0 && p[1] === 0) return "在原点";
+          if (p[1] === 0) return "在 x 轴上";
+          if (p[0] === 0) return "在 y 轴上";
+          return p[0] > 0 ? (p[1] > 0 ? "第一象限" : "第四象限") : (p[1] > 0 ? "第二象限" : "第三象限");
+        }
+        function show() {
+          var p = P.get();
+          $("sd-r1").textContent = "P(" + num(p[0]) + ", " + num(p[1]) + ")　" + where(p);
+        }
+        P.on("drag", show).on("end", show).on("end", perfShow);
+        show();
+        window.__sdDemo = window.__sdDemo || {};
+        window.__sdDemo.grid = { board: b, P: P };
+      })();
+
+      /* ---------- 2 圆上的点 ---------- */
+      (function () {
+        // 半径取 2.5：圆和坐标轴的交点落在两个刻度数字之间，数字不会压在圆上
+        var R = 2.5, T = [-3, -2, -1, 1, 2, 3];
+        var b = SK.board($("sd-b2"), { view: [-4, 4, -4, 4], aspect: "equal", axes: { x: "x", y: "y", xt: T, yt: T }, maxHeight: "40vh" });
+        b.circle([0, 0], R, { color: "muted" });
+        var A = b.point([R * Math.cos(0.7), R * Math.sin(0.7)], {
+          label: "A", draggable: true, step: 0.2,
+          constrain: on.circle([0, 0], R),
+          ariaLabel: "圆上可拖动的点 A"
+        });
+        function turn() { var a = A.meta().a || 0; return a < 0 ? a + 2 * Math.PI : a; }
+        // 从 x 轴正方向逆时针量到 OA 的小圆弧
+        b.polyline(function () {
+          var a = turn(), pts = [];
+          for (var i = 0; i <= 32; i++) { var t = a * i / 32; pts.push([0.8 * Math.cos(t), 0.8 * Math.sin(t)]); }
+          return pts;
+        }, { color: "coral", width: 1.5 });
+        b.segment([0, 0], A, { color: "blue" });
+        function show() {
+          var p = A.get();
+          $("sd-r2").textContent = "A(" + num(p[0]) + ", " + num(p[1]) + ")　OA = " + num(geo.dist([0, 0], p)) + "　旋转角 " + deg(turn() / Math.PI * 180);
+        }
+        A.on("drag", show).on("end", show).on("end", perfShow);
+        show();
+        window.__sdDemo.circle = { board: b, A: A };
+      })();
+
+      /* ---------- 3 二次函数：只露出 a，h、k 收进「进阶」 ---------- */
+      (function () {
+        var v = { a: 1, h: 0, k: 0 };
+        var b = SK.board($("sd-b3"), { view: [-5, 5, -3, 7], aspect: "equal", grid: true, axes: { x: "x", y: "y" }, maxHeight: "40vh" });
+        b.segment(function () { return [v.h, -3]; }, function () { return [v.h, 7]; }, { dash: true, color: "muted", width: 1.5 });
+        b.fn(function (x) { return v.a * (x - v.h) * (x - v.h) + v.k; }, { domain: [-5, 5], width: 2.5 });
+        // 顶点不写字：文字的白色描边会在顶点旁把曲线「挖」出一个缺口，读数里已经写了顶点坐标
+        b.point(function () { return [v.h, v.k]; }, { color: "coral", r: 4.5 });
+        function formula() {
+          var a = v.a, h = v.h, k = v.k;
+          var A = a === 1 ? "" : a === -1 ? "−" : num(a);
+          var X = h === 0 ? "x²" : "(x " + (h > 0 ? "− " + num(h) : "+ " + num(-h)) + ")²";
+          var K = k === 0 ? "" : (k > 0 ? " + " + num(k) : " − " + num(-k));
+          return "y = " + A + X + K;
+        }
+        function show() {
+          var s = $("sd-s3");
+          if (v.a === 0) {
+            $("sd-r3").textContent = "y = " + num(v.k);
+            s.textContent = "a = 0 时不是二次函数，图象变成一条直线。";
+            s.className = "sd-sub is-warn";
+            return;
+          }
+          $("sd-r3").textContent = formula();
+          s.textContent = "顶点 (" + num(v.h) + ", " + num(v.k) + ")，开口" + (v.a > 0 ? "向上" : "向下") + "，对称轴 x = " + num(v.h);
+          s.className = "sd-sub";
+        }
+        SK.controls($("sd-c3"), [
+          { id: "a", label: "a（开口方向和大小）", min: -3, max: 3, step: 0.1, value: 1 },
+          { id: "h", label: "h（左右平移）", min: -3, max: 3, step: 0.5, value: 0, advanced: true },
+          { id: "k", label: "k（上下平移）", min: -2, max: 5, step: 0.5, value: 0, advanced: true }
+        ], function (vals) {
+          v.a = vals.a; v.h = vals.h; v.k = vals.k;
+          show();
+          b.update();
+        });
+        show();
+        window.__sdDemo.quad = { board: b, v: v };
+      })();
+
+      /* ---------- 4 三角形的高与垂足 ---------- */
+      (function () {
+        var b = SK.board($("sd-b4"), { view: [-2, 8, -1.5, 5.5], aspect: "equal", axes: null, maxHeight: "40vh" });
+        var box = on.box([-1.6, 7.6, -1.1, 5.1]);
+        var A = b.point([1.5, 4], { label: "A", draggable: true, constrain: box, ariaLabel: "三角形的顶点 A" });
+        var B = b.point([0, 0], { label: "B", draggable: true, constrain: box, pos: "sw", ariaLabel: "三角形的顶点 B" });
+        var C = b.point([6, 0], { label: "C", draggable: true, constrain: box, pos: "se", ariaLabel: "三角形的顶点 C" });
+        function H() { return geo.foot(A.get(), B.get(), C.get()); }
+        function t() { return geo.param(A.get(), B.get(), C.get()); }
+        b.polygon([A, B, C], { color: "blue" });
+        // BC 的延长线（虚线）：从离 H 近的那个端点画到 H；垂足在线段上时藏起来
+        var ext = b.segment(function () { return t() < 0 ? B.get() : C.get(); }, H, { dash: true, color: "muted", width: 1.5 });
+        b.segment(A, H, { color: "coral" });
+        // 直角符号：边长 0.3 个单位，一条边朝 BC 中点，一条边朝 A
+        b.polyline(function () {
+          var a = A.get(), h = H(), p = B.get(), q = C.get();
+          var ux = (p[0] + q[0]) / 2 - h[0], uy = (p[1] + q[1]) / 2 - h[1], ul = Math.hypot(ux, uy);
+          if (ul < 1e-6) { ux = q[0] - p[0]; uy = q[1] - p[1]; ul = Math.hypot(ux, uy); }
+          var vx = a[0] - h[0], vy = a[1] - h[1], vl = Math.hypot(vx, vy);
+          if (ul < 1e-6 || vl < 0.5) return [];
+          var s = 0.3;
+          ux *= s / ul; uy *= s / ul; vx *= s / vl; vy *= s / vl;
+          return [[h[0] + ux, h[1] + uy], [h[0] + ux + vx, h[1] + uy + vy], [h[0] + vx, h[1] + vy]];
+        }, { color: "coral", width: 1.5 });
+        var Hp = b.point(H, { label: "H", color: "coral", r: 4, pos: "s" });
+        function show() {
+          var a = A.get(), p = B.get(), q = C.get(), tt = t();
+          var angB = geo.angle(a, p, q), angC = geo.angle(a, q, p);
+          var out = tt < -1e-9 || tt > 1 + 1e-9;
+          ext.show(out);
+          $("sd-r4").textContent = "∠B = " + deg(angB) + "　∠C = " + deg(angC);
+          var s = $("sd-s4");
+          if (geo.dist(p, q) < 0.05) { s.textContent = "B、C 重合了，拉开一点。"; s.className = "sd-sub is-warn"; return; }
+          if (tt < -1e-9) { s.textContent = "∠B 是钝角：垂足 H 落在 CB 的延长线上（虚线）。"; s.className = "sd-sub is-warn"; }
+          else if (tt > 1 + 1e-9) { s.textContent = "∠C 是钝角：垂足 H 落在 BC 的延长线上（虚线）。"; s.className = "sd-sub is-warn"; }
+          else if (Math.abs(angB - 90) < 0.5 || Math.abs(angC - 90) < 0.5) { s.textContent = "有一个直角：垂足 H 和直角顶点重合。"; s.className = "sd-sub"; }
+          else { s.textContent = "∠B、∠C 都是锐角：垂足 H 在线段 BC 上。"; s.className = "sd-sub"; }
+        }
+        [A, B, C].forEach(function (P) { P.on("drag", show).on("end", show).on("end", perfShow); });
+        show();
+        window.__sdDemo.tri = { board: b, A: A, B: B, C: C, H: Hp, ext: ext };
+      })();
+
+      /* ---------- 5 手绘预测：画完后叠加真实曲线 ---------- */
+      (function () {
+        var b = SK.board($("sd-b5"), {
+          view: [0, 10, 0, 100], aspect: "fill", ratio: 0.8, grid: true, maxHeight: "40vh",
+          axes: { x: "x", y: "y", xt: [2, 4, 6, 8, 10], yt: [20, 40, 60, 80] }
+        });
+        var truth = b.fn(function (x) { return x * x; }, { domain: [0, 10], color: "green", width: 2.5 });
+        truth.show(false);
+        var msg = $("sd-s5");
+        var INIT = msg.textContent;
+        // 在画的线上找 x 处的 y（线性插值）；画的线没覆盖到 x 就返回 null
+        function yAt(pts, x) {
+          for (var i = 0; i + 1 < pts.length; i++) {
+            var p = pts[i], q = pts[i + 1];
+            if (p[0] <= x && x <= q[0]) return q[0] === p[0] ? p[1] : p[1] + (q[1] - p[1]) * (x - p[0]) / (q[0] - p[0]);
+          }
+          return null;
+        }
+        var sk = b.sketch({
+          monotoneX: true,
+          onEnd: function (pts) {
+            perfShow();
+            if (pts.length < 2 || pts[pts.length - 1][0] - pts[0][0] < 1) {
+              msg.textContent = "再画长一点：从左往右拖出一条线。";
+              sk.clear();
+              return;
+            }
+            truth.show(true);
+            sk.enable(false);
+            var x = 5, y = yAt(pts, x);
+            if (y === null) { x = Math.round((pts[0][0] + pts[pts.length - 1][0]) / 2); y = yAt(pts, x); }
+            msg.textContent = "紫色是你的预测，绿色是真实图象 y = x²。" +
+              (y === null ? "" : "看 x = " + x + "：你画的 y ≈ " + Math.round(y) + "，真实 y = " + x * x + "。") +
+              "边长变成 2 倍，面积变成 4 倍，所以图象越来越陡。";
+          }
+        });
+        $("sd-redo").addEventListener("click", function () {
+          sk.clear();
+          sk.enable(true);
+          truth.show(false);
+          msg.textContent = INIT;
+        });
+        window.__sdDemo.sketch = { board: b, sketch: sk, truth: truth };
+      })();
+
+      /* ---------- 6 静态图：直接用示范题题库里的 figure ---------- */
+      (function () {
+        var box = $("sd-figs");
+        function add(title, spec) {
+          var d = document.createElement("div");
+          d.className = "sd-thumb";
+          var p = document.createElement("p");
+          p.textContent = title;
+          var f = document.createElement("div");
+          d.appendChild(p);
+          d.appendChild(f);
+          box.appendChild(d);
+          SK.figure(f, spec);
+        }
+        fetch("../shared/quiz/items/math-demo.json").then(function (r) {
+          if (!r.ok) throw new Error(String(r.status));
+          return r.json();
+        }).then(function (lib) {
+          (lib.items || []).forEach(function (it) {
+            (it.figures || []).forEach(function (fg, i) { add(it.id + " 题图 " + (i + 1), fg); });
+            ((it.answer && it.answer.options) || []).forEach(function (op) {
+              if (op.figure) add(it.id + " 选项 " + op.id + "：" + op.text, op.figure);
+            });
+          });
+        }).catch(function () {
+          box.textContent = "读不到题库（请通过网址打开本页，不要直接双击文件）。";
+        });
+      })();
+    })();
+  </script>
+</body>
+</html>
