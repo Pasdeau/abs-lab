@@ -35,6 +35,7 @@
   var EX_MAX = 120;
 
   var WIDGETS = {};  // 部件 id → factory
+  var EXTERNAL = {}; // 外部部件 id → { cover, bind, scrollTarget, card }（部件的 DOM 是页面自己的，见 registerExternal）
   var PENDING = {};  // 部件还没注册就已经渲染出来的卡片，注册时再挂上
   var CARDS = [];    // 页面上的卡片（登录状态变化时更新记录去向）
   var REVIEWS = [];  // mountReview 的实例（登录状态变化时重新渲染）
@@ -355,27 +356,40 @@
     var core = K();
     var bank = ctx.bank;
     var isPredict = item.type === "predict" && !!item.widget;
+    // 外部部件（registerExternal）：部件的 DOM 是页面自己的（例如电学实验台里现成的模块），卡片里不放部件，
+    // 引擎只负责锁定、解锁、读进度和结果。要在 mount 之前注册，卡片才会按外部部件排版（见 README 第五节）
+    var extAtBuild = isPredict && !!EXTERNAL[item.widget];
     // 预测关卡的作答一律记成 poe（预测—观察—解释），其余按调用方给的模式
     var amode = isPredict ? "poe" : ctx.mode;
     var explain = item.explain || { prompt: "用一句话说一说你看到了什么。", min: 0 };
     var exMin = Math.max(0, Math.min(EX_MAX, +explain.min || 0));
     var c = {
       item: item, isPredict: isPredict, stage: "", sel: { ch: "", rs: "", cf: "" },
-      w: null, wFail: false, widgetDone: false, optFigs: [], figs: [], recEl: null, dead: false
+      w: null, wFail: false, widgetDone: false, optFigs: [], figs: [], recEl: null, dead: false,
+      ext: false, xd: null, cover: null, promptEl: null
     };
 
+    // 外部部件且页面给了 promptHost：题头、题干、题图放进 promptHost（页面把它放在模块图上方），
+    // 作答区留在 mount 的容器里（页面把它放在模块图紧下方），手机上预测选项就能紧跟在模块图下面。
+    // 锚点 #qz-<题目 id> 跟着题干走，定位时先看到题目
+    var split = extAtBuild && !!ctx.promptHost;
     var sec = h("section", {
-      cls: "qz-card" + (isPredict ? " qz-card-predict" : ""), id: "qz-" + item.id,
+      cls: "qz-card" + (isPredict ? " qz-card-predict" : "") + (extAtBuild ? " qz-card-ext" : ""), id: split ? null : "qz-" + item.id,
       "data-qid": item.id, "data-type": item.type || "", "data-mode": ctx.mode
     });
     c.el = sec;
+    var top = sec;
+    if (split) {
+      top = h("div", { cls: "qz-prompt", id: "qz-" + item.id, "data-qid": item.id, "data-type": item.type || "" });
+      c.promptEl = top;
+    }
 
     /* --- 头部 --- */
     var head = h("div", { cls: "qz-head" }, [
       h("span", { cls: "qz-kind", text: ctx.mode === "retest" ? "重测题" : (TYPE_NAME[item.type] || "理解测试") }),
       item.level === "senior" ? h("span", { cls: "qz-lv", text: "高中" }) : null
     ]);
-    sec.appendChild(head);
+    top.appendChild(head);
     var steps = null;
     if (isPredict) {
       // 步骤条：不用写长说明，学生一眼看到「先预测、再动手、再对比、最后解释」
@@ -384,7 +398,7 @@
       }));
       head.appendChild(steps);
     }
-    sec.appendChild(h("p", { cls: "qz-stem", text: item.stem || "" }));
+    top.appendChild(h("p", { cls: "qz-stem", text: item.stem || "" }));
     var figs = (item.figures || []).filter(Boolean);
     if (figs.length) {
       var fw = h("div", { cls: "qz-figs", "data-n": figs.length });
@@ -393,7 +407,7 @@
         fw.appendChild(f);
         c.figs.push([f, spec]);
       });
-      sec.appendChild(fw);
+      top.appendChild(fw);
     }
 
     /* --- 部件区（预测关卡） --- */
@@ -406,15 +420,21 @@
       cmpBtn = h("button", { type: "button", cls: "qz-btn", "data-qz-compare": true, disabled: true, text: "看对比" });
       repBtn = h("button", { type: "button", cls: "qz-btn", "data-qz-repredict": true, text: "重新预测" });
       wActs = h("div", { cls: "qz-actions qz-wacts" }, [cmpBtn]);
-      freeNote = h("p", { cls: "qz-free-note", hidden: true, text: "你做过这道题的预测。部件可以随意操作；想再检验一次，点「重新预测」。" });
-      wBox = h("div", { cls: "qz-stage" }, [wEl, prog, wActs, freeNote]);
-      sec.appendChild(wBox);
+      freeNote = h("p", { cls: "qz-free-note", hidden: true, text: extAtBuild
+        ? "你做过这道题的预测。上面的模块可以随意操作；想再检验一次，点「重新预测」。"
+        : "你做过这道题的预测。部件可以随意操作；想再检验一次，点「重新预测」。" });
+      // 外部部件：卡片里没有部件容器，进度、「看对比」「重新预测」放在作答区后面（见下）
+      wBox = extAtBuild ? h("div", { cls: "qz-stage qz-stage-ext" }, [prog, wActs, freeNote]) : h("div", { cls: "qz-stage" }, [wEl, prog, wActs, freeNote]);
+      if (!extAtBuild) sec.appendChild(wBox);
       cmpBtn.addEventListener("click", showCompare);
       repBtn.addEventListener("click", function () { enterPredict(true); });
     }
 
     /* --- 作答区 --- */
     var ansWrap = h("div", { cls: "qz-answer" });
+    // 外部部件提交预测以后，选项收起成一行「你的预测：……」，模块的操作区不被一大块选项隔开；到反馈阶段再展开、标对错
+    var picked = extAtBuild ? h("p", { cls: "qz-picked" }) : null;
+    if (picked) ansWrap.appendChild(picked);
     function optGroup(secData, attr, keyOf, label) {
       var wrap = h("div", { cls: "qz-part qz-part-" + attr });
       var lab = h("p", { cls: "qz-q", id: uid("qzq"), text: label });
@@ -459,6 +479,7 @@
     var need = h("span", { cls: "qz-need" });
     ansWrap.appendChild(h("div", { cls: "qz-actions" }, [subBtn, need]));
     sec.appendChild(ansWrap);
+    if (extAtBuild) sec.appendChild(wBox);
     subBtn.addEventListener("click", function () { if (isPredict) submitPredict(); else submitAnswer(); });
 
     /* --- 对比、解释（预测关卡） --- */
@@ -485,12 +506,19 @@
     var fb = h("div", { cls: "qz-feedback", "aria-live": "polite" });
     sec.appendChild(fb);
 
+    if (c.promptEl) ctx.promptHost.appendChild(c.promptEl);
     host.appendChild(sec);
 
     /* ---------- 状态 ---------- */
     function setStage(s) {
       c.stage = s;
       sec.setAttribute("data-stage", s);
+      if (c.promptEl) c.promptEl.setAttribute("data-stage", s);
+      // 外部部件：提交预测到解释之间，选项收起成一行；预测、反馈阶段展开（反馈阶段要在选项上标对错）
+      if (picked) {
+        var fold = s === "operate" || s === "compare" || s === "explain";
+        if (fold) ansWrap.setAttribute("data-collapsed", "true"); else ansWrap.removeAttribute("data-collapsed");
+      }
       if (steps) {
         var order = ["predict", "operate", "compare", "explain"];
         var at = order.indexOf(s === "feedback" ? "explain" : s);
@@ -578,6 +606,7 @@
       return null;
     }
     function setLock(on) {
+      if (c.ext) { setExtLock(on); return; }
       if (on) {
         // 遮罩放在部件容器的最后，叠在最上层；部件若清空过容器，这里会把它补回来
         if (lockEl.parentNode !== wEl || wEl.lastChild !== lockEl) wEl.appendChild(lockEl);
@@ -591,7 +620,52 @@
         wcall("unlock");
       }
     }
+    // 外部部件：遮罩盖在页面指定的 cover（模块图）上；控件由部件自己的 lock() / unlock() 锁住、放开
+    function setExtLock(on) {
+      var cv = c.cover;
+      if (on) {
+        if (cv && inDoc(cv)) {
+          // 遮罩是绝对定位的：cover 本来是 static 时补一个 relative（sticky、relative 都能当定位容器，不改）
+          try { if (window.getComputedStyle(cv).position === "static") cv.style.position = "relative"; } catch (e) { /* 老浏览器 */ }
+          cv.classList.add("qz-ext-cover");
+          if (lockEl.parentNode !== cv || cv.lastChild !== lockEl) cv.appendChild(lockEl);
+          cv.setAttribute("data-qz-locked", "true");
+        }
+        show(lockEl, !c.wFail && !!cv);
+        wcall("lock");
+      } else {
+        show(lockEl, false);
+        if (cv) cv.removeAttribute("data-qz-locked");
+        wcall("unlock");
+      }
+    }
+    function attachExternal(xd) {
+      // 同一个外部部件同一时间只挂在一张卡片上（页面重新 mount 时）：先把上一张卡片的遮罩撤掉
+      if (xd.card && xd.card !== c && typeof xd.card.detach === "function") xd.card.detach();
+      xd.card = c;
+      c.ext = true;
+      c.xd = xd;
+      c.cover = typeof xd.cover === "function" ? xd.cover() : xd.cover;
+      // 卡片先按普通部件渲染、外部部件后注册的情况：卡片里空着的部件容器（只有「正在加载」）拿掉
+      if (wEl && wEl.parentNode) wEl.parentNode.removeChild(wEl);
+      try {
+        c.w = xd.bind(wapi) || null;
+      } catch (e) {
+        c.w = null;
+        c.wFail = true;
+        if (window.console) console.warn("外部部件 " + item.widget + " 绑定失败", e);
+      }
+      setLock(c.stage === "predict");
+    }
+    c.detach = function () {
+      c.dead = true;
+      if (lockEl && lockEl.parentNode) lockEl.parentNode.removeChild(lockEl);
+      if (c.cover) c.cover.removeAttribute("data-qz-locked");
+      if (c.promptEl && c.promptEl.parentNode) c.promptEl.parentNode.removeChild(c.promptEl);
+    };
     c.attach = function () {
+      var xd = EXTERNAL[item.widget];
+      if (xd) { attachExternal(xd); return; }
       var f = WIDGETS[item.widget];
       if (!f) {
         (PENDING[item.widget] = PENDING[item.widget] || []).push(c);
@@ -633,11 +707,12 @@
       show(prog, false);
       show(wActs, false);
       prog.textContent = "";
+      if (picked) picked.textContent = "";
       setStage("predict");
       wcall("reset");
       setLock(true);
       updateSubmit();
-      if (fromUser) jumpTo(ansWrap);
+      if (fromUser) jumpTo(c.promptEl || ansWrap);
     }
     function enterFree() {
       show(ansWrap, false);
@@ -654,6 +729,11 @@
     function submitPredict() {
       if (c.stage !== "predict" || subBtn.disabled) return;
       lockInputs();
+      if (picked) {
+        var po = core.findOpt(item.answer, c.sel.ch);
+        var pi = (item.answer.options || []).indexOf(po);
+        picked.textContent = "你的预测：" + (po ? ANS_KEYS.charAt(pi) + ". " + po.text : "") + "（" + (c.sel.cf === "sure" ? "有把握" : "没把握") + "）";
+      }
       setStage("operate");
       setLock(false);
       show(prog, true);
@@ -664,7 +744,13 @@
       prog.textContent = "";
       setTimeout(function () { if (c.stage === "operate" && !prog.textContent) prog.textContent = progText; }, 80);
       // 手机上部件在作答区上方：提交后函数板出现（部件解锁时），把几何板滚到屏幕顶上（瞬时滚动，不做动画）
-      jumpTo(wBox);
+      // 外部部件：滚到页面指定的位置（缺省是 cover，即模块图）
+      if (c.ext) {
+        var st = c.xd && c.xd.scrollTarget;
+        jumpTo((typeof st === "function" ? st() : st) || c.cover || sec);
+      } else {
+        jumpTo(wBox);
+      }
     }
     function showCompare() {
       if (c.stage !== "operate" || !c.widgetDone) return;
@@ -833,7 +919,8 @@
     }
 
     c.api = {
-      qid: item.id, el: sec, item: item,
+      qid: item.id, el: sec, item: item, prompt: c.promptEl,
+      external: function () { return c.ext; },
       stage: function () { return c.stage; },
       reset: function () { if (isPredict) enterPredict(false); else resetNormal(); }
     };
@@ -845,6 +932,21 @@
   function registerWidget(id, factory) {
     if (!id || typeof factory !== "function") return;
     WIDGETS[id] = factory;
+    var wait = PENDING[id] || [];
+    PENDING[id] = [];
+    wait.forEach(function (c) { if (inDoc(c.el)) c.attach(); });
+  }
+
+  // 外部部件：部件的 DOM 已经在页面上（例如电学实验台的模块），引擎不建部件、不清空容器，
+  // 只负责锁定（在 cover 上盖「先预测，再动手」，并调部件的 lock）、解锁、读进度（api.onProgress / api.done）和结果（result）。
+  //   def.cover        遮罩盖在哪个元素上（模块图）；可以是元素，也可以是返回元素的函数
+  //   def.bind(api)    卡片挂上时调用（同一个外部部件同一时间只挂一张卡片），返回 { lock, unlock, reset, result }，与 registerWidget 的 factory 返回值一样
+  //   def.scrollTarget 可选：提交预测后滚到哪里（缺省是 cover）
+  // 要在 mount 之前注册：卡片按外部部件排版（mount 给了 promptHost 时题干放进 promptHost，作答区留在 mount 的容器里）。
+  function registerExternal(id, def) {
+    if (!id || !def || typeof def.bind !== "function") return;
+    var old = EXTERNAL[id];
+    EXTERNAL[id] = { cover: def.cover || null, bind: def.bind, scrollTarget: def.scrollTarget || null, card: old ? old.card : null };
     var wait = PENDING[id] || [];
     PENDING[id] = [];
     wait.forEach(function (c) { if (inDoc(c.el)) c.attach(); });
@@ -864,9 +966,11 @@
       return Promise.resolve(ctrl);
     }
     el.appendChild(h("p", { cls: "qz-loading", text: "正在加载题目……" }));
+    var promptHost = opts.promptHost && opts.promptHost.nodeType === 1 ? opts.promptHost : null;
     return Promise.all([load(), loadRecords()]).then(function (r) {
       var bank = r[0], recs = r[1] || {}, core = K(), hs = hsFlags(), seen = readSeen();
       clear(el);
+      if (promptHost) clear(promptHost);
       (opts.items || []).forEach(function (x) {
         var it = typeof x === "string" ? bank.byId[x] : x;
         if (!it || !it.id || !it.answer) {
@@ -877,7 +981,7 @@
         if (!core.levelAllowed(it, hs)) return;
         var c = buildCard(el, it, {
           mode: mode, bank: bank, retestKey: opts.retestKey || "", onAnswered: opts.onAnswered,
-          seenBefore: !!seen[it.id] || core.doneBefore(recs, it.id)
+          seenBefore: !!seen[it.id] || core.doneBefore(recs, it.id), promptHost: promptHost
         });
         ctrl.cards.push(c.api);
       });
@@ -1172,6 +1276,7 @@
 
   window.ABSLabQuiz = {
     registerWidget: registerWidget,
+    registerExternal: registerExternal,
     mount: mount,
     mountReview: mountReview,
     openReview: openReview,
