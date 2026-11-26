@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>示范题 · 动点与面积图象 · ABS-LAB</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="../shared/quiz/quiz.css" />
+  <script src="../shared/auth.js"></script>
+  <style>
+    /* 只管页面排版；题目卡片的样子由 quiz.css 负责，部件的样子由 js/demo-poe.js 注入（都用 dd- / qz- 前缀分开） */
+    /* 做题页一行字太长不好读：主体收窄到 880px，宽屏上两块画板仍能左右并排 */
+    .dd-page { max-width: 880px; }
+    .dd-page .section-head h2 { font-size: 1.12rem; }
+    .dd-mount { min-width: 0; }
+    .dd-sec + .dd-sec { margin-top: 28px; }
+    .dd-load { margin: 0; padding: 14px 16px; border: 1.5px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-size: 0.9rem; }
+    .dd-note { margin-top: 28px; }
+    /* 行距 10px、项距 16px 不用 flex 的 gap（iOS 14.5、Chrome 84 以前不支持）：子项带上、左外边距，
+       里层容器用负外边距抵掉。负外边距放在没有底色的里层，卡片的内边距和外观不变 */
+    .dd-note-in { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: -10px 0 0 -16px; }
+    .dd-note-in > * { margin: 10px 0 0 16px; }
+    .dd-note p { color: var(--muted); font-size: 0.9rem; flex: 1 1 220px; }
+    .dd-review { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; border-radius: 10px; border: 1.5px solid var(--blue); background: var(--blue-soft); color: var(--blue); font-weight: 700; text-decoration: none; }
+    .dd-review::after { content: " →"; white-space: pre; }
+    /* 分开写：选择器列表里有一个不认识的伪类，整条规则都会作废（:focus-visible 要 iOS 15.4 / Chrome 86），悬停效果也会跟着丢 */
+    .dd-review:hover { background: var(--surface); }
+    .dd-review:focus-visible { background: var(--surface); }
+    /* 返回按钮也按「按钮至少 44px 高」处理 */
+    .dd-hero .hero-pill-btn { min-height: 44px; }
+  </style>
+</head>
+<body>
+  <script src="../shared/topbar.js" data-root=".." data-page="math"></script>
+
+  <header class="hero-banner dd-hero">
+    <div class="hero-inner">
+      <div>
+        <h1>示范题 · 动点与面积图象</h1>
+        <p>先预测图象的样子，再拖动 P 看真实的图象，最后用一句话说出道理。</p>
+      </div>
+      <a class="hero-pill-btn" href="index.html">← 返回数学</a>
+    </div>
+  </header>
+
+  <main class="container dd-page">
+    <section class="dd-sec" aria-labelledby="dd-h-poe">
+      <div class="section-head">
+        <h2 id="dd-h-poe">预测关卡</h2>
+        <span class="section-note">预测 → 拖动 → 对比 → 解释</span>
+      </div>
+      <div class="dd-mount" id="dd-poe"><p class="dd-load">题目加载中……</p></div>
+    </section>
+
+    <section class="dd-sec" aria-labelledby="dd-h-more">
+      <div class="section-head">
+        <h2 id="dd-h-more">再练三题</h2>
+        <span class="section-note">换几个情境，再检验一次同一个想法</span>
+      </div>
+      <div class="dd-mount" id="dd-more"><p class="dd-load">题目加载中……</p></div>
+    </section>
+
+    <aside class="card dd-note">
+      <div class="dd-note-in">
+        <p>这是理解测试的示范题，用来检验整套流程</p>
+        <a class="dd-review" href="../review.html">今日重测</a>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+
+  <script src="../shared/svgkit.js"></script>
+  <script src="../shared/quiz/core.js"></script>
+  <script src="../shared/quiz/engine.js"></script>
+  <script src="js/demo-poe.js"></script>
+  <script>
+    (function () {
+      "use strict";
+      var poe = document.getElementById("dd-poe");
+      var more = document.getElementById("dd-more");
+      function fail(el) {
+        // 加载失败只在页面上说明，不抛错：页面其他部分（导航、登录、重测入口）照常可用
+        el.innerHTML = '<p class="dd-load">题目没有加载成功，请检查网络后刷新页面。</p>';
+      }
+      var Q = window.ABSLabQuiz;
+      if (!Q || typeof Q.mount !== "function") { fail(poe); fail(more); return; }
+      function go(el, opts) {
+        // 「加载中」提示：引擎渲染完就去掉（引擎可能是往容器里追加卡片，而不是清空重写）
+        var wait = el.querySelector(".dd-load");
+        var done;
+        try { done = Promise.resolve(Q.mount(el, opts)); } catch (e) { done = Promise.reject(e); }
+        return done.then(function () {
+          if (wait && wait.parentNode) wait.parentNode.removeChild(wait);
+        }).catch(function (e) {
+          if (window.console && console.warn) console.warn("理解测试加载失败", e);
+          fail(el);
+        });
+      }
+      // 题 1 单独一个容器（预测关卡，mode "poe"）；题 2、3、4 放一起（练习，mode "practice"）
+      var p1 = go(poe, { items: ["m-dd-area-poe"], mode: "poe" });
+      var p2 = go(more, { items: ["m-dd-st-twotier", "m-dd-area-transfer", "m-dd-area-inverse"], mode: "practice" });
+      // 导图上的「理解测试」标签链接到 #qz-<题目 id>；卡片是异步渲染的，浏览器打开时找不到锚点，渲染完再定位一次
+      Promise.all([p1, p2]).then(function () {
+        var h = location.hash;
+        if (!/^#qz-[a-z0-9-]+$/.test(h)) return;
+        var t = document.getElementById(h.slice(1));
+        if (t && t.scrollIntoView) t.scrollIntoView();
+      });
+    })();
+  </script>
+  <script src="../shared/linker.js" data-mode="lab" data-lab=""></script>
+</body>
+</html>

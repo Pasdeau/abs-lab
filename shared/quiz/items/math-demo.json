@@ -1,0 +1,858 @@
+{
+  "v": 1,
+  "items": [
+    {
+      "id": "m-dd-area-poe",
+      "subject": "math",
+      "module": "demo",
+      "kp": [
+        "math:c23-4-2",
+        "math:c22-2-2"
+      ],
+      "type": "predict",
+      "level": "junior",
+      "context": "动点面积",
+      "retest": false,
+      "page": "math/demo-poe.html",
+      "widget": "math-dd-area",
+      "stem": "P 从 B 出发，沿 B→C→D 运动。设 P 走过的路程为 x，△ABP 的面积为 y。先预测：y 随 x 变化的图象是什么样的？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "先上升，再保持不变",
+            "figure": {
+              "view": [
+                0,
+                10,
+                0,
+                20
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10
+                ],
+                "yt": [
+                  12
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      12
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "b",
+            "text": "先保持 0，再上升",
+            "figure": {
+              "view": [
+                0,
+                10,
+                0,
+                20
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10
+                ],
+                "yt": [
+                  12
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      0
+                    ],
+                    [
+                      10,
+                      12
+                    ]
+                  ]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "c",
+            "text": "先上升，再上升得更快",
+            "figure": {
+              "view": [
+                0,
+                10,
+                0,
+                20
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10
+                ],
+                "yt": [
+                  12
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      20
+                    ]
+                  ]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "d",
+            "text": "先上升，再下降",
+            "figure": {
+              "view": [
+                0,
+                10,
+                0,
+                20
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10
+                ],
+                "yt": [
+                  12
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      0
+                    ]
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": null,
+      "confidence": true,
+      "explain": {
+        "prompt": "用一句话说一说：P 在 CD 上运动时，y 为什么不变？",
+        "min": 6
+      },
+      "feedback": {
+        "ref": "P 在 BC 上时，底 AB = 4 不变，高 BP = x 变大，y = 2x，图象是上升的线段；P 在 CD 上时，底 AB 和高（CD 到 AB 的距离 6）都不变，y = 12，图象是水平线段。拐点 (6, 12) 对应 P 正好到达 C。"
+      }
+    },
+    {
+      "id": "m-dd-st-twotier",
+      "subject": "math",
+      "module": "demo",
+      "kp": [
+        "math:c22-2-2"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "距离—时间读图",
+      "retest": true,
+      "page": "math/demo-poe.html",
+      "widget": null,
+      "stem": "小明从家出发去书店，又回到家。下图是他离家的距离 s（km）与时间 t（min）的关系。第 10～20 分钟，小明在做什么？",
+      "figures": [
+        {
+          "view": [
+            0,
+            30,
+            0,
+            1.2
+          ],
+          "aspect": "fill",
+          "axes": {
+            "x": "t（min）",
+            "y": "s（km）",
+            "xt": [
+              10,
+              20,
+              30
+            ],
+            "yt": [
+              1
+            ]
+          },
+          "items": [
+            {
+              "t": "polyline",
+              "pts": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  10,
+                  1
+                ],
+                [
+                  20,
+                  1
+                ],
+                [
+                  30,
+                  0
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "在一段平路上走",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "b",
+            "text": "在离家 1 km 的地方停留"
+          },
+          {
+            "id": "c",
+            "text": "走得最快"
+          },
+          {
+            "id": "d",
+            "text": "在往家走"
+          }
+        ],
+        "correct": "b"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "这段图象是水平的，所以他走的路是平的",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "r2",
+            "text": "这段时间 s 一直等于 1，离家的距离没有变"
+          },
+          {
+            "id": "r3",
+            "text": "这段时间 t 没有变"
+          }
+        ],
+        "correct": "r2"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "s 是离家的距离。第 10～20 分钟 s 一直是 1 km，说明离家的距离没有变，他在离家 1 km 的地方停留。水平的图象表示这个量不变，不代表走在平路上。"
+      }
+    },
+    {
+      "id": "m-dd-area-transfer",
+      "subject": "math",
+      "module": "demo",
+      "kp": [
+        "math:c23-4-2",
+        "math:c22-2-2"
+      ],
+      "type": "transfer",
+      "level": "junior",
+      "context": "动点面积",
+      "retest": true,
+      "page": "math/demo-poe.html",
+      "widget": null,
+      "stem": "同一个矩形（AB = 4，BC = 6）。把 P 的路线延长为 B→C→D→A。P 在 DA 上运动时（10 ≤ x ≤ 16），y 怎样变化？",
+      "figures": [
+        {
+          "view": [
+            -1,
+            7,
+            -1,
+            5
+          ],
+          "aspect": "equal",
+          "axes": null,
+          "items": [
+            {
+              "t": "polygon",
+              "pts": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  0,
+                  0
+                ],
+                [
+                  6,
+                  0
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "fill": false
+            },
+            {
+              "t": "polyline",
+              "pts": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  6,
+                  0
+                ],
+                [
+                  6,
+                  4
+                ],
+                [
+                  0,
+                  4
+                ]
+              ],
+              "dash": true,
+              "accent": true
+            },
+            {
+              "t": "text",
+              "at": [
+                0,
+                4
+              ],
+              "s": "A",
+              "pos": "nw"
+            },
+            {
+              "t": "text",
+              "at": [
+                0,
+                0
+              ],
+              "s": "B",
+              "pos": "sw"
+            },
+            {
+              "t": "text",
+              "at": [
+                6,
+                0
+              ],
+              "s": "C",
+              "pos": "se"
+            },
+            {
+              "t": "text",
+              "at": [
+                6,
+                4
+              ],
+              "s": "D",
+              "pos": "ne"
+            },
+            {
+              "t": "text",
+              "at": [
+                0,
+                2
+              ],
+              "s": "4",
+              "pos": "w"
+            },
+            {
+              "t": "text",
+              "at": [
+                3,
+                0
+              ],
+              "s": "6",
+              "pos": "s"
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "从 12 均匀减小到 0",
+            "figure": {
+              "view": [
+                0,
+                16,
+                0,
+                24
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10,
+                  16
+                ],
+                "yt": [
+                  12,
+                  24
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      12
+                    ],
+                    [
+                      16,
+                      0
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "b",
+            "text": "保持 12 不变",
+            "figure": {
+              "view": [
+                0,
+                16,
+                0,
+                24
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10,
+                  16
+                ],
+                "yt": [
+                  12,
+                  24
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      12
+                    ],
+                    [
+                      16,
+                      12
+                    ]
+                  ]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "c",
+            "text": "图象向左折回",
+            "figure": {
+              "view": [
+                0,
+                16,
+                0,
+                24
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10,
+                  16
+                ],
+                "yt": [
+                  12,
+                  24
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      12
+                    ],
+                    [
+                      4,
+                      12
+                    ]
+                  ]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "d",
+            "text": "从 12 均匀增大到 24",
+            "figure": {
+              "view": [
+                0,
+                16,
+                0,
+                24
+              ],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [
+                  6,
+                  10,
+                  16
+                ],
+                "yt": [
+                  12,
+                  24
+                ]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [
+                      0,
+                      0
+                    ],
+                    [
+                      6,
+                      12
+                    ],
+                    [
+                      10,
+                      12
+                    ],
+                    [
+                      16,
+                      24
+                    ]
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "底 AB 不变，高（P 到 AB 的距离）从 6 减小到 0"
+          },
+          {
+            "id": "r2",
+            "text": "P 沿水平的边走，所以图象也是水平的",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "r3",
+            "text": "P 往回走，所以图象也往回画",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "r4",
+            "text": "P 走的路程越来越长，所以面积越来越大"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "P 在 DA 上从 D 走到 A：底 AB = 4 不变，高是 P 到 AB 的距离，从 6 均匀减小到 0，所以 y = 2(16 − x)，从 12 减小到 0。图象不会往回画：x 是走过的总路程，只会越来越大。"
+      }
+    },
+    {
+      "id": "m-dd-area-inverse",
+      "subject": "math",
+      "module": "demo",
+      "kp": [
+        "math:c23-4-2",
+        "math:c22-2-2"
+      ],
+      "type": "inverse",
+      "level": "junior",
+      "context": "动点面积",
+      "retest": true,
+      "page": "math/demo-poe.html",
+      "widget": null,
+      "stem": "同一个矩形（AB = 4，BC = 6）。P 从 B 出发沿矩形的边运动，走过的路程为 x，y = S△ABP。下图是 y 与 x 的关系。P 走的是哪条路线？",
+      "figures": [
+        {
+          "view": [
+            -1,
+            7,
+            -1,
+            5
+          ],
+          "aspect": "equal",
+          "axes": null,
+          "items": [
+            {
+              "t": "polygon",
+              "pts": [
+                [
+                  0,
+                  4
+                ],
+                [
+                  0,
+                  0
+                ],
+                [
+                  6,
+                  0
+                ],
+                [
+                  6,
+                  4
+                ]
+              ],
+              "fill": false
+            },
+            {
+              "t": "text",
+              "at": [
+                0,
+                4
+              ],
+              "s": "A",
+              "pos": "nw"
+            },
+            {
+              "t": "text",
+              "at": [
+                0,
+                0
+              ],
+              "s": "B",
+              "pos": "sw"
+            },
+            {
+              "t": "text",
+              "at": [
+                6,
+                0
+              ],
+              "s": "C",
+              "pos": "se"
+            },
+            {
+              "t": "text",
+              "at": [
+                6,
+                4
+              ],
+              "s": "D",
+              "pos": "ne"
+            },
+            {
+              "t": "text",
+              "at": [
+                0,
+                2
+              ],
+              "s": "4",
+              "pos": "w"
+            },
+            {
+              "t": "text",
+              "at": [
+                3,
+                0
+              ],
+              "s": "6",
+              "pos": "s"
+            }
+          ]
+        },
+        {
+          "view": [
+            0,
+            11,
+            0,
+            14
+          ],
+          "aspect": "fill",
+          "axes": {
+            "x": "x",
+            "y": "y",
+            "xt": [
+              4,
+              10
+            ],
+            "yt": [
+              12
+            ]
+          },
+          "items": [
+            {
+              "t": "polyline",
+              "pts": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  4,
+                  0
+                ],
+                [
+                  10,
+                  12
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "B→A→D"
+          },
+          {
+            "id": "b",
+            "text": "B→C→D",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "c",
+            "text": "B→A→D→C"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "P 在 AB 上时，A、B、P 在一条直线上，面积为 0"
+          },
+          {
+            "id": "r2",
+            "text": "图象先水平再上升，所以 P 先沿水平的边走，再往上走",
+            "mc": "graphaspath"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "P 在 BA 上时，A、B、P 在同一直线上，三角形面积为 0（0 ≤ x ≤ 4）；到 A 以后沿 AD 走，高（P 到 AB 的距离）从 0 增大到 6，y = 2(x − 4)，到 x = 10 时为 12。"
+      }
+    }
+  ]
+}
