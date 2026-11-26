@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>动点与函数图象 · ABS-LAB</title>
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="../shared/quiz/quiz.css" />
+  <script src="../shared/auth.js"></script>
+  <style>
+    /* 只管页面排版；画板的样子由 svgkit 负责，题目卡片的样子由 quiz.css 负责。类名一律 mp- 开头。
+       间距：flex 容器不用 gap（iOS 14.5、Chrome 84 以前不支持），改用子项外边距 + 容器负外边距；grid 的 gap 照用 */
+    /* 两块画板要在宽屏上左右并排：主体放宽到 980px，手机上照常是 390px 一栏 */
+    .mp-page { max-width: 980px; }
+    .mp-hero .hero-pill-btn { min-height: 44px; }
+
+    /* ---------- 标签页：三个情境，一次只显示一个 ---------- */
+    .mp-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 14px; }
+    .mp-tab {
+      position: relative; min-width: 0; min-height: 52px; margin: 0; padding: 6px 6px 7px;
+      border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink);
+      font: inherit; line-height: 1.3; text-align: center; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mp-tab b { display: block; font-size: 0.94rem; }
+    .mp-tab small { display: block; margin-top: 1px; font-size: 0.74rem; font-weight: 600; color: var(--muted); }
+    .mp-tab[aria-selected="true"] { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); box-shadow: inset 0 -3px 0 var(--blue); }
+    .mp-tab[aria-selected="true"] small { color: var(--blue); }
+    .mp-tab:hover { border-color: var(--blue); }
+    /* 完成标记：小圆点贴在按钮右上角，不占文字的宽度（390px 下三个按钮各只有一百来 px） */
+    .mp-ok {
+      display: none; position: absolute; top: -7px; right: -4px; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--green); color: #fff; font-size: 0.72rem; font-weight: 700; line-height: 20px; text-align: center;
+    }
+    .mp-tab.is-done .mp-ok { display: block; }
+    /* 读屏用的文字：看不见，但读得到「已完成」 */
+    .mp-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .mp-tab:not(.is-done) .mp-sr { display: none; }
+
+    /* ---------- 面板 ---------- */
+    .mp-panel[hidden] { display: none !important; }
+    .mp-lead { margin: 0 0 10px; color: var(--muted); font-size: 0.92rem; line-height: 1.55; }
+    .mp-lead b { color: var(--ink); }
+    .mp-boards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 0; }
+    /* 屏宽 ≥ 820px 时两块板左右并排；手机上上下排（几何板在上） */
+    @media (min-width: 820px) {
+      .mp-boards { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+    }
+    .mp-pane { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 6px 6px 8px; }
+    .mp-cap { margin: 0 4px 2px; font-size: 0.82rem; line-height: 1.45; color: var(--muted); }
+    .mp-cap b { color: var(--ink); font-variant-numeric: tabular-nums; }
+    .mp-nw { white-space: nowrap; } /* 「y = S△PBQ」这样的式子换行时整体换，不拆成两半 */
+    .mp-board { width: 100%; min-width: 0; }
+    /* 读数：等宽数字，拖动时宽度不跳；文字只改文字节点（见 js/moving-point.js 开头） */
+    .mp-readout { margin: 4px 4px 0; text-align: center; font-weight: 700; font-size: 1.02rem; line-height: 1.5; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .mp-sub { margin: 2px 4px 0; text-align: center; font-size: 0.9rem; font-weight: 600; line-height: 1.5; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .mp-pb { color: var(--green); }
+    .mp-bq { color: var(--purple); }
+    /* 拐点、最大值附近：读数变成珊瑚色，和板上高亮的顶点、拐点同一个颜色 */
+    .mp-boards.mp-hot .mp-readout { color: var(--coral); }
+    /* 最大值提示：平时占着位置但看不见（用 visibility，出现时版面不跳） */
+    .mp-hint {
+      display: block; width: -webkit-fit-content; width: fit-content; max-width: 100%; margin: 4px auto 0; padding: 2px 12px;
+      border-radius: 999px; background: var(--coral-soft); color: var(--coral); font-size: 0.88rem; font-weight: 700; line-height: 1.6;
+      text-align: center; visibility: hidden;
+    }
+    .mp-boards.mp-hot .mp-hint { visibility: visible; }
+    /* 锁定（预测之前）时读数没有信息，还会和遮罩上的字叠在一起：先藏起来。第一行用 visibility（同示范题，几何板下沿不动），
+       PB、BQ 和最大值提示那两行直接不占地方：手机上预测选项能再往上提一些（解锁时函数板反正也要出现，版面本来就会变） */
+    .mp-boards.mp-locked .mp-readout { visibility: hidden; }
+    .mp-boards.mp-locked .mp-sub,
+    .mp-boards.mp-locked .mp-hint { display: none; }
+    /* 手机上两块板上下排：预测之前函数板是空的，却占着大半屏，把预测选项挤到下面去。
+       锁定时先不显示它，选项紧跟在几何板下面；提交预测（解锁）后再出现。宽屏左右并排时不藏 */
+    @media (max-width: 819.98px) {
+      .mp-boards.mp-locked .mp-fn { display: none; }
+    }
+    /* 静态图形不接指针：手指落在填充的三角形上也能照常滚动页面，挡不住动点的触控圈 */
+    .mp-noptr { pointer-events: none; }
+
+    /* 宽屏时遮罩只盖左右两块板，作答区仍在板子下面，提示文字不变（quiz.css 缺省就是「在下面……↓」） */
+
+    /* ---------- 题干、作答区（预测关卡） ---------- */
+    .mp-qprompt:empty, .mp-qans:empty { display: none; }
+    .mp-qans { margin-top: 12px; }
+
+    /* ---------- 进阶 ---------- */
+    .mp-adv { margin-top: 10px; }
+    .mp-adv-body { padding: 0 2px 6px; }
+    .mp-opt { margin: 4px 0 2px; }
+    .mp-opt + .mp-opt { margin-top: 8px; }
+    .mp-opt-name { margin: 0 0 2px; font-size: 0.9rem; font-weight: 600; color: var(--ink); }
+    /* 按钮组：项距 8px（不用 gap） */
+    .mp-seg { display: flex; flex-wrap: wrap; margin: -8px 0 0 -8px; }
+    .mp-seg > button { margin: 8px 0 0 8px; }
+    .mp-seg button {
+      min-width: 72px; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 10px;
+      background: var(--surface); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer;
+    }
+    .mp-seg button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+    .mp-seg button:disabled { cursor: not-allowed; opacity: 0.5; }
+    .mp-adv-note { margin: 8px 0 0; font-size: 0.84rem; color: var(--muted); }
+    .mp-adv-note[hidden] { display: none; }
+
+    /* ---------- 练一练 ---------- */
+    .mp-sec { margin-top: 28px; }
+    .mp-sec .section-head h2 { font-size: 1.12rem; }
+    .mp-practice { border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
+    .mp-practice > summary {
+      display: flex; align-items: center; min-height: 48px; padding: 0 16px; cursor: pointer; list-style: none;
+      font-weight: 700; color: var(--blue);
+    }
+    .mp-practice > summary::-webkit-details-marker { display: none; }
+    .mp-practice > summary::before { content: "▸"; margin-right: 8px; }
+    .mp-practice[open] > summary::before { content: "▾"; }
+    .mp-more { padding: 4px 12px 12px; min-width: 0; }
+    .mp-load { margin: 0; padding: 12px 14px; border: 1.5px dashed var(--line); border-radius: 12px; color: var(--muted); font-size: 0.9rem; }
+    .mp-check-row { margin: 12px 0 0; }
+    .mp-check {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px;
+      border-radius: 10px; border: 1.5px solid var(--blue); background: var(--blue-soft); color: var(--blue);
+      font-weight: 700; text-decoration: none;
+    }
+    .mp-check:hover { background: var(--surface); }
+    @media (max-width: 600px) {
+      .mp-more { padding: 4px 6px 10px; }
+      /* 手机：横幅压成一行（标题 + 返回按钮），说明段落不显示（每个面板上方已有一行说明）；
+         标签页、说明的下边距也收一点。这样打开页面时几何板和函数板都尽量在第一屏里，拖 P 时看得见图象 */
+      .mp-hero { padding-top: 8px; padding-bottom: 8px; }
+      .mp-hero p { display: none; }
+      .mp-hero h1 { font-size: 1.15rem; }
+      .mp-page { padding-top: 8px; }
+      .mp-tabs { margin-bottom: 10px; }
+      .mp-lead { margin-bottom: 8px; }
+      .mp-boards { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <script src="../shared/topbar.js" data-root=".." data-page="math"></script>
+
+  <header class="hero-banner mp-hero">
+    <div class="hero-inner">
+      <div>
+        <h1>动点与函数图象</h1>
+        <p>拖动动点，看函数图象一段一段画出来：拐点在哪里，面积什么时候最大，横轴换成时间又会怎样。</p>
+      </div>
+      <a class="hero-pill-btn" href="index.html">← 返回数学</a>
+    </div>
+  </header>
+
+  <main class="container mp-page">
+    <div class="mp-tabs" role="tablist" aria-label="三个情境">
+      <button type="button" class="mp-tab" role="tab" id="mp-tab-rect" data-tab="rect" aria-controls="mp-rect" aria-selected="true">
+        <b>矩形 · 面积</b><small>分段一次函数</small><span class="mp-ok" aria-hidden="true">✓</span><span class="mp-sr">（已完成）</span>
+      </button>
+      <button type="button" class="mp-tab" role="tab" id="mp-tab-pq" data-tab="pq" aria-controls="mp-pq" aria-selected="false" tabindex="-1">
+        <b>双动点 · 面积</b><small>二次函数</small><span class="mp-ok" aria-hidden="true">✓</span><span class="mp-sr">（已完成）</span>
+      </button>
+      <button type="button" class="mp-tab" role="tab" id="mp-tab-time" data-tab="time" aria-controls="mp-time" aria-selected="false" tabindex="-1">
+        <b>变速 · 按时间</b><small>横轴是时间</small><span class="mp-ok" aria-hidden="true">✓</span><span class="mp-sr">（已完成）</span>
+      </button>
+    </div>
+
+    <!-- 情境 rect：矩形·面积（分段一次函数）。data-task 写在源码里：build-index 和 linker.js 都按它找任务 -->
+    <section class="mp-panel" id="mp-rect" data-task="rect" role="tabpanel" aria-labelledby="mp-tab-rect">
+      <!-- 说明只留一行（手机上两块板要尽量都在第一屏里）；路线随「进阶」里的起点由脚本改写 -->
+      <p class="mp-lead">拖动 <b>P</b> 沿 <span id="mp-rect-route">B→C→D→A</span> 走到底：图象在哪里拐弯？</p>
+      <div class="mp-boards" id="mp-rect-boards">
+        <div class="mp-pane mp-geo">
+          <p class="mp-cap">矩形 ABCD：AB = <b id="mp-rect-ab">4</b>，BC = <b id="mp-rect-bc">6</b>；<span class="mp-nw">y = S△ABP</span></p>
+          <div class="mp-board" id="mp-rect-geo"></div>
+          <div class="mp-readout" id="mp-rect-read">x = 0.0　y = 0.0</div>
+        </div>
+        <div class="mp-pane mp-fn">
+          <p class="mp-cap">横轴是路程 x，纵轴是面积 y（只画走过的部分）</p>
+          <div class="mp-board" id="mp-rect-fn"></div>
+        </div>
+      </div>
+      <details class="sk-adv mp-adv" id="mp-rect-adv">
+        <summary>进阶</summary>
+        <div class="mp-adv-body">
+          <div class="mp-opt">
+            <p class="mp-opt-name" id="mp-rect-start-lab">P 的起点</p>
+            <div class="mp-seg" role="group" aria-labelledby="mp-rect-start-lab" id="mp-rect-start">
+              <button type="button" data-v="B" aria-pressed="true">从 B 出发</button>
+              <button type="button" data-v="C" aria-pressed="false">从 C 出发</button>
+            </div>
+          </div>
+          <div class="mp-opt" id="mp-rect-ctl"></div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 情境 pq：双动点·面积（二次函数），挂预测关卡 m-m1-poe（部件 m1-pq） -->
+    <section class="mp-panel" id="mp-pq" data-task="pq" role="tabpanel" aria-labelledby="mp-tab-pq" hidden>
+      <div class="mp-qprompt" id="qz-pq-prompt"></div>
+      <p class="mp-lead">拖动 <b>P</b> 从 A 走向 B，<b>Q</b> 同时从 B 走向 C。</p>
+      <div class="mp-boards" id="mp-pq-boards">
+        <div class="mp-pane mp-geo">
+          <p class="mp-cap">正方形 ABCD 边长 4；<span id="mp-pq-speed">P、Q 每秒都走 1</span>；<span class="mp-nw">y = S△PBQ</span></p>
+          <div class="mp-board" id="mp-pq-geo"></div>
+          <div class="mp-readout" id="mp-pq-read">t = 0.0　y = 0.00</div>
+          <div class="mp-sub"><span class="mp-pb">PB = <span id="mp-pq-pb">4.0</span></span>　<span class="mp-bq">BQ = <span id="mp-pq-bq">0.0</span></span></div>
+          <span class="mp-hint" id="mp-pq-hint">PB = BQ 时，面积最大</span>
+        </div>
+        <div class="mp-pane mp-fn">
+          <p class="mp-cap">横轴是时间 t，纵轴是面积 y（只画走过的部分）</p>
+          <div class="mp-board" id="mp-pq-fn"></div>
+        </div>
+      </div>
+      <div class="mp-qans" id="qz-pq-ans"></div>
+      <details class="sk-adv mp-adv" id="mp-pq-adv">
+        <summary>进阶</summary>
+        <div class="mp-adv-body">
+          <div class="mp-opt">
+            <p class="mp-opt-name" id="mp-pq-vq-lab">Q 的速度</p>
+            <div class="mp-seg" role="group" aria-labelledby="mp-pq-vq-lab" id="mp-pq-vq">
+              <button type="button" data-v="1" aria-pressed="true">每秒 1</button>
+              <button type="button" data-v="2" aria-pressed="false">每秒 2</button>
+            </div>
+            <p class="mp-adv-note" id="mp-pq-adv-note" hidden>先做完上面的预测关卡，再换 Q 的速度。</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 情境 time：变速·按时间画图（横轴是时间 t） -->
+    <section class="mp-panel" id="mp-time" data-task="time" role="tabpanel" aria-labelledby="mp-tab-time" hidden>
+      <p class="mp-lead">拖动<b>时间轴上的手柄</b>，P 跟着走：拐点在 t 等于几？</p>
+      <div class="mp-boards" id="mp-time-boards">
+        <div class="mp-pane mp-geo">
+          <p class="mp-cap">AB = 4，BC = 6；P 在 BC 上每秒走 <b id="mp-time-v1">2</b>，CD 上每秒走 <b id="mp-time-v2">1</b></p>
+          <div class="mp-board" id="mp-time-geo"></div>
+          <div class="mp-readout" id="mp-time-read">t = 0.0　路程 0.0　y = 0.0</div>
+        </div>
+        <div class="mp-pane mp-fn">
+          <p class="mp-cap">横轴是时间 t，纵轴是面积 y：拖横轴上的手柄</p>
+          <div class="mp-board" id="mp-time-fn"></div>
+        </div>
+      </div>
+      <details class="sk-adv mp-adv" id="mp-time-adv">
+        <summary>进阶</summary>
+        <div class="mp-adv-body">
+          <div class="mp-opt">
+            <p class="mp-opt-name" id="mp-time-v1-lab">在 BC 上的速度</p>
+            <div class="mp-seg" role="group" aria-labelledby="mp-time-v1-lab" id="mp-time-v1s">
+              <button type="button" data-v="1" aria-pressed="false">每秒 1</button>
+              <button type="button" data-v="2" aria-pressed="true">每秒 2</button>
+            </div>
+          </div>
+          <div class="mp-opt">
+            <p class="mp-opt-name" id="mp-time-v2-lab">在 CD 上的速度</p>
+            <div class="mp-seg" role="group" aria-labelledby="mp-time-v2-lab" id="mp-time-v2s">
+              <button type="button" data-v="1" aria-pressed="true">每秒 1</button>
+              <button type="button" data-v="2" aria-pressed="false">每秒 2</button>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="mp-sec" aria-labelledby="mp-h-more">
+      <div class="section-head">
+        <h2 id="mp-h-more">练一练</h2>
+        <span class="section-note">换几个情境，检验同样的想法</span>
+      </div>
+      <details class="qz-practice mp-practice" id="mp-practice">
+        <summary>理解测试（9 题）</summary>
+        <div class="mp-more" id="mp-more"></div>
+      </details>
+      <p class="mp-check-row"><a class="qz-check-link mp-check" href="../check.html?m=m1&amp;t=pre">做小测（前测 / 后测）→</a></p>
+    </section>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+
+  <script src="../shared/svgkit.js"></script>
+  <script src="../shared/quiz/core.js"></script>
+  <script src="../shared/quiz/engine.js"></script>
+  <script src="js/moving-point-model.js"></script>
+  <script src="js/moving-point.js"></script>
+  <script src="../shared/linker.js" data-mode="lab" data-lab="mpoint"></script>
+</body>
+</html>

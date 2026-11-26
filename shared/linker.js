@@ -524,7 +524,10 @@
     var li = $('[data-task="' + String(task).replace(/"/g, "") + '"]'); if (!li) return;
     setTimeout(function () {
       var r = li.getBoundingClientRect();
-      window.scrollTo({ top: Math.max(0, Math.round(r.top + window.scrollY - (window.innerHeight - r.height) / 2)), behavior: "smooth" });
+      // 任务区比屏幕矮：放在屏幕中间；比屏幕高（例如动点页的整个情境面板）：顶部对齐，留出顶栏的高度，
+      // 否则居中会把面板开头（题干、说明）滚出屏幕
+      var y = r.height > window.innerHeight * 0.8 ? r.top + window.scrollY - 72 : r.top + window.scrollY - (window.innerHeight - r.height) / 2;
+      window.scrollTo({ top: Math.max(0, Math.round(y)), behavior: "smooth" });
       li.classList.remove("lk-flash"); void li.offsetWidth; li.classList.add("lk-flash");
     }, 120);
   }
