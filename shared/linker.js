@@ -68,7 +68,7 @@
     ".lk-chip[data-kind=quiz]:focus-visible{border-color:currentColor;background:var(--sun-soft,#fff8e6);box-shadow:inset 0 0 0 1px currentColor}",
     ".lk-chip[data-kind=quiz][data-qs=passed],.lk-chip[data-kind=quiz][data-qs=passed]:hover{border-color:var(--green,#15803d);background:var(--green-soft,#f0fdf4);color:var(--green,#15803d)}",
     ".lk-chip[data-kind=quiz][data-qs=partial],.lk-chip[data-kind=quiz][data-qs=partial]:hover{border-color:var(--blue,#1d4ed8);background:var(--blue-soft,#eef2ff);color:var(--blue,#1d4ed8)}",
-    ".lk-chip[data-kind=quiz][data-qs=none],.lk-chip[data-kind=quiz][data-qs=none]:hover{border-color:var(--line,#cbd5e1);background:var(--surface-soft,#f8fafc);color:var(--muted,#475569)}",
+    ".lk-chip[data-kind=quiz][data-qs=none],.lk-chip[data-kind=quiz][data-qs=none]:hover,.lk-chip[data-kind=quiz][data-qs=tried],.lk-chip[data-kind=quiz][data-qs=tried]:hover{border-color:var(--line,#cbd5e1);background:var(--surface-soft,#f8fafc);color:var(--muted,#475569)}",
     ".lk-chip[data-kind=quiz][data-qs=verify],.lk-chip[data-kind=quiz][data-qs=verify]:hover{border-color:var(--coral,#ea580c);background:var(--coral-soft,#fff1eb);color:var(--red,#b91c1c)}",
     "body:not(.show-hs) .lk-hs-only{display:none!important}",
     /* 实验页：每个模块、任务的初中 / 高中和对应知识点 */
@@ -189,7 +189,7 @@
   var QUIZ = null, QUIZ_BY = null, QUIZ_ITEMS = null;
   var QREC = null, QREC_TOKEN = null, qrecFor = null, qrecSeq = 0, coreLoading = null;
   var QTYPE = { predict: "预测关卡", twotier: "二段式", transfer: "迁移", inverse: "逆向" };
-  var QLABEL = { guest: "理解测试 →", passed: "测试达标 ✓", partial: "测试 1 / 2", none: "未测", verify: "待验证" };
+  var QLABEL = { guest: "理解测试 →", passed: "测试达标 ✓", partial: "测试 1 / 2", tried: "测试 0 / 2", none: "未测", verify: "待验证" };
   function authToken() {
     var A = window.ABSLabAuth;
     return A && A.getToken ? A.getToken() : null;
@@ -266,7 +266,8 @@
     var core = window.ABSLabQuizCore, t = authToken();
     if (!t || !QREC || QREC_TOKEN !== t || !core) return { s: "guest", label: QLABEL.guest, m: null };
     var m = core.mastery(ref, quizItems(), QREC) || { state: "none", dates: [] };
-    var s = m.state === "passed" ? "passed" : m.state === "partial" ? "partial" : "none";
+    // 做过题但一天都没达标：「测试 0 / 2」；一道都没做过才是「未测」
+    var s = m.state === "passed" ? "passed" : m.state === "partial" ? "partial" : m.tried ? "tried" : "none";
     if (s !== "passed" && manualLevel(key) === 3) s = "verify";
     return { s: s, label: QLABEL[s], m: m };
   }
@@ -296,7 +297,8 @@
       return dates.length >= 2 ? "测试 1 / 2：达标以后又答错过，再做对一轮就能恢复。"
         : "测试 1 / 2：" + md(dates[dates.length - 1]) + " 已经做对一轮，换一天再做对一次就达标。";
     }
-    return "未测：还没有在同一天做对这个知识点的二段式题和迁移题。";
+    if (qs.s === "tried") return "测试 0 / 2：做过这个知识点的题，但还没有在同一天做对二段式题和迁移题。";
+    return "未测：还没有做过这个知识点的测试题。";
   }
   function quizPopHTML(chip) {
     var ref = chip.getAttribute("data-lk-quiz") || "";

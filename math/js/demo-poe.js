@@ -44,6 +44,13 @@
       // 等宽数字：拖动时读数宽度不跳
       ".dd-readout{margin:4px 4px 0;text-align:center;font-weight:700;font-size:1.02rem;line-height:1.5;color:var(--ink,#2b2d42);font-variant-numeric:tabular-nums;white-space:nowrap}",
       ".dd-wrap.dd-kink .dd-readout{color:var(--coral,#f2643d)}",
+      // 锁定（预测之前）时读数还是「x = 0.0　y = 0.0」，没有信息，还会和遮罩上的提示字叠在一起：先藏起来，
+      // 用 visibility 而不是 display，解锁时几何板的高度不变、页面不跳
+      ".dd-wrap.dd-locked .dd-readout{visibility:hidden}",
+      // 手机上两块板上下排：预测之前函数板是空的，却占着一屏的高度，把预测选项挤到第二屏以下。
+      // 锁定时先不显示它，预测选项、把握度和「提交预测」紧跟在几何板下面；提交后（解锁）再出现。
+      // 宽屏左右并排时不藏：右半边空着反而显得缺了东西，选项也不会被挤下去
+      "@media (max-width:819.98px){.dd-wrap.dd-locked .dd-fn{display:none}}",
       // 静态元素不接指针事件：△ABP 的填充盖在别处时也不会挡住 P 的触控圈，手指落在空白处照常上下滚动页面
       ".dd-noptr{pointer-events:none}",
       // D 点（终点）在没完成之前轻微闪烁，提示「一直拖到 D」：闪的是点外圈的光晕（描边透明度），点本身一直看得见；
@@ -116,7 +123,8 @@
 
     // svgkit 没加载成功：给一句提示，返回不做事的部件，不让页面报错；不调 done()，「看对比」就一直不可用
     if (!S || typeof S.board !== "function" || !S.on || typeof S.on.polyline !== "function") {
-      wrap.appendChild(mk("p", "dd-fail", "画板没有加载成功，请刷新页面再试。"));
+      // 同时带上引擎的 qz-wait：引擎看到它就不在上面盖「先预测，再动手」的遮罩（否则两段字叠在一起）
+      wrap.appendChild(mk("p", "dd-fail qz-wait", "画板没有加载成功，请刷新页面再试。"));
       el.appendChild(wrap);
       var dead = {
         get: function () { return { x: 0, y: 0, px: 0, py: 0, maxX: 0, locked: st.locked }; },
@@ -267,6 +275,8 @@
       st.locked = false;
       P.enable(true);
       wrap.classList.remove("dd-locked");
+      // 手机上函数板刚从隐藏变成显示：有 ResizeObserver 的浏览器会自己重排；没有的（iOS 13.0–13.3）这里补一次
+      if (typeof fb.resize === "function") fb.resize();
     }
     function reset() {
       // maxX 清零后再把 P 放回 B：图象、进度、完成状态都回到初始，done() 可以再调一次

@@ -211,7 +211,8 @@
       "subject": "math",
       "module": "demo",
       "kp": [
-        "math:c22-2-2"
+        "math:c22-2-2",
+        "math:c23-4-2"
       ],
       "type": "twotier",
       "level": "junior",

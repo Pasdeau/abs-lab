@@ -252,13 +252,15 @@
   /* ---------- 8 掌握门槛 ---------- */
   // 两个不同日期里，每天都至少通过 1 道覆盖该知识点的 twotier 和 1 道 transfer，才算 passed；
   // 只有一天：partial；最近一次达标之后又在这个知识点的题上出现 mc：退回 partial。
+  // tried：覆盖这个知识点的题做过没有（任何题型、任何结果）。导图标签据此区分「未测」和「测试 0 / 2」。
   function mastery(kpRef, items, records) {
     var cover = (items || []).filter(function (it) { return (it.kp || []).indexOf(kpRef) !== -1; });
     var types = {};
     cover.forEach(function (it) { types[it.id] = it.type; });
-    var days = {}, mcs = [];
+    var days = {}, mcs = [], tried = false;
     cover.forEach(function (it) {
       attemptsOf(records, it.id).forEach(function (a) {
+        tried = true;
         if (a.cls === "mc") mcs.push(stamp(a));
         if (a.cls !== "pass" || !a.d) return;
         if (types[it.id] !== "twotier" && types[it.id] !== "transfer") return;
@@ -268,11 +270,11 @@
       });
     });
     var dates = Object.keys(days).filter(function (d) { return days[d].twotier && days[d].transfer; }).sort();
-    if (!dates.length) return { state: "none", dates: [] };
+    if (!dates.length) return { state: "none", dates: [], tried: tried };
     var lastDay = days[dates[dates.length - 1]];
     var reached = lastDay.twotier > lastDay.transfer ? lastDay.twotier : lastDay.transfer;
     var regress = mcs.some(function (s) { return s > reached; });
-    return { state: dates.length >= 2 && !regress ? "passed" : "partial", dates: dates };
+    return { state: dates.length >= 2 && !regress ? "passed" : "partial", dates: dates, tried: true };
   }
 
   /* ---------- 7.1 错题本条目 ---------- */

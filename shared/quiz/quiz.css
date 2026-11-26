@@ -829,6 +829,13 @@
   color: var(--red, #d7263d);
   border: 1px solid var(--coral, #f2643d);
 }
+/* 已经掌握的稳定迷思：记录保留，徽标变灰 */
+.qz-badge-stable.qz-badge-past {
+  background: var(--surface-soft, #f8fafc);
+  color: var(--muted, #5c667a);
+  border-color: var(--line, #e3e6ec);
+  font-weight: 600;
+}
 .qz-sum-res {
   flex: none;
   margin-left: auto;

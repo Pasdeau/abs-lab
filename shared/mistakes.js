@@ -148,6 +148,8 @@
     ".mk-mc{font-size:12.5px;font-weight:600;background:var(--sun-soft,#fef3c7);color:#7a4a00;border-radius:4px;padding:0 6px}",
     ".mk-stable{font-size:12px;font-weight:700;background:var(--red,#be123c);color:#fff;border-radius:4px;padding:0 6px}",
     ".mk-due{font-size:12.5px;color:var(--muted,#64748b)}",
+    // 12px 小字：#475569 在 #e2e8f0 上约 6.2:1，够 4.5:1（导图页不加载 theme.css，这里的回退值就是实际颜色）
+    ".mk-stable.mk-stable-past{font-weight:600;background:var(--line,#e2e8f0);color:#475569}",
     /* 「去重测」看起来是个小标签，伪元素把可点的范围撑到 44px 高，手机上好点 */
     ".mk-retest{position:relative;display:inline-block;font-size:13px;font-weight:700;line-height:1.5;color:var(--blue,#1d4ed8)!important;text-decoration:none!important;border:1px solid currentColor;border-radius:12px;padding:0 10px;background:var(--blue-soft,#eef2ff)}",
     ".mk-retest::after{content:'';position:absolute;left:-4px;right:-4px;top:50%;height:44px;transform:translateY(-50%)}",
@@ -223,7 +225,12 @@
     if (!isQuiz(it)) return "";
     var h = "", r = reviewOf(it);
     (Array.isArray(it.mc) ? it.mc : []).forEach(function (id) { h += '<span class="mk-mc" title="错误概念">' + esc(tagName(id)) + "</span>"; });
-    if (r && r.stable === true) h += '<span class="mk-stable" title="在两种不同情境的题上都出现过这个错误想法">稳定迷思</span>';
+    // 稳定迷思的记录一直保留；这条错题已经掌握后改成灰色的「曾是稳定迷思」（重测页 engine.js 同一套文字）
+    if (r && r.stable === true) {
+      h += +it.status === 2
+        ? '<span class="mk-stable mk-stable-past" title="曾在两种不同情境的题上出现过这个错误想法，现在已经掌握">曾是稳定迷思</span>'
+        : '<span class="mk-stable" title="在两种不同情境的题上都出现过这个错误想法">稳定迷思</span>';
+    }
     // 已掌握的不再安排重测（与 core.dueList 一致）
     if (r && +it.status < 2 && DATE_RE.test(String(r.due || ""))) {
       h += '<span class="mk-due">下次重测：' + fmtMD(r.due) + "</span>";

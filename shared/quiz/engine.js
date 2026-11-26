@@ -581,7 +581,8 @@
       if (on) {
         // 遮罩放在部件容器的最后，叠在最上层；部件若清空过容器，这里会把它补回来
         if (lockEl.parentNode !== wEl || wEl.lastChild !== lockEl) wEl.appendChild(lockEl);
-        show(lockEl, true);
+        // 部件没加载成功、或还在加载（容器里只有 .qz-wait 提示）：遮罩会和那句提示叠在一起，看不清，这时不盖
+        show(lockEl, !c.wFail && !wEl.querySelector(".qz-wait"));
         wEl.setAttribute("data-locked", "true");
         wcall("lock");
       } else {
@@ -627,8 +628,11 @@
       cmpBtn.classList.remove("qz-primary");
       wActs.appendChild(cmpBtn);
       if (repBtn.parentNode) repBtn.parentNode.removeChild(repBtn);
-      show(prog, true);
-      prog.textContent = "先在下面选出你的预测，提交以后才能动手。";
+      // 预测阶段只露出部件（锁着）和作答区：进度提示和「看对比」这时没有用，
+      // 藏起来让预测选项紧跟在部件下面，手机上不用先翻过一屏（遮罩上已经写着「在下面选出你的预测并提交 ↓」）
+      show(prog, false);
+      show(wActs, false);
+      prog.textContent = "";
       setStage("predict");
       wcall("reset");
       setLock(true);
@@ -642,6 +646,7 @@
       show(prog, false);
       show(cmpBtn, false);
       show(freeNote, true);
+      show(wActs, true);
       wActs.appendChild(repBtn);
       setStage("free");
       setLock(false);
@@ -651,8 +656,14 @@
       lockInputs();
       setStage("operate");
       setLock(false);
-      prog.textContent = c.wFail ? "互动部件没有加载成功，请刷新页面再试。" : "现在动手验证你的预测：操作完成后点「看对比」。";
-      // 手机上部件在作答区上方，提交后把它滚到眼前（瞬时滚动，不做动画）
+      show(prog, true);
+      show(wActs, true);
+      var progText = c.wFail ? "互动部件没有加载成功，请刷新页面再试。" : "现在动手验证你的预测：操作完成后点「看对比」。";
+      // 进度提示是 aria-live 区域：先让它（空着）出现，隔一会儿再写字，读屏软件才会念出来；
+      // 部件这期间若已经报了进度（onProgress 改了文字），就不覆盖
+      prog.textContent = "";
+      setTimeout(function () { if (c.stage === "operate" && !prog.textContent) prog.textContent = progText; }, 80);
+      // 手机上部件在作答区上方：提交后函数板出现（部件解锁时），把几何板滚到屏幕顶上（瞬时滚动，不做动画）
       jumpTo(wBox);
     }
     function showCompare() {
@@ -913,7 +924,11 @@
     clear(R.box);
     (kids || []).forEach(function (k) { if (k) R.box.appendChild(k); });
   }
-  function stableBadge() { return h("span", { cls: "qz-badge-stable", text: "稳定迷思" }); }
+  // 稳定迷思的记录一直保留（review.stable 不撤）；错题已经掌握（status 2）后改成灰色的「曾是稳定迷思」，
+  // 既不抹掉这段经历，也不让已经过关的项目看着还像问题。错题本抽屉（shared/mistakes.js）用同一套文字
+  function stableBadge(past) {
+    return h("span", { cls: "qz-badge-stable" + (past ? " qz-badge-past" : ""), text: past ? "曾是稳定迷思" : "稳定迷思" });
+  }
   function intervalsText() {
     var core = K();
     // 间隔都从 core.js 的常量读，改排期只改那一处
@@ -992,7 +1007,17 @@
         // 文字包一层 span：.qz-next-due 用子项外边距代替 flex 的 gap（quiz.css 开头），裸文字节点没法带外边距
         kids.push(h("p", { cls: "qz-next-due" }, [h("span", { text: "最近一个到期日：" + core.fmtMD(nx.due) + " · " + nxName }), nx.stable ? " " : null, nx.stable ? stableBadge() : null]));
       } else {
-        kids.push(h("p", { cls: "qz-muted", text: "错题本里还没有来自理解测试、需要重测的项目。" }));
+        // 用 ?tag= / ?item= 打开、而这一项已经掌握：说清楚它为什么不在列表里（稳定迷思的记录照样显示，改成灰色）
+        var done = keyF ? mistakes.filter(function (m) { return core.keyOfMistake(m) === keyF && +m.status === 2; })[0] : null;
+        if (done) {
+          var dName = keyF.indexOf("q:") === 0
+            ? (bank.byId[keyF.slice(2)] ? cutText(bank.byId[keyF.slice(2)].stem, 24) : "这道题")
+            : ((bank.tags[keyF] && bank.tags[keyF].name) || keyF);
+          var dStable = !!(done.review && done.review.stable);
+          kids.push(h("p", { cls: "qz-next-due" }, [h("span", { text: "「" + dName + "」已掌握，不再安排重测" }), dStable ? " " : null, dStable ? stableBadge(true) : null]));
+        } else {
+          kids.push(h("p", { cls: "qz-muted", text: "错题本里还没有来自理解测试、需要重测的项目。" }));
+        }
       }
       if (keyF) kids.push(h("div", { cls: "qz-actions" }, [h("a", { cls: "qz-link", href: ROOT + "review.html", text: "看全部重测项目 →" })]));
       reviewState(R, "empty", [h("div", { cls: "qz-panel" }, kids)]);
@@ -1110,8 +1135,9 @@
           else if (+m.status === 2 || !(m.review && m.review.due)) txt = "已掌握，不再安排";
           else txt = "下次重测：" + core.fmtMD(m.review.due);
           var stable = m && m.review && m.review.stable;
+          // 这次重测过了最后一档、错题变成「已掌握」：徽标改成灰色的「曾是稳定迷思」
           list.appendChild(h("li", { cls: "qz-sum-item", "data-key": e.key, "data-cls": cls }, [
-            h("div", { cls: "qz-due-main" }, [h("b", { cls: "qz-due-name", text: e.name }), stable ? stableBadge() : null,
+            h("div", { cls: "qz-due-main" }, [h("b", { cls: "qz-due-name", text: e.name }), stable ? stableBadge(+m.status === 2) : null,
               cls ? h("span", { cls: "qz-sum-res", "data-cls": cls, text: err ? "没保存上" : cls === "pass" ? "通过" : cls === "unsure" ? "没把握" : "还没掌握" }) : null]),
             h("div", { cls: "qz-due-meta", text: txt })
           ]));

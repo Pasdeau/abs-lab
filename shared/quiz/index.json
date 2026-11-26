@@ -38,6 +38,12 @@
     "level": "junior"
    },
    {
+    "id": "m-dd-st-twotier",
+    "type": "twotier",
+    "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
     "id": "m-dd-area-transfer",
     "type": "transfer",
     "page": "math/demo-poe.html",
@@ -69,7 +75,8 @@
    "subject": "math",
    "type": "twotier",
    "kp": [
-    "math:c22-2-2"
+    "math:c22-2-2",
+    "math:c23-4-2"
    ],
    "page": "math/demo-poe.html",
    "level": "junior",
