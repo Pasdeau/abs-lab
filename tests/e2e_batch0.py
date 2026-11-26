@@ -614,6 +614,27 @@ def sc_offline(R):
     R.check("external_requests_total", total_ext == 0, "全部页面外部请求共 %d 个" % total_ext)
 
 
+PREDICT_LAYOUT_JS = """(q) => {
+  var c = window.__e2e.card(q); if (!c) return null;
+  var opt = c.querySelector('[data-qz-ans]'), fn = c.querySelector('.dd-fn'), geo = c.querySelector('.dd-geo'), ro = c.querySelector('.dd-readout');
+  var lk = c.querySelector('.qz-lock');
+  var r = function (e) { if (!e) return null; var b = e.getBoundingClientRect(); return { top: b.top + window.scrollY, bottom: b.bottom + window.scrollY }; };
+  var between = []; ['.dd-fn', '.qz-progress', '[data-qz-compare]'].forEach(function (s) { var e = c.querySelector(s); if (e && e.getClientRects().length) between.push(s); });
+  return { stage: c.getAttribute('data-stage'), opt: r(opt), geo: r(geo), lock: r(lk), lockShown: !!(lk && lk.getClientRects().length),
+           fnShown: !!(fn && fn.getClientRects().length), roVis: ro ? getComputedStyle(ro).visibility : null,
+           hint: lk ? getComputedStyle(lk, '::after').content : null, between: between };
+}"""
+
+
+def grayish(css_color):
+    """rgb(…) 的三个分量相差不大 = 灰色（红色的「稳定迷思」三个分量差得很远）。"""
+    m = re.findall(r"\d+", css_color or "")
+    if len(m) < 3:
+        return False
+    v = [int(x) for x in m[:3]]
+    return max(v) - min(v) < 50
+
+
 def sc_mobile_drag(R):
     """§11.C.2：390×844 触屏，预测前拖不动；提交预测后用 CDP 触屏事件分 50 步把 P 从 B 拖到 D。"""
     ctx = R.new_context(mobile=True)
@@ -629,6 +650,29 @@ def sc_mobile_drag(R):
             "遮罩 .qz-lock 可见且写着「先预测，再动手」" if lock_ok else "没有可见的 .qz-lock", page)
     cmp_btn = card.locator("[data-qz-compare]")
     R.check("locked.compare_disabled", cmp_btn.count() > 0 and cmp_btn.first.is_disabled(), "「看对比」在预测前不可用", page)
+
+    # 预测阶段的手机排版：函数板这时是空的，先不显示；预测选项紧跟在几何板下面，
+    # 第一个选项的顶部（页面坐标）不超过 900 px，不用先翻过一整屏的空函数板
+    lay = page.evaluate("""(q) => {
+      var c = window.__e2e.card(q); if (!c) return null;
+      var opt = c.querySelector('[data-qz-ans]'), fn = c.querySelector('.dd-fn'), geo = c.querySelector('.dd-geo'), ro = c.querySelector('.dd-readout');
+      var lk = c.querySelector('.qz-lock');
+      var r = function (e) { if (!e) return null; var b = e.getBoundingClientRect(); return { top: b.top + window.scrollY, bottom: b.bottom + window.scrollY }; };
+      return { opt: r(opt), geo: r(geo), lock: r(lk),
+               fnShown: !!(fn && fn.getClientRects().length), roVis: ro ? getComputedStyle(ro).visibility : null,
+               hint: lk ? getComputedStyle(lk, '::after').content : null, between: (function () {
+                 // 几何板下沿到第一个选项之间，不能夹着函数板、进度提示或「看对比」按钮
+                 var out = []; ['.dd-fn', '.qz-progress', '[data-qz-compare]'].forEach(function (s) { var e = c.querySelector(s); if (e && e.getClientRects().length) out.push(s); }); return out; })() };
+    }""", QID_POE)
+    R.check("layout.first_option_top<=900", bool(lay and lay["opt"]) and lay["opt"]["top"] <= 900,
+            "第一个预测选项顶部 %s px（应 ≤ 900）" % (lay and lay["opt"] and round(lay["opt"]["top"])), page)
+    R.check("layout.fn_hidden_before_predict", bool(lay) and not lay["fnShown"], "预测前函数板不显示：%s" % json.dumps(lay), page)
+    R.check("layout.options_follow_geo", bool(lay) and not lay["between"] and lay["opt"]["top"] - lay["geo"]["bottom"] < 120,
+            "几何板下沿 %s → 第一个选项 %s；中间可见的：%s" % (lay and round(lay["geo"]["bottom"]), lay and round(lay["opt"]["top"]), lay and lay["between"]), page)
+    R.check("layout.readout_hidden_when_locked", bool(lay) and lay["roVis"] == "hidden", "锁定时读数 visibility=%r（遮罩提示字不和读数叠在一起）" % (lay and lay["roVis"]), page)
+    R.check("layout.lock_hint_points_down", bool(lay) and "↓" in (lay["hint"] or "") and lay["lock"]["bottom"] <= lay["opt"]["top"],
+            "遮罩提示 %r；遮罩下沿 %s ≤ 选项顶部 %s（箭头指向下面的选项）" % (lay and lay["hint"], lay and round(lay["lock"]["bottom"]), lay and round(lay["opt"]["top"])), page)
+    R.shot(page, "locked_layout")
 
     # 预测之前：手指按在 P 上往 C 拖，P 不能动
     scroll_board(page)
@@ -647,6 +691,13 @@ def sc_mobile_drag(R):
     R.require("predict.stage_operate", wait_stage(R, page, QID_POE, ["operate"]), "提交预测后 data-stage=operate", page)
     lock_gone = lock.count() == 0 or not lock.first.is_visible()
     R.check("predict.unlocked", lock_gone, "提交预测后遮罩消失", page)
+    page.wait_for_timeout(150)
+    aft = page.evaluate("""(q) => { var c = window.__e2e.card(q); var fn = c.querySelector('.dd-fn svg'), geo = c.querySelector('.dd-geo'), ro = c.querySelector('.dd-readout');
+      var fr = fn ? fn.getBoundingClientRect() : null;
+      return { fnW: fr ? Math.round(fr.width) : 0, fnH: fr ? Math.round(fr.height) : 0, geoTop: Math.round(geo.getBoundingClientRect().top), roVis: getComputedStyle(ro).visibility }; }""", QID_POE)
+    R.check("predict.fn_shown", aft["fnW"] > 200 and aft["fnH"] > 100, "提交后函数板出现并排好版：%s" % json.dumps(aft), page)
+    R.check("predict.scrolled_to_geo", -2 <= aft["geoTop"] <= 120, "提交后滚到几何板：几何板顶部在视口 %s px" % aft["geoTop"], page)
+    R.check("predict.readout_shown", aft["roVis"] == "visible", "解锁后读数 visibility=%r" % aft["roVis"], page)
 
     # 拖动前准备：滚到画板、装长任务监听、清零性能打点
     scroll_board(page)
@@ -718,6 +769,21 @@ def sc_mobile_drag(R):
         sw = page.evaluate("() => document.documentElement.scrollWidth")
         R.check("layout.no_hscroll_after_compare", sw <= 390, "scrollWidth=%s" % sw, page)
 
+        # 写解释 → 反馈 →「重新预测」：又回到锁定，排版和第一次打开时一样（函数板、读数藏起来，选项紧跟几何板）
+        try:
+            card.locator("textarea[data-qz-ex]").fill("底和高都不变，所以面积不变")
+            card.locator("[data-qz-ex-submit]").click()
+            wait_record(page, QID_POE, ("guest", "saved"))
+            card.locator("[data-qz-repredict]").first.click()
+            wait_stage(R, page, QID_POE, ["predict"])
+            page.wait_for_timeout(150)
+            lay = page.evaluate(PREDICT_LAYOUT_JS, QID_POE)
+            ok = bool(lay) and lay["stage"] == "predict" and lay["lockShown"] and not lay["fnShown"] and lay["roVis"] == "hidden" \
+                and not lay["between"] and lay["opt"]["top"] - lay["geo"]["bottom"] < 120
+            R.check("repredict.layout", ok, "重新预测后：%s" % json.dumps(lay), page)
+        except PWTimeout:
+            R.check("repredict.layout", False, "没能走到「重新预测」", page)
+
 
 def sc_closed_loop(R):
     """§11.C.3：账号 A。D 天做题 1 答成 mc → 进错题本；D+1 天重测出题 2（换情境）→ 通过 → step 1、D+4 重测、已订正。"""
@@ -731,6 +797,11 @@ def sc_closed_loop(R):
     R.register(page, name)
     R.state["A"] = name
     R.info("账号 A = %s，D = %s" % (name, iso(D)))
+    if not mobile:
+        wait_dd(R, page)
+        lay = page.evaluate(PREDICT_LAYOUT_JS, QID_POE)
+        R.check("D.desktop.locked_layout", bool(lay) and lay["stage"] == "predict" and lay["lockShown"] and lay["fnShown"] and lay["roVis"] == "hidden",
+                "1280 宽、锁定时：函数板照常并排显示、读数藏起来：%s" % json.dumps(lay), page)
 
     rec = do_predict(R, page, ctx, "b", "sure", want=("saved",), prefix="D.")
     R.require("D.poe.record_saved", rec.get("state") == "saved", "记录状态 %r：%s" % (rec.get("state"), rec.get("text")), page)
@@ -800,7 +871,8 @@ def sc_closed_loop(R):
 
 
 def sc_stable(R):
-    """§11.C.4：账号 B。D 天题 1 答成 mc；D+1 重测题 2 又答成 mc（情境不同）→ 稳定迷思；抽屉和重测页都显示「稳定迷思」。"""
+    """§11.C.4：账号 B。D 天题 1 答成 mc；D+1 重测题 2 又答成 mc（情境不同）→ 稳定迷思；抽屉和重测页都显示「稳定迷思」。
+    之后按计划重测到「已掌握」：记录不撤，徽标变成灰色的「曾是稳定迷思」。"""
     D, D1, D2 = R.day(0), R.day(1), R.day(2)
     mobile = flow_mobile(R, False)
     ctx = R.new_context(mobile=mobile)
@@ -854,6 +926,70 @@ def sc_stable(R):
     R.check("D2.review.stable_badge", ok, "到期项里 .qz-badge-stable「稳定迷思」可见", page)
     R.shot(page, "D2_review_list")
 
+    # 接着按计划重测到「已掌握」：D+2、D+5、D+12、D+26 都答对（间隔 3、7、14 天）。
+    # 稳定迷思的记录不撤；掌握以后徽标变成灰色的「曾是稳定迷思」，重测页和错题本都这样显示
+    plan = [(2, 1, 5, 1), (5, 2, 12, 1), (12, 3, 26, 1), (26, 4, None, 2)]
+    served = []
+    for n, step, due_n, status in plan:
+        pre = "D%d" % n
+        R.set_day(ctx, n)
+        page.goto(R.url("review.html"), wait_until="load")
+        st = wait_review_state(R, page, ("list", "empty", "guest"))
+        R.require(pre + ".review.list", st == "list", "第 D+%d 天 data-state=%r（应为 list）" % (n, st), page)
+        page.locator("[data-qz-start]").first.click()
+        R.require(pre + ".review.run", wait_review_state(R, page, ("run",)) == "run", "开始重测", page)
+        try:
+            page.wait_for_selector(".qz-review .qz-card", timeout=15000)
+        except PWTimeout:
+            R.require(pre + ".review.card", False, "重测里没有出现题目卡片", page)
+        qid = page.evaluate("() => { var c = document.querySelectorAll('.qz-review .qz-card'); return c.length ? c[c.length - 1].getAttribute('data-qid') : null; }")
+        R.require(pre + ".served", qid in RIGHT, "重测出的题 %r" % qid, page)
+        served.append(qid)
+        ch, rs = RIGHT[qid]
+        rec, _ = answer_card(R, page, qid, ch, rs, "sure", want=("saved",))
+        R.require(pre + ".saved", rec.get("state") == "saved", "记录状态 %r：%s" % (rec.get("state"), rec.get("text")), page)
+        m = R.mistakes(page).get("mc-" + TAG) or {}
+        rv = m.get("review") or {}
+        want_due = iso(R.day(due_n)) if due_n is not None else ""
+        R.check(pre + ".schedule", rv.get("step") == step and rv.get("due") == want_due and m.get("status") == status and rv.get("stable") is True,
+                "want step %s due %r status %s stable True；got step %r due %r status %r stable %r" % (
+                    step, want_due, status, rv.get("step"), rv.get("due"), m.get("status"), rv.get("stable")), page)
+    # 情境交替：距离—时间读图（题 2）和动点面积（题 3、4）轮着出
+    ctx_of = lambda q: "st" if q == QID_TT else "area"
+    R.check("chain.context_alternates", all(ctx_of(a) != ctx_of(b) for a, b in zip([QID_TT] + served, served)),
+            "D+1 起依次出的题：%s" % ([QID_TT] + served))
+
+    # 最后一次的小结：已掌握 + 灰色「曾是稳定迷思」
+    nxt = page.locator(".qz-review [data-qz-next]")
+    if nxt.count():
+        nxt.last.click()
+        wait_review_state(R, page, ("summary",))
+    sm = page.evaluate("""(t) => { var li = document.querySelector('.qz-review .qz-sum-item[data-key="' + t + '"]'); if (!li) return null;
+      var b = li.querySelector('.qz-badge-stable'); return { text: li.textContent.replace(/\s+/g, ' '), badge: b ? b.textContent : null, past: !!(b && b.classList.contains('qz-badge-past')),
+        color: b ? getComputedStyle(b).color : null }; }""", TAG)
+    R.check("D26.summary.former_stable", bool(sm) and sm["past"] and sm["badge"] == "曾是稳定迷思" and "已掌握" in sm["text"] and grayish(sm["color"]),
+            "小结：%s" % json.dumps(sm, ensure_ascii=False), page)
+    R.shot(page, "D26_summary")
+    # 用 ?tag= 打开：说明已掌握，徽标同样是灰色的「曾是稳定迷思」
+    page.goto(R.url("review.html?tag=" + TAG), wait_until="load")
+    st = wait_review_state(R, page, ("empty", "list"))
+    tb = page.evaluate("() => { var r = document.querySelector('.qz-review'); var b = r && r.querySelector('.qz-badge-stable'); return { text: r ? r.textContent.replace(/\s+/g, ' ') : '', badge: b ? b.textContent : null, past: !!(b && b.classList.contains('qz-badge-past')) }; }")
+    R.check("D26.review_tag.former_stable", st == "empty" and tb["past"] and tb["badge"] == "曾是稳定迷思" and "已掌握" in tb["text"],
+            "state=%r %s" % (st, json.dumps(tb, ensure_ascii=False)), page)
+
+    # 错题本抽屉：灰色「曾是稳定迷思」，不再有红色的「稳定迷思」
+    page.goto(R.url("math/knowledge-map.html"), wait_until="load")
+    try:
+        wait_js(page, "() => !!(window.ABSLabMistakes && window.ABSLabMistakes.open)", None, 15000)
+        page.evaluate("() => window.ABSLabMistakes.open('')")
+        wait_js(page, "() => !!document.querySelector('.mk-drawer .mk-stable')", None, 15000)
+    except PWTimeout:
+        pass
+    dr = page.evaluate("() => Array.prototype.map.call(document.querySelectorAll('.mk-drawer .mk-stable'), function (e) { return { text: e.textContent, past: e.classList.contains('mk-stable-past'), bg: getComputedStyle(e).backgroundColor }; })")
+    R.check("D26.drawer.former_stable", len(dr) == 1 and dr[0]["past"] and dr[0]["text"] == "曾是稳定迷思" and grayish(dr[0]["bg"]),
+            "抽屉里的徽标：%s" % json.dumps(dr, ensure_ascii=False), page)
+    R.shot(page, "D26_drawer")
+
 
 def sc_mastery(R):
     """§11.C.5：账号 C。D 天、D+2 天各做对题 2、题 3（有把握）→ 导图上的测试标签 1 / 2 → 达标 ✓；手动学习状态 sxzs.status 全程不变。"""
@@ -890,17 +1026,24 @@ def sc_mastery(R):
         t23 = wait_chip_text(page, "math:c23-4-2", want23, 5000)
         R.check(prefix + ".chip.c23-4-2", t23 == want23, "手动「已掌握」：want %r got %r" % (want23, t23), page)
 
+    # 还没做过任何题：c22-2-2「未测」；c23-4-2 手动标了已掌握、测试没达标：「待验证」
+    chips("D0", "未测", "待验证")
+    # 只做对题 2（二段式）：做过但一天都没达标 →「测试 0 / 2」
+    page.goto(R.url("math/demo-poe.html"), wait_until="load")
+    rec, _ = answer_card(R, page, QID_TT, "b", "r2", "sure", want=("saved",))
+    R.check("D0.twotier.saved", rec.get("state") == "saved", "%r：%s" % (rec.get("state"), rec.get("text")), page)
+    chips("D0b", "测试 0 / 2", "待验证")
     two_items("D")
     recs = R.quiz_records(page)
     n = sum(1 for q in (QID_TT, QID_TR) for a in ((recs.get(q) or {}).get("tries") or []) if a.get("cls") == "pass")
-    R.check("D.quiz.passes", n == 2, "api/quiz 里 pass 作答 %d 条（应为 2）" % n)
+    R.check("D.quiz.passes", n == 3, "api/quiz 里 pass 作答 %d 条（应为 3：题 2 两次、题 3 一次）" % n)
     chips("D", "测试 1 / 2", "待验证")
     R.shot(page, "D_map_chip")
 
     R.set_day(ctx, 2)
     two_items("D2")
-    # c23-4-2 没有 twotier 题覆盖（题 2 只覆盖 c22-2-2），按 core.mastery 永远到不了 passed，所以仍是「待验证」
-    chips("D2", "测试达标 ✓", "待验证")
+    # 题 2 也覆盖 c23-4-2：两天都达标后，c23-4-2 的手动「已掌握」得到验证 →「测试达标 ✓」（不再是「待验证」）
+    chips("D2", "测试达标 ✓", "测试达标 ✓")
     R.shot(page, "D2_map_chip")
 
     s1 = page.evaluate("() => localStorage.getItem('sxzs.status')")

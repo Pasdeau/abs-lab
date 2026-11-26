@@ -504,15 +504,15 @@ describe("mastery：掌握门槛", function () {
   function M(list, items) { return core.mastery(KP, items || ITEMS, recs.apply(null, list)); }
 
   it("什么都没做 → none", function () {
-    assert.deepEqual(core.mastery(KP, ITEMS, {}), { state: "none", dates: [] });
-    assert.deepEqual(core.mastery("math:no-such-kp", ITEMS, recs(passDay(D)[0])), { state: "none", dates: [] });
+    assert.deepEqual(core.mastery(KP, ITEMS, {}), { state: "none", dates: [], tried: false });
+    assert.deepEqual(core.mastery("math:no-such-kp", ITEMS, recs(passDay(D)[0])), { state: "none", dates: [], tried: false });
   });
   it("只通过二段式、或只通过迁移 → none（每天两种都要有）", function () {
     assert.equal(M([passDay(D)[0], passDay(plus(2))[0]]).state, "none");
     assert.equal(M([passDay(D)[1], passDay(plus(2))[1]]).state, "none");
   });
   it("二段式和迁移不在同一天 → none", function () {
-    assert.deepEqual(M([passDay(D)[0], passDay(plus(1))[1]]), { state: "none", dates: [] });
+    assert.deepEqual(M([passDay(D)[0], passDay(plus(1))[1]]), { state: "none", dates: [], tried: true });
   });
   it("预测、逆向题通过不计；unsure 不算通过", function () {
     assert.equal(M([[POE.id, att(D, "pass")], [INV.id, att(D, "pass")], [POE.id, att(plus(2), "pass")], [INV.id, att(plus(2), "pass")]]).state, "none");
@@ -522,16 +522,16 @@ describe("mastery：掌握门槛", function () {
   });
   it("同一天做两遍 → partial（只算一个日期）", function () {
     var r = M(passDay(D, "02", "03").concat(passDay(D, "06", "07")));
-    assert.deepEqual(r, { state: "partial", dates: [D] });
+    assert.deepEqual(r, { state: "partial", dates: [D], tried: true });
   });
   it("两个不同日期 → passed（dates 按日期排序）", function () {
-    assert.deepEqual(M(passDay(D).concat(passDay(plus(2)))), { state: "passed", dates: [D, plus(2)] });
-    assert.deepEqual(M(passDay(plus(2)).concat(passDay(D))), { state: "passed", dates: [D, plus(2)] });
+    assert.deepEqual(M(passDay(D).concat(passDay(plus(2)))), { state: "passed", dates: [D, plus(2)], tried: true });
+    assert.deepEqual(M(passDay(plus(2)).concat(passDay(D))), { state: "passed", dates: [D, plus(2)], tried: true });
   });
   it("最近一个达标日期之后，这个知识点的题上又出现 mc → 退回 partial", function () {
     var base = passDay(D).concat(passDay(plus(2)));
     var later = base.concat([[POE.id, att(plus(3), "mc", { tags: ["graphaspath"] })]]);
-    assert.deepEqual(M(later), { state: "partial", dates: [D, plus(2)] });
+    assert.deepEqual(M(later), { state: "partial", dates: [D, plus(2)], tried: true });
     // 同一天、在达标之后（时间更晚）出现 mc 也算
     var sameDay = base.concat([[INV.id, att(plus(2), "mc", { tags: ["graphaspath"], t: at(plus(2), "05") })]]);
     assert.equal(M(sameDay).state, "partial");
@@ -547,11 +547,27 @@ describe("mastery：掌握门槛", function () {
   });
   it("退回 partial 以后，再有一天达标 → 重新 passed", function () {
     var list = passDay(D).concat(passDay(plus(2)), [[TR.id, att(plus(3), "mc", { tags: ["graphaspath"] })]], passDay(plus(4)));
-    assert.deepEqual(M(list), { state: "passed", dates: [D, plus(2), plus(4)] });
+    assert.deepEqual(M(list), { state: "passed", dates: [D, plus(2), plus(4)], tried: true });
   });
-  it("没有二段式题覆盖的知识点（c23-4-2）永远到不了 passed", function () {
+  it("题 2 也覆盖 c23-4-2：两天都做对题 2、题 3，c23-4-2 同样达标", function () {
+    assert.deepEqual(TT.kp, ["math:c22-2-2", "math:c23-4-2"]);
     var r = core.mastery("math:c23-4-2", ITEMS, recs.apply(null, passDay(D).concat(passDay(plus(2)))));
-    assert.equal(r.state, "none");
+    assert.equal(r.state, "passed");
+  });
+  it("没有二段式题覆盖的知识点永远到不了 passed（合成题）", function () {
+    var only = [syn("tr-only", { type: "transfer", kp: ["math:k77"] })];
+    var r = core.mastery("math:k77", only, recs(["tr-only", att(D, "pass")], ["tr-only", att(plus(2), "pass")]));
+    assert.deepEqual(r, { state: "none", dates: [], tried: true });
+  });
+  it("tried：覆盖这个知识点的题做过（任何题型、任何结果）才为真——导图据此区分「未测」和「测试 0 / 2」", function () {
+    assert.equal(core.mastery(KP, ITEMS, {}).tried, false);
+    // 只做了预测关卡（不计入达标）也算做过
+    assert.deepEqual(M([[POE.id, att(D, "mc", { tags: ["graphaspath"] })]]), { state: "none", dates: [], tried: true });
+    // 只做了二段式、答错
+    assert.equal(M([[TT.id, att(D, "gap")]]).tried, true);
+    // 做的题不覆盖这个知识点：不算
+    var O = syn("other-kp2", { kp: ["math:c99-9-9"] });
+    assert.equal(core.mastery(KP, ITEMS.concat([O]), recs([O.id, att(D, "pass")])).tried, false);
   });
 });
 
