@@ -145,6 +145,45 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 .learn-btn{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
 .learn-btn:hover{border-color:var(--green);color:var(--green)}
 .learn-btn.done{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ===== 理解测试：3 号「小灯泡」的预测关卡和「练一练」 =====
+ * quiz.css、引擎、画板组件只在第一次打开这个模块时才加载（见脚本里的 qzAssets），其他模块一个字节都不多下。
+ * 新写的规则里 flex 容器不用 gap（老的 iOS、安卓浏览器不支持），间距用外边距。 */
+/* 本页的 section{display:none} 是切换模块用的；引擎的卡片也是 <section>，要单独放出来 */
+section.qz-card{display:block}
+.qz-host-prompt:empty,.qz-host-ans:empty{display:none}
+/* 不在小灯泡模式时：题干、作答区、遮罩都藏起来，引擎里的状态原样保留，切回来接着做 */
+section.qz-off .qz-host-prompt,section.qz-off .qz-host-ans,section.qz-off .stage>.qz-lock{display:none!important}
+/* 定位到题目、提交后滚回模块图时，让开顶上吸住的导航栏（老的 Safari 认 scroll-snap-margin-top） */
+.qz-prompt,.qz-card,.qz-compare,.qz-more,.qz-host-ans,#m3 .grid{scroll-margin-top:calc(var(--navh,60px) + 8px);scroll-snap-margin-top:calc(var(--navh,60px) + 8px)}
+.qz-host-ans .qz-card{margin:0}
+/* 预测阶段锁住的控件变灰：一眼看出「现在还不能动」 */
+#m3 .ctl input:disabled,#m3 .ctl button:disabled{opacity:.4;cursor:not-allowed}
+#m3 .ctl label.off{color:var(--muted)}
+/* 宽屏（和手机横屏）上作答区在右栏，遮罩上的提示改成「在右边」 */
+@media (min-width:900px),(orientation:landscape) and (max-height:520px){
+ #m3 .stage>.qz-lock::after{content:"在右边选出你的预测并提交 →"}
+ /* 右栏只有三四百像素宽：带图的选项两个一行，缩略图和文字都不至于挤成一条 */
+ #m3 .qz-host-ans .qz-opts-fig[data-n="4"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* 手机上模块图吸在顶上；到了对比、解释、反馈阶段它会盖住对比图和解释框，这时让它跟着页面走 */
+@media (max-width:899px){section.qz-unstick:not(.qz-off) .stage{position:relative!important;top:auto!important;box-shadow:none!important}}
+/* 「练一练」：默认收起；做小测的链接宽屏时放在同一行右边，手机上放在下面 */
+.qz-more{position:relative;margin-top:18px}
+.qz-practice>summary{display:block;list-style:none;min-height:48px;padding:11px 14px;background:#fff;border:1.5px solid var(--line);border-radius:14px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.qz-practice>summary::-webkit-details-marker{display:none}
+/* 展开标记用边框画（「▸」这类字符在一些安卓字体里只有一个小点） */
+.qz-practice>summary::before{content:"";display:inline-block;width:7px;height:7px;margin:0 12px 2px 2px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:rotate(-45deg);transition:transform .15s}
+.qz-practice[open]>summary::before{transform:rotate(45deg)}
+.qz-practice[open]>summary{border-color:var(--blue);margin-bottom:12px}
+.qz-practice>summary:hover{border-color:var(--blue)}
+.qz-check-link{display:inline-block;margin-top:8px;padding:10px 2px;min-height:44px;color:var(--blue);font-weight:700;font-size:14px;text-decoration:none}
+.qz-check-link:hover{text-decoration:underline}
+@media (min-width:600px){
+ .qz-practice>summary{padding-right:220px}
+ .qz-check-link{position:absolute;top:2px;right:14px;margin:0;padding:10px 0;min-height:0}
+}
+@media (prefers-reduced-motion:reduce){.qz-practice>summary::before{transition:none}}
 </style>
 <script src="../shared/auth.js"></script>
 </head>
@@ -187,17 +226,21 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div>
 </section>
 
-<section id="m3">
+<section id="m3" class="qz-off">
 <h2>3 · 滑动变阻器与 U-I 图像</h2><p class="lead">拖动滑片，同时盯住右边的图像：图上的每一个点，都是“此刻的电路”。</p>
+<div class="qz-host-prompt" id="qz-m3-prompt"></div>
 <div class="grid"><div class="stage"><svg id="s3" viewBox="0 0 560 280"></svg></div>
 <div class="side">
+<div class="qz-host-ans" id="qz-m3-ans"></div>
 <div class="card ctl"><h3>操作</h3>
-<label>滑片位置：变阻器接入 <b class="v" id="v3p"></b> Ω<input type="range" id="i3p" min="0" max="50" step="1" value="25"></label>
+<div class="btns qz-modes"><button type="button" data-m3="r0" class="on">定值电阻 R₀</button><button type="button" data-m3="lamp">小灯泡 L（2.5 V）</button></div>
+<label id="l3p">滑片位置：变阻器接入 <b class="v" id="v3p"></b> Ω<input type="range" id="i3p" min="0" max="50" step="1" value="25"></label>
 <label>定值电阻 R₀ = <b class="v" id="v3r"></b> Ω<input type="range" id="i3r" min="5" max="20" step="5" value="10"></label>
 <div class="btns"><button data-set="vm:0">电压表测 R₀</button><button data-set="vm:1">电压表测变阻器</button></div></div>
-<div class="card"><h3>电压表示数 U 与电流 I</h3><svg id="g3" viewBox="0 0 300 210" style="width:100%"></svg><div class="read" id="r3"></div></div>
-<div class="tip"><b>要点</b><ul><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul></div>
+<div class="card"><h3 id="h3g">电压表示数 U 与电流 I</h3><svg id="g3" viewBox="0 0 300 210" style="width:100%"></svg><div class="read" id="r3"></div><div id="o3"></div></div>
+<div class="tip"><b>要点</b><ul id="t3r0"><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul><ul id="t3lamp" style="display:none"></ul></div>
 </div></div>
+<div class="qz-more"><details class="qz-practice" id="qz-m3-practice"><summary>理解测试（9 题）</summary><div id="qz-m3-more"></div></details><a class="qz-check-link" href="../check.html?m=pa&amp;t=pre">做小测（前测 / 后测）→</a></div>
 </section>
 
 <section id="m4">
@@ -475,7 +518,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 </main>
-<footer>这是帮助理解的简化模型：导线、电表和电源都当作理想的，灯丝电阻当作不变。电与磁部分的磁感线是用简化的磁极模型画出的示意图。</footer>
+<footer>这是帮助理解的简化模型：导线、电表和电源都当作理想的，灯丝电阻当作不变（3 号模块的「小灯泡」模式除外）。电与磁部分的磁感线是用简化的磁极模型画出的示意图。</footer>
 <div id="zoom" hidden><div class="zbar"><b id="ztitle"></b><button onclick="zoomClose()">✕ 关闭</button></div><div class="zwrap" id="zwrap"><div id="zbox"></div></div></div>
 
 <script>
@@ -530,7 +573,14 @@ function r2(){
   $('r2').innerHTML=rd([['干路电流 I',f2(I)+' A'],['L₁ 电流 I₁',f2(I1)+' A'],['L₂ 电流 I₂',f2(I2)+' A'],['L₁ 电压 U₁',f2(U1)+' V'],['L₂ 电压 U₂',f2(U2)+' V']]);
 }
 function rheo(x,y,frac,l){const px=x-45+90*frac;return `<rect x="${x-45}" y="${y-9}" width="90" height="18" rx="3" fill="#fff" stroke="#2B2D42" stroke-width="2.2"/><rect x="${x-45}" y="${y-9}" width="${90*frac}" height="18" rx="3" fill="#FFC9B8" stroke="#2B2D42" stroke-width="2.2"/><path d="M${px} ${y-30}V${y-11}" stroke="#F2643D" stroke-width="2.6"/><path d="M${px-6} ${y-19}L${px} ${y-10}L${px+6} ${y-19}Z" fill="#F2643D"/>`+tx(px,y-34,'P','style="fill:#F2643D" font-weight="700"')+tx(x,y+27,l)}
+/* 3 号模块的两种模式：「定值电阻 R₀」走下面 r3() 原来的代码（读数、图像和改动前一字不差）；
+   「小灯泡」走 r3lamp()，数值全部来自 js/sensor-models.js（window.ABSLabSensors，与题库的单元测试用同一份模型）。
+   Q3 是小灯泡模式和预测关卡 phy-m3-lamp 的状态：
+   locked 引擎锁着（预测阶段）；shown 变阻器的曲线可以画了（提交预测后，或这道题做过）；
+   vis 预测提交后滑片走过的接入电阻 [最小, 最大]；f 已经报给引擎的进度；api 引擎给的 onProgress / done */
+const Q3={mode:'r0',locked:false,shown:false,vis:null,f:-1,api:null};
 function r3(){
+  if(Q3.mode=='lamp'){r3lamp();return}
   const U=12,Rp=+$('i3p').value,R0=+$('i3r').value;$('v3p').textContent=Rp;$('v3r').textContent=R0;
   const I=U/(R0+Rp),U0=I*R0,Up=I*Rp,UV=S.vm?Up:U0;
   $('s3').innerHTML=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I)+res(180,90,'R₀ = '+R0+' Ω')+rheo(370,90,Rp/50,'变阻器（最大 50 Ω）')
@@ -545,6 +595,94 @@ function r3(){
   g+=`<polyline points="${P(pts)}" fill="none" stroke="#F2643D" stroke-width="2.6"/><circle cx="${X(I)}" cy="${Y(UV)}" r="6" fill="#3B5BDB" stroke="#fff" stroke-width="2"/>`;
   $('g3').innerHTML=g;
   $('r3').innerHTML=rd([['电流 I',f2(I)+' A'],['R₀ 两端 U₀',f2(U0)+' V'],['变阻器两端 U滑',f2(Up)+' V'],['U₀ + U滑','12 V']]);
+}
+/* ---------- 3 号「小灯泡」模式 ---------- */
+const f3=n=>String(Math.round(n*1000)/1000);
+// 带白色描边的字：压在曲线上也看得清
+const halo='paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round';
+function r3lamp(){
+  const M=window.ABSLabSensors,Rp=+$('i3p').value;$('v3p').textContent=Rp;$('v3r').textContent=$('i3r').value;
+  if(!M){
+    // 模型脚本还在路上（第一次打开 3 号模块就点了「小灯泡」）：先写一句，加载完再画
+    $('s3').innerHTML=tx(280,150,'正在加载小灯泡……','style="fill:#6B7280"');$('g3').innerHTML='';$('r3').innerHTML='';$('o3').innerHTML='';
+    qzAssets().then(()=>{if(cur==2&&Q3.mode=='lamp')draw()},()=>{$('s3').innerHTML=tx(280,150,'小灯泡没有加载成功，请刷新页面再试。','style="fill:#D7263D"')});
+    return}
+  const L=M.LAMP,E=L.E,c=M.lampCircuit(Rp,E),I=c.I,UL=c.UL,Up=c.Up,UV=S.vm?Up:UL;
+  track3(Rp);
+  // 亮度照 6 号模块的做法：实际功率 ÷ 额定功率（额定电压 2.5 V 时的功率）
+  const b=c.P/(L.rated*M.lampI(L.rated));
+  $('s3').innerHTML=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I*3)+lamp(180,90,b,'灯 L（2.5 V）')+rheo(370,90,Rp/50,'变阻器（最大 50 Ω）')
+   +(S.vm?wire([[300,90],[300,150],[440,150],[440,90]],'#3B5BDB')+meter(370,150,'V','','#3B5BDB')+tx(370,180,f2(UV)+' V','font-weight="700" style="fill:#3B5BDB"')+node(300,90)+node(440,90):vlead(180,90,f2(UV)+' V'))
+   +meter(490,165,'A','','#F2643D')+tx(527,170,f3(I)+' A','font-weight="700" style="fill:#F2643D"')+batt(220,230)+tx(220,262,'电源 4.5 V','style="fill:#6B7280"')
+   +(c.over?tx(180,152,'超过额定电压 2.5 V','font-size="12.5" font-weight="700" style="fill:#D7263D"'):'');
+  // I-U 图像（横轴 U、纵轴 I，和中考的画法一致；R₀ 模式仍是原来的 U-I 图像）
+  const X=u=>40+u/E*240,Y=i=>180-i/L.iMax*160,xy=p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1),yI=Y(I).toFixed(1);
+  let g=`<path d="M40 14V180H292" fill="none" stroke="#2B2D42" stroke-width="1.6"/>`+tx(18,10,'I/A','font-size="11"')+tx(286,172,'U/V','font-size="11"');
+  [.1,.2,.3].forEach(i=>{g+=`<path d="M40 ${Y(i).toFixed(1)}H280" stroke="#E3E6EC"/>`+tx(24,Y(i)+4,i.toFixed(1),'font-size="10"')});
+  [1,2,3,4,4.5].forEach(u=>{g+=tx(X(u),194,u,'font-size="10"')});
+  g+=`<polyline data-curve="lamp" points="${M.lampCurve().map(xy).join(' ')}" fill="none" stroke="#3B5BDB" stroke-width="2.6"/>`;
+  g+=`<path d="M192 158H210" stroke="#3B5BDB" stroke-width="2.6"/><text x="214" y="162" font-size="11" style="fill:#3B5BDB">灯 L</text>`;
+  const rg=rheoRange3();
+  if(Q3.shown){
+    // 提交预测以后：变阻器的曲线只画滑片走过的那一段；两个工作点在同一条水平线（同一个电流）上，关于 U = 2.25 V 左右对称
+    g+=`<path d="M${X(E/2)} ${Y(L.iMax)}V180" stroke="#0FA3A3" stroke-dasharray="4 3" stroke-width="1.4"/>`+tx(X(E/2),12,'对称轴 U = 2.25 V','font-size="10" style="fill:#0FA3A3"');
+    if(rg)g+=`<polyline data-curve="rheo" points="${M.rheostatCurve(Math.max(2,Math.ceil((rg[1]-rg[0])/0.05)),rg[0],rg[1],E).map(xy).join(' ')}" fill="none" stroke="#F2643D" stroke-width="2.6"/>`;
+    g+=`<path d="M192 172H210" stroke="#F2643D" stroke-width="2.6"/><text x="214" y="176" font-size="11" style="fill:#F2643D">变阻器</text>`;
+    // 电流大时水平线贴近顶上的「对称轴」三个字：标注挪到线下面
+    g+=`<path d="M40 ${yI}H280" stroke="#6B7280" stroke-dasharray="3 3" stroke-width="1.2"/>`+tx(X(E/2),Y(I)<34?Y(I)+15:Y(I)-7,'U灯 + U滑 = 4.5 V',`font-size="11" font-weight="700" data-sum="1" style="${halo}"`);
+    g+=`<circle data-pt="rheo" data-u="${f3(Up)}" data-i="${f3(I)}" cx="${X(Up).toFixed(1)}" cy="${yI}" r="${S.vm?6.5:5}" fill="#F2643D" stroke="#fff" stroke-width="2"/>`;
+  }else{
+    g+=`<path d="M40 ${yI}H${X(UL).toFixed(1)}V180" fill="none" stroke="#9AA3B2" stroke-dasharray="3 3" stroke-width="1.2"/>`;
+  }
+  g+=`<circle data-pt="lamp" data-u="${f3(UL)}" data-i="${f3(I)}" cx="${X(UL).toFixed(1)}" cy="${yI}" r="${S.vm?5:6.5}" fill="#3B5BDB" stroke="#fff" stroke-width="2"/>`;
+  $('g3').innerHTML=g;
+  $('r3').innerHTML=rd([['电流 I',f3(I)+' A'],['灯两端 U灯',f2(UL)+' V'],['变阻器两端 U滑',f2(Up)+' V'],['灯的电阻 R<sub>L</sub>',f2(c.RL)+' Ω']]);
+  $('o3').innerHTML=c.over?msg('超过额定电压 2.5 V：实际功率比额定功率大，灯比正常发光时更亮，长时间这样会缩短灯的寿命。','bad')
+   :Math.abs(UL-L.rated)<0.02?msg('U灯 = 2.5 V，等于额定电压：小灯泡正常发光。','ok')
+   :msg(`灯丝电阻 R<sub>L</sub> = U灯 ÷ I = ${f2(UL)} V ÷ ${f3(I)} A ≈ ${f2(c.RL)} Ω。电压越高，灯丝越热，电阻越大。`);
+  $('t3lamp').innerHTML='<li>灯丝的温度随电压升高而升高，电阻变大：灯的 I-U 图像越来越平，不是直线。</li><li>灯和变阻器串联：电流相同，U灯 + U滑 = 4.5 V。</li>'
+   +(Q3.shown?'<li>同一个电流下，两个工作点到 U = 2.25 V 的距离相等：变阻器的图像就是灯的图像左右翻过来。它也不是直线，因为灯丝电阻在变。</li>':'<li>提交预测以后拖动滑片，看变阻器的图像一点点画出来。</li>');
+}
+// 预测提交后（没锁着）滑片走过的范围：完成条件是既到过 ≤ 10 Ω、也到过 ≥ 40 Ω，两个条件各算一半进度。
+// 预测阶段（引擎的卡片在 predict）不算：「重新预测」时引擎先 reset 再锁，这时的位置不能偷偷记进去
+function track3(Rp){
+  if(Q3.mode!='lamp'||Q3.locked||G3.stage()=='predict')return;
+  const v=Q3.vis||(Q3.vis=[Rp,Rp]);if(Rp<v[0])v[0]=Rp;if(Rp>v[1])v[1]=Rp;
+  rep3();
+}
+function rep3(){const v=Q3.vis,f=v?(v[0]<=10?.5:0)+(v[1]>=40?.5:0):0;if(f===Q3.f||!Q3.api)return;Q3.f=f;Q3.api.onProgress(f);if(f>=1)Q3.api.done()}
+// 走过的接入电阻范围换成灯两端电压的范围 [uFrom, uTo]（接入电阻越大，灯两端电压越小）
+function rheoRange3(){const M=window.ABSLabSensors,v=Q3.vis;if(!M||!v)return null;return[M.lampCircuit(v[1],M.LAMP.E).UL,M.lampCircuit(v[0],M.LAMP.E).UL]}
+// 「实际结果」：和 p-pa-poe 选项缩略图同一个视野、同一套坐标轴；灯的曲线浅色作参照，变阻器的曲线只画走过的那一段
+function result3(){
+  const M=window.ABSLabSensors,L=M.LAMP,r=rheoRange3(),items=[{t:'polyline',pts:M.lampCurve(),color:'muted'}];
+  if(r&&r[1]>r[0])items.push({t:'polyline',pts:M.rheostatCurve(Math.max(2,Math.ceil((r[1]-r[0])/0.05)),r[0],r[1],L.E)});
+  return{figure:{view:[0,4.5,0,0.35],aspect:'fill',axes:{x:'U/V',y:'I/A',xt:[2.25,4.5],yt:[0.1,0.2,0.3]},items}};
+}
+// 锁定只锁滑片和电压表按钮；模式按钮不锁，随时可以切回 R₀ 模式（那时什么都不锁）
+function applyCtl3(){
+  const off=Q3.mode=='lamp'&&Q3.locked,st=document.querySelector('#m3 .stage');
+  $('i3p').disabled=off;$('l3p').classList.toggle('off',off);
+  document.querySelectorAll('#m3 [data-set^="vm:"]').forEach(b=>{b.disabled=off});
+  if(off)st.setAttribute('data-qz-locked','true');else st.removeAttribute('data-qz-locked');
+}
+function setMode3(m,user){
+  const lamp=m=='lamp',i=$('i3p');Q3.mode=lamp?'lamp':'r0';
+  document.querySelectorAll('#m3 [data-m3]').forEach(b=>b.classList.toggle('on',b.dataset.m3==Q3.mode));
+  $('m3').classList.toggle('qz-off',!lamp);
+  // 小灯泡模式步长 0.2 Ω，正常发光的 6.6 Ω 才拖得到；回到 R₀ 模式取整，R₀ 模式的读数仍只出现原来那些整数位置
+  if(lamp)i.step='0.2';else{i.value=Math.round(+i.value);i.step='1'}
+  $('i3r').closest('label').style.display=lamp?'none':'';
+  document.querySelector('#m3 [data-set="vm:0"]').textContent=lamp?'电压表测灯':'电压表测 R₀';
+  $('h3g').textContent=lamp?'小灯泡和变阻器的 I-U 图像':'电压表示数 U 与电流 I';
+  $('t3r0').style.display=lamp?'none':'';$('t3lamp').style.display=lamp?'':'none';
+  if(!lamp)$('o3').innerHTML='';
+  applyCtl3();draw();
+  if(!lamp)return null;
+  const p=G3.start();
+  // 自己点「小灯泡」、而这道题还在预测阶段：把题干滚到导航栏下面，先看题再看图
+  if(user)p.then(()=>{if(Q3.mode=='lamp'&&G3.stage()=='predict')qzJump($('qz-m3-prompt'))});
+  return p;
 }
 const FN={ok:'正常',Lo:'L 断路',Ls:'L 短路',Ro:'R 断路',Rs:'R 短路'};
 function calc4(f,vm){const U=6;let I,UV;
@@ -1105,6 +1243,101 @@ function ACT(a){const p=a.split(':'),k=p[0],rnd=n=>Math.floor(Math.random()*n);
  else if(k=='a21'){S.a21[+p[1]]=+p[2]}else if(k=='r21'){S.a21={};S.yn=null}else if(k=='yn'){if(!S.yn)S.yn=p[1]}
  else return}
 
+/* ===================== 理解测试（3 号模块的预测关卡与练一练） ===================== */
+/* 懒加载：第一次打开 3 号模块时才插入 quiz.css 和四个脚本（模型、画板组件、判定规则、作答界面），其他模块一个都不加载。
+   脚本设 async=false：动态插入的脚本照插入顺序执行（engine.js 要在 core.js 之后）。
+   样式表插在本页 <style> 前面：同样的优先级时本页的规则说了算（例如 section.qz-card 要显示出来）。 */
+const QZ={p:null},QZ_MODS=[2];
+function qzAssets(){
+  if(QZ.p)return QZ.p;
+  const one=(el,soft)=>new Promise((ok,no)=>{el.onload=()=>ok();el.onerror=()=>soft?ok():no(new Error('加载失败：'+(el.src||el.href)))});
+  const css=document.createElement('link');css.rel='stylesheet';css.href='../shared/quiz/quiz.css';
+  const ps=[one(css,true)];document.head.insertBefore(css,document.head.querySelector('style'));
+  ['js/sensor-models.js','../shared/svgkit.js','../shared/quiz/core.js','../shared/quiz/engine.js'].forEach(src=>{
+    const s=document.createElement('script');s.src=src;s.async=false;ps.push(one(s));document.body.appendChild(s)});
+  QZ.p=Promise.all(ps).then(()=>true);
+  QZ.p.then(null,()=>{}); // 失败由各个用处自己处理；这里接住，免得控制台多一条「未处理的 Promise 拒绝」
+  return QZ.p;
+}
+// 滚到某个元素：让开顶上吸住的导航栏（手机横屏时导航栏不吸顶）
+function qzJump(el){
+  if(!el)return;const n=$('nav'),top=getComputedStyle(n).position=='sticky'?n.offsetHeight:0;
+  window.scrollTo(0,Math.max(0,Math.round(el.getBoundingClientRect().top+window.pageYOffset-top-8)));
+}
+// 手机上：对比、解释、反馈阶段模块图不再吸顶（CSS 里的 .qz-unstick），否则它会盖住对比图和解释框
+function qzWatch(sec){
+  const ans=$('qz-'+sec+'-ans'),el=$(sec);
+  const upd=()=>{const c=ans.querySelector('.qz-card[data-stage]');el.classList.toggle('qz-unstick',!!c&&/^(compare|explain|feedback)$/.test(c.getAttribute('data-stage')))};
+  try{new MutationObserver(upd).observe(ans,{subtree:true,childList:true,attributes:true,attributeFilter:['data-stage']})}catch(e){}
+  upd();
+}
+/* 预测关卡：模块是页面上现成的 DOM，用引擎的「外部部件」写法（registerExternal）。
+   o = { wid 部件 id, qid 题目 id, sec 模块的 section id, st 状态（locked/shown/vis/f/api）,
+         apply() 按状态锁、放控件, redraw() 重画模块, rep() 报进度, result() 实际结果图 }
+   第一次切到对应的模式时才 start()：注册、mount（题干放模块图上方，作答区放模块图紧下方）。
+   引擎决定锁不锁：没做过的题锁住（预测阶段），做过的题是 free（不锁，只给「重新预测」）。 */
+function qzGate(o){
+  const st=o.st,g={o,p:null,ctrl:null};
+  g.stage=()=>{const c=g.ctrl&&g.ctrl.card(o.qid);return c?c.stage():''};
+  g.start=()=>{
+    if(g.p)return g.p;
+    const ans=$('qz-'+o.sec+'-ans'),pr=$('qz-'+o.sec+'-prompt');
+    ans.innerHTML='<p class="qz-loading">正在加载预测题……</p>';
+    // 引擎或题库没加载成功：模块照常可用，变阻器的曲线也照常画，不让学生卡在锁上
+    const fail=()=>{st.locked=false;st.shown=true;o.apply();o.redraw();pr.innerHTML='';ans.innerHTML='<p class="qz-error">预测题没有加载成功，模块可以直接操作；刷新页面可以再试一次。</p>'};
+    g.p=qzAssets().then(()=>{
+      const Q=window.ABSLabQuiz;
+      Q.registerExternal(o.wid,{
+        cover:()=>document.querySelector('#'+o.sec+' .stage'),
+        // 提交预测后滚到 .grid：手机上模块图正好吸在导航栏下面，控件紧跟在作答区后面
+        scrollTarget:()=>document.querySelector('#'+o.sec+' .grid'),
+        bind:api=>{st.api=api;return{
+          lock(){st.locked=true;st.shown=false;o.apply();o.redraw()},
+          unlock(){st.locked=false;st.shown=true;o.apply();o.redraw();
+            // 引擎解锁后会先清空进度提示、80 ms 后再写「现在动手验证……」；滑片原来就在 ≤ 10 Ω 或 ≥ 40 Ω 时，等它写完再报一次
+            setTimeout(()=>{if(!st.locked&&st.f>0){st.f=-1;o.rep()}},150)},
+          reset(){st.vis=null;st.f=-1;o.redraw()},
+          result:o.result}}});
+      return Q.mount(ans,{items:[o.qid],mode:'poe',promptHost:pr});
+    }).then(ctrl=>{g.ctrl=ctrl;if(!ctrl.card(o.qid))fail();else qzWatch(o.sec);return ctrl},()=>{fail();return null});
+    return g.p;
+  };
+  return g;
+}
+const G3=qzGate({wid:'phy-m3-lamp',qid:'p-pa-poe',sec:'m3',st:Q3,apply:applyCtl3,redraw:()=>{if(cur==2)draw()},rep:rep3,result:result3});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-m3]');if(b&&b.dataset.m3!=Q3.mode)setMode3(b.dataset.m3,true)});
+/* 练一练：第一次展开时才出题（该模块 retest:true 的题，按题库顺序，practice 模式） */
+const QP={};
+function qzPractice(sec,mod){
+  if(QP[sec])return QP[sec];
+  const host=$('qz-'+sec+'-more');host.innerHTML='<p class="qz-loading">正在加载题目……</p>';
+  return QP[sec]=qzAssets().then(()=>window.ABSLabQuiz.load()).then(b=>window.ABSLabQuiz.mount(host,{mode:'practice',
+    items:b.items.filter(it=>it.module==mod&&it.retest===true).map(it=>it.id)}))
+   .then(null,()=>{QP[sec]=null;host.innerHTML='<p class="qz-error">题目没有加载成功，请检查网络后刷新页面。</p>';return null});
+}
+$('qz-m3-practice').addEventListener('toggle',e=>{if(e.currentTarget.open)qzPractice('m3','pa')});
+/* 深链 #qz-<题目 id>（导图上的「理解测试」标签、review.html 的「回到题目所在页面」）：
+   p-pa- → 3 号模块；预测关卡切到小灯泡模式，其他题展开练一练；卡片渲染出来后滚到题目。原来的 #3、#m3 照旧 */
+const QZ_DEEP={pa:{sec:'m3',k:2,gate:G3,open:()=>setMode3('lamp')}};
+function qzDeepOf(hash){const m=/^#qz-(p-(pa|pe)-[a-z0-9-]+)$/.exec(hash||'');return m&&QZ_DEEP[m[2]]?{id:m[1],mod:m[2],d:QZ_DEEP[m[2]]}:null}
+function qzDeep(q){
+  let p;
+  if(q.id==q.d.gate.o.qid)p=q.d.open();
+  else{$('qz-'+q.d.sec+'-practice').open=true;p=qzPractice(q.d.sec,q.mod)}
+  if(p)p.then(()=>qzJump(document.getElementById('qz-'+q.id)));
+}
+addEventListener('hashchange',()=>{const q=qzDeepOf(location.hash);if(!q)return;if(cur!=q.d.k)go(q.d.k);qzDeep(q)});
+/* 测试钩子（e2e 用，只读） */
+window.__lab={
+  assets:()=>QZ.p,
+  m3:()=>{
+    const Rp=+$('i3p').value,R0=+$('i3r').value,M=window.ABSLabSensors,locked=Q3.mode=='lamp'&&Q3.locked,visited=Q3.vis?Q3.vis.slice():null;
+    if(Q3.mode=='lamp'&&M){const c=M.lampCircuit(Rp,M.LAMP.E),rg=Q3.shown?rheoRange3():null;
+      return{mode:'lamp',Rp,R0,vm:S.vm,I:c.I,U0:null,Up:c.Up,UL:c.UL,RL:c.RL,locked,visited,rheo:rg}}
+    const I=12/(R0+Rp);return{mode:Q3.mode,Rp,R0,vm:S.vm,I,U0:I*R0,Up:I*Rp,UL:null,RL:null,locked,visited,rheo:null};
+  }
+};
+
 const MODS=[['m1','通路·断路·短路',0,r1],['m2','串联和并联',0,r2],['m3','变阻器与图像',0,r3],['m4','故障侦探',0,r4],['m5','探究实验',0,r5],['m6','电功率',1,r6],['m7','家庭电路',1,r7],['m8','去表法',2,r8],['m9','动态电路',2,r9],['m10','填电表挑战',2,r10],['m11','开关组合',2,r11],['m12','电路安全',2,r12],['m13','风速仪',2,r13],['m14','磁场与磁感线',1,r14],['m15','电生磁',1,r15],['m16','电磁铁',1,r16],['m17','电动机',1,r17],['m18','磁生电',1,r18],['m19','电磁继电器',2,r19],['m20','弹簧与电磁铁',2,r20],['m21','原理辨析',2,r21]];
 let cur=0;
 function draw(){MODS[cur][3]();document.querySelectorAll('[data-t]').forEach(b=>{if(b.tagName=='BUTTON')b.classList.toggle('on',!!S[b.dataset.t])});
@@ -1174,7 +1407,7 @@ function go(i){i=Math.max(0,Math.min(MODS.length-1,i));if(Z.svg)zoomClose();cur=
  const cb=document.querySelectorAll('#chips button');cb.forEach((b,k)=>b.classList.toggle('on',k==i));
  $('nav').dataset.g=g;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.g==g));$('msel').value=i;
  try{localStorage.setItem('mx_lab_cur',i)}catch(e){}try{history.replaceState(null,'','#'+(i+1))}catch(e){}
- draw();navH();window.scrollTo(0,0)}
+ draw();navH();window.scrollTo(0,0);if(QZ_MODS.indexOf(i)>=0)qzAssets()}
 function navH(){document.documentElement.style.setProperty('--navh',$('nav').offsetHeight+'px')}
 addEventListener('resize',()=>{navH();zoomFit()});
 try{new ResizeObserver(navH).observe($('nav'))}catch(e){}
@@ -1205,7 +1438,8 @@ document.addEventListener('click',e=>{
   else return;
   draw()});
 document.addEventListener('input',e=>{if(e.target.dataset.a){if(S.trip){e.target.checked=false;return}S.on7[e.target.dataset.a]=e.target.checked}draw()});
-{try{history.scrollRestoration='manual'}catch(e){}let s=0;const h=location.hash.replace(/^#m?/,''),k=/^\d+$/.test(h)?+h-1:-1;if(k>=0&&k<MODS.length)s=k;else{try{const v=+localStorage.getItem('mx_lab_cur');if(v>=0&&v<MODS.length)s=v}catch(e){}}go(s)}
+{try{history.scrollRestoration='manual'}catch(e){}let s=0;const h=location.hash.replace(/^#m?/,''),k=/^\d+$/.test(h)?+h-1:-1;if(k>=0&&k<MODS.length)s=k;else{try{const v=+localStorage.getItem('mx_lab_cur');if(v>=0&&v<MODS.length)s=v}catch(e){}}
+ const q=qzDeepOf(location.hash);if(q)s=q.d.k;go(s);if(q)qzDeep(q)}
 let _lt=performance.now();setInterval(()=>{const n=performance.now(),dt=Math.min(.1,(n-_lt)/1000);_lt=n;if(document.hidden)return;const f=TK[MODS[cur][0]];if(f&&f(dt))MODS[cur][3]()},40);
 </script>
 <script src="../shared/linker.js" data-mode="lab" data-lab="circuits"></script>
