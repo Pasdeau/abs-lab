@@ -960,6 +960,35 @@ const fmR=(r,mt)=>mt.unit=='A'?f3(r):f2(r);
 const DC=[440,198],DR=88;
 function dpt(M,a,r){const q=M.dialXY(a,r);return[DC[0]+q[0],DC[1]-q[1]]}
 const pth=(a,b,o)=>`<path d="M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}" ${o}/>`;
+// 改装表盘的刻度数字：每条刻度都要有数字（这个表盘就是让学生看清刻度间隔的）。按刻度顺序逐个放，候选位置依次是：
+// 弧线外侧（13px）→ 更外一圈（12px，带引线）→ 弧线内侧（10px）→ 再缩小字号试外侧、更外两圈、内侧。
+// 和已经写好的数字、任何一条刻度线、里圈电表的刻度碰上就换下一个位置。字框按基线估：粗体数字宽 ≈ 0.64 × 字号 × 位数，
+// 上到基线以上 1 个字号、下到基线以下 0.3 个字号，四周再留 1.5 个单位（比实际字形略大，保证画出来不重叠）。
+// 所有位置都放不下时才不写（只在五六条刻度挤在三十几度以内时出现，例如电子秤换成「电压表测 Rₓ」且 R₀ 很小）
+const LBL13=[[102,13],[118,12],[64,10],[102,10],[118,10],[64,9],[134,10],[102,8],[118,8],[134,8],[64,8]];
+function dialLabels13(M,ticks,mark){
+  const boxes=[],pad=1.5,hit=(b)=>boxes.some(o=>b.x0<o.x1&&b.x1>o.x0&&b.y0<o.y1&&b.y1>o.y0);
+  const add=(x,y,w,hh)=>boxes.push({x0:x-w/2,x1:x+w/2,y0:y-hh/2,y1:y+hh/2});
+  // 障碍：外圈每条刻度线（沿线每 2 个单位一个小方块）、里圈电表的刻度线和数字（见 dial13）、指针轴心
+  ticks.forEach(t=>{const c=mark[t.v];for(let r=c?68:74;r<=(c?95:DR);r+=2){const q=dpt(M,t.angle,r);add(q[0],q[1],3,3)}});
+  for(let k=0;k<=6;k++){for(let r=56;r<=(k%2?60:64);r+=2){const q=dpt(M,k*30,r);add(q[0],q[1],2.5,2.5)}
+    if(k%2==0){const q=dpt(M,k*30,45);add(q[0],q[1]-0.5,k==6?30:22,11)}}
+  let h='';
+  ticks.forEach(t=>{const c=mark[t.v],str=String(t.v);
+    for(let i=0;i<LBL13.length;i++){const r=LBL13[i][0],fs=LBL13[i][1],q=dpt(M,t.angle,r),base=q[1]+fs*0.36,hw=0.32*fs*str.length+pad;
+      const b={x0:q[0]-hw,x1:q[0]+hw,y0:base-fs-pad,y1:base+0.3*fs+pad};
+      if(b.x0<0||b.x1>560||b.y0<0||b.y1>DC[1]+14||hit(b))continue;
+      // 放到更外面两圈的数字离刻度远：沿刻度方向补一条浅色引线（从弧线外到数字下沿）。
+      // 引线会穿过已写好的数字时就不画（数字照写，它仍在自己刻度的延长方向上）；画了的引线也算障碍
+      let lead=[];
+      if(r>110){for(let rr=DR+2;rr<=r-fs*0.75;rr+=2){const z=dpt(M,t.angle,rr);lead.push({x0:z[0]-1,x1:z[0]+1,y0:z[1]-1,y1:z[1]+1})}
+        if(lead.some(hit))lead=[]}
+      boxes.push(b);lead.forEach(z=>boxes.push(z));
+      if(lead.length)h+=pth(dpt(M,t.angle,DR+2),dpt(M,t.angle,r-fs*0.75),'stroke="#CBD5E1" stroke-width="1"');
+      h+=`<text x="${q[0].toFixed(1)}" y="${base.toFixed(1)}" text-anchor="middle" font-size="${fs}" font-weight="700" data-tick-label="${t.v}" data-ring="${r<DR?'in':r>125?'out3':r>110?'out2':'out'}"${c?` style="fill:${c}"`:''}>${str}</text>`;
+      break}});
+  return h;
+}
 function dial13(M,o,showTicks){
   const Mt=o.Mt;
   let h=`<path d="M${DC[0]-DR} ${DC[1]}A${DR} ${DR} 0 0 1 ${DC[0]+DR} ${DC[1]}Z" fill="#F8FAFC" stroke="#9AA3B2" stroke-width="1.6"/>`;
@@ -968,14 +997,10 @@ function dial13(M,o,showTicks){
     if(k%2==0){const t=dpt(M,a,45);h+=tx(t[0].toFixed(1),(t[1]+3).toFixed(1),String(+(Mt.max*k/6).toFixed(2))+(k==6?' '+Mt.unit:''),'font-size="9" style="fill:#9AA3B2"')}}
   // 外圈：按被测量等间隔取值（F 每 10 N、c 每 20、h 每 10 cm）画在模型算出的角度上；只画量程内的
   if(showTicks){
-    const mark=o.p=='alcohol'?{20:'#E8A317',80:'#D7263D'}:{};let last=null;
-    o.ticks.forEach(t=>{if(!t.inRange)return;const c=mark[t.v],q=dpt(M,t.angle,c?68:74),w=dpt(M,t.angle,c?95:DR);
-      h+=pth(q,w,`data-tick="${t.v}" data-angle="${M.round(t.angle,4)}" stroke="${c||'#2B2D42'}" stroke-width="${c?3:2}"`);
-      // 刻度挤在一起时（例如换成电流表）数字按角度挑着写：和上一个写出来的数字相差不到 14° 就不写；
-      // 斜着挨在一起的两个数字再按字框估一下（13px 粗体数字约 8 个单位宽、16 个单位高），横竖都留不出 2 个单位就也不写
-      const L=dpt(M,t.angle,102),wd=String(t.v).length*8;
-      if(last==null||Math.abs(t.angle-last.a)>=14&&(Math.abs(L[0]-last.x)>=(wd+last.w)/2+2||Math.abs(L[1]-last.y)>=18)){
-        h+=tx(L[0].toFixed(1),(L[1]+4).toFixed(1),t.v,`font-size="11" font-weight="700" data-tick-label="${t.v}"${c?` style="fill:${c}"`:''}`);last={a:t.angle,x:L[0],y:L[1],w:wd}}});
+    const mark=o.p=='alcohol'?{20:'#E8A317',80:'#D7263D'}:{},shown=o.ticks.filter(t=>t.inRange);
+    shown.forEach(t=>{const c=mark[t.v],q=dpt(M,t.angle,c?68:74),w=dpt(M,t.angle,c?95:DR);
+      h+=pth(q,w,`data-tick="${t.v}" data-angle="${M.round(t.angle,4)}" stroke="${c||'#2B2D42'}" stroke-width="${c?3:2}"`)});
+    h+=dialLabels13(M,shown,mark);
     if(o.p=='alcohol')h+=`<path d="M350 263H364" stroke="#E8A317" stroke-width="3"/><text x="368" y="267" font-size="11" style="fill:#9A6400">20 饮酒驾车</text><path d="M448 263H462" stroke="#D7263D" stroke-width="3"/><text x="466" y="267" font-size="11" style="fill:#D7263D">80 醉酒驾车</text>`;
   }else h+=tx(DC[0],DC[1]-30,'?','font-size="22" font-weight="700" style="fill:#9AA3B2"');
   // 指针：超量程时打到头（dialAngle 已经截在 180°）、变红

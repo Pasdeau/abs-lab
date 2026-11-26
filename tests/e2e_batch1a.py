@@ -1113,6 +1113,14 @@ def sc_pe_mobile(R):
     R.shot(page, "pe_dial")
     R.check("dial.ticks_after_submit", sorted(ticks) == [0, 10, 20, 30, 40],
             "提交后表盘画出的刻度线 data-tick=%s（R₀ = 10 Ω、电压表测 R₀ 时量程内应为 0～40 N）" % sorted(ticks), page)
+    # 每条刻度都要有数字（表盘就是让学生看清 0、10、20、30、40 的间隔）：数字齐全，字框互不重叠
+    lab = page.evaluate("""() => Array.prototype.map.call(document.querySelectorAll('#s13 [data-tick-label]'), function (e) {
+        var b = e.getBBox(); return { v: +e.getAttribute('data-tick-label'), x0: b.x, x1: b.x + b.width, y0: b.y, y1: b.y + b.height }; })""")
+    lab_v = sorted(x["v"] for x in lab)
+    lab_ov = [(a["v"], c["v"]) for i, a in enumerate(lab) for c in lab[i + 1:]
+              if a["x0"] < c["x1"] and a["x1"] > c["x0"] and a["y0"] < c["y1"] and a["y1"] > c["y0"]]
+    R.check("dial.every_tick_labelled", lab_v == sorted(ticks) and not lab_ov,
+            "刻度数字 %s（刻度线 %s），重叠的数字 %s" % (lab_v, sorted(ticks), lab_ov or "无"), page)
 
     # 触屏拖压力 F：20 → 0 → 46（每步 1 N），每一步都读表盘
     samples, hit, vend = slide(R, ctx, page, "#i13x", [0, 46], step=1.0, after_move=lambda k: page.evaluate("() => window.__e2e.pe()"))
