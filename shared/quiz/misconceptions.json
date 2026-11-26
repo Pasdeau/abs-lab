@@ -1,0 +1,177 @@
+{
+  "v": 1,
+  "tags": {
+    "graphaspath": {
+      "name": "图象即轨迹",
+      "subject": "math",
+      "subjects": [
+        "math",
+        "physics"
+      ],
+      "kp": [
+        "math:c22-2-2",
+        "math:c23-4-2"
+      ],
+      "level": "junior",
+      "desc": "把函数图象的形状当成物体运动路线的形状",
+      "refute": "很多同学以为：P 往哪个方向走，图象就往哪个方向画。其实图象表示的是两个量（例如路程 x 和面积 y）之间的关系，不是 P 在纸上的位置。看图象只看一件事：x 变大时，y 是变大、变小还是不变，变得快还是慢。",
+      "source": "McDermott, Rosenquist & van Zee, 1987, American Journal of Physics 55(6)（运动学图象的「图即图画」困难）"
+    },
+    "vertexismax": {
+      "name": "顶点一定是最值",
+      "subject": "math",
+      "subjects": [
+        "math"
+      ],
+      "kp": [
+        "math:c26-2-4"
+      ],
+      "level": "junior",
+      "desc": "不看自变量的取值范围，认为二次函数一定在顶点处取到最大值或最小值",
+      "refute": "很多同学以为：二次函数的最值一定在顶点处取到。其实只有顶点的横坐标在自变量的取值范围内时才是这样；范围不包含顶点时，要根据增减性比较范围两端的函数值，最值在端点处取到。",
+      "source": ""
+    },
+    "altitudeinside": {
+      "name": "高一定在三角形内部",
+      "subject": "math",
+      "subjects": [
+        "math"
+      ],
+      "kp": [
+        "math:c13-2-2"
+      ],
+      "level": "junior",
+      "desc": "认为三角形的高总是画在三角形的内部",
+      "refute": "很多同学以为：三角形的高一定在三角形里面。其实只有锐角三角形的三条高都在内部；直角三角形有两条高就是两条直角边；钝角三角形有两条高在三角形外部，垂足落在对边的延长线上，画之前要先把对边延长。",
+      "source": ""
+    },
+    "currentconsumed": {
+      "name": "电流流过用电器后被消耗",
+      "subject": "physics",
+      "subjects": [
+        "physics"
+      ],
+      "kp": [
+        "physics:toc-ch15-s4"
+      ],
+      "level": "junior",
+      "desc": "认为电流流过用电器时会被「用掉」一部分，流回电源的电流变小",
+      "refute": "很多同学以为：电流经过灯泡后被消耗了，流回电源的电流变小。其实串联电路中各处的电流都相等；用电器消耗的是电能，不是电流，电荷在电路里循环流动，流进用电器多少，就流出多少。",
+      "source": "Ivanjek et al., 2021, Physical Review Physics Education Research（简单电路二段式测试 2T-SEC）"
+    },
+    "lampresistance": {
+      "name": "电流越大，灯丝电阻越小",
+      "subject": "physics",
+      "subjects": [
+        "physics"
+      ],
+      "kp": [
+        "physics:k4",
+        "physics:k3"
+      ],
+      "level": "junior",
+      "desc": "由 R = U/I 推出：通过灯丝的电流越大，灯丝的电阻就越小",
+      "refute": "很多同学以为：R = U/I，电流越大，电阻就越小。其实电阻是导体本身的性质，由材料、长度、横截面积和温度决定，R = U/I 只是计算电阻的方法；小灯泡两端电压升高、电流变大时，灯丝温度升高，电阻反而变大，所以它的 U-I 图象是弯曲的。",
+      "source": ""
+    },
+    "deeperbuoyancy": {
+      "name": "浸得越深，浮力越大",
+      "subject": "physics",
+      "subjects": [
+        "physics"
+      ],
+      "kp": [
+        "physics:toc-ch10-s1"
+      ],
+      "level": "junior",
+      "desc": "认为物体浸没在液体中以后，越往深处，受到的浮力越大",
+      "refute": "很多同学以为：物体在水里越深，浮力越大。其实浮力等于物体排开的液体所受的重力，F浮 = ρ液 g V排；物体浸没以后，排开液体的体积不再变化，浮力也就不变。只有浸没之前，浸入的体积变大，浮力才变大。",
+      "source": ""
+    },
+    "armtopoint": {
+      "name": "力臂是支点到力的作用点的距离",
+      "subject": "physics",
+      "subjects": [
+        "physics"
+      ],
+      "kp": [
+        "physics:toc-ch12-s0"
+      ],
+      "level": "junior",
+      "desc": "把支点到力的作用点的连线长度当成力臂",
+      "refute": "很多同学以为：力臂就是支点到力的作用点的距离。其实力臂是支点到力的作用线的垂直距离；力的方向一变，力臂就跟着变，只有力的方向与支点和作用点的连线垂直时，两者才相等。",
+      "source": ""
+    },
+    "moleculecount": {
+      "name": "化学反应前后分子个数守恒",
+      "subject": "chemistry",
+      "subjects": [
+        "chemistry"
+      ],
+      "kp": [
+        "chemistry:u5-k1",
+        "chemistry:u5-k2"
+      ],
+      "level": "junior",
+      "desc": "认为质量守恒是因为化学反应前后分子的个数不变",
+      "refute": "很多同学以为：化学反应前后分子的个数一定不变。其实反应时分子分成原子，原子重新组合成新的分子；不变的是原子的种类、数目和质量，分子的个数可能变，也可能不变。例如氢气燃烧：2 个氢分子和 1 个氧分子反应，生成 2 个水分子。",
+      "source": ""
+    },
+    "neutralnoions": {
+      "name": "恰好中和时溶液里没有离子",
+      "subject": "chemistry",
+      "subjects": [
+        "chemistry"
+      ],
+      "kp": [
+        "chemistry:u10-k7"
+      ],
+      "level": "junior",
+      "desc": "认为酸和碱恰好完全反应后，溶液里就没有离子了",
+      "refute": "很多同学以为：恰好中和时 H⁺ 和 OH⁻ 都没有了，溶液里就没有离子。其实中和反应的实质是 H⁺ 和 OH⁻ 结合成水，生成的盐仍以离子的形式留在溶液里。例如稀盐酸和氢氧化钠溶液恰好反应后，溶液中还有 Na⁺ 和 Cl⁻，溶液仍能导电。",
+      "source": ""
+    },
+    "solubilityfraction": {
+      "name": "溶解度相等，溶质质量分数就相等",
+      "subject": "chemistry",
+      "subjects": [
+        "chemistry"
+      ],
+      "kp": [
+        "chemistry:u9-k4"
+      ],
+      "level": "junior",
+      "desc": "看到两条溶解度曲线相交，就认为两种溶液的溶质质量分数一定相等",
+      "refute": "很多同学以为：溶解度相等，两种溶液的溶质质量分数就相等。其实溶解度说的是饱和溶液；只有两种溶液在这个温度下都是饱和溶液时，溶质质量分数才相等。不饱和溶液的溶质质量分数要看实际溶解了多少溶质。",
+      "source": ""
+    },
+    "plantsnightonly": {
+      "name": "植物只在夜间进行呼吸作用",
+      "subject": "biology",
+      "subjects": [
+        "biology"
+      ],
+      "kp": [
+        "biology:u3-c2-k12"
+      ],
+      "level": "junior",
+      "desc": "认为植物白天只进行光合作用，到了夜间才进行呼吸作用",
+      "refute": "很多同学以为：植物白天进行光合作用，晚上才进行呼吸作用。其实所有活细胞时刻都在进行呼吸作用，有光无光都进行；白天光合作用比呼吸作用强，所以从整体看，植物在吸收二氧化碳、放出氧气。",
+      "source": "Haslam & Treagust, 1987, Journal of Biological Education（光合作用与呼吸作用二段式诊断）"
+    },
+    "gamblerheredity": {
+      "name": "前几个孩子是显性，下一个一定是隐性",
+      "subject": "biology",
+      "subjects": [
+        "biology"
+      ],
+      "kp": [
+        "biology:u6-c2-k10"
+      ],
+      "level": "junior",
+      "desc": "认为前几个孩子都表现显性性状，下一个孩子就一定（或更可能）表现隐性性状",
+      "refute": "很多同学以为：Aa × Aa 的后代是 3∶1，前三个孩子是显性，第四个就一定是隐性。其实每生一个孩子都是一次独立的结合，每一次表现隐性性状的可能都是 1/4，和前面生了几个、是什么性状无关；3∶1 是大量后代的统计结果。",
+      "source": ""
+    }
+  }
+}
