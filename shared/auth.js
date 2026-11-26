@@ -130,6 +130,7 @@
       hs_elec_tasks: { close: false, open: false, ohm: false, flip: false },
       chem_neut_tasks: { drip: false, jump: false, indicator: false },
       bio_micro_tasks: { focus_low: false, high_mag: false, animal_cell: false, organelle: false },
+      math_mpoint_tasks: { rect: false, pq: false, time: false },
       bridged: {}
     };
   }
@@ -518,6 +519,9 @@
       var bioTasks = data.bio_micro_tasks || {};
       var bioDone = Object.keys(bioTasks).filter(function (k) { return !!bioTasks[k]; }).length;
 
+      var mpointTasks = data.math_mpoint_tasks || {};
+      var mpointDone = ["rect", "pq", "time"].filter(function (k) { return !!mpointTasks[k]; }).length;
+
       return {
         username: bucket.username,
         cloud: cloudState.enabled && Boolean(getSessionToken()),
@@ -533,6 +537,8 @@
         chemTotal: 3,
         bioDone: bioDone,
         bioTotal: 4,
+        mpointDone: mpointDone,
+        mpointTotal: 3,
         updatedAt: data.updatedAt || null
       };
     },

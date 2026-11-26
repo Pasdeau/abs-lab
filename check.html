@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>理解小测 · ABS-LAB</title>
+  <link rel="stylesheet" href="shared/theme.css" />
+  <link rel="stylesheet" href="shared/quiz/quiz.css" />
+  <script src="shared/auth.js"></script>
+  <style>
+    /* 理解小测页自己的样式（题目、选项、按钮沿用 quiz.css 的 qz- 类，外观和理解测试一致）。
+     * flex 容器不用 gap（iOS 14.5 / Chrome 84 以前不支持）：子项带外边距，容器用负外边距抵掉，写法见 quiz.css 开头；grid 照用 gap。 */
+
+    /* 「返回首页」在手机上也按「按钮至少 44px 高」处理（theme.css 在窄屏把它压小了） */
+    .hero-pill-btn { min-height: 44px; }
+    /* 一题一屏读起来不宜太宽：宽屏居中，最宽 760px */
+    .ck-main { max-width: 760px; }
+    .ck { min-width: 0; }
+    .ck a { color: var(--blue); }
+    .ck .qz-btn { color: var(--ink); }
+    .ck .qz-btn.qz-primary { color: var(--surface); }
+    .ck-small { font-size: 0.86rem; font-weight: 600; }
+
+    /* ---------- 选模块、选前测 / 后测 ---------- */
+    .ck-mods {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      margin: 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .ck-mod {
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface-soft);
+    }
+    .ck-mod-name b { font-size: 1.02rem; }
+    .ck-subj {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 1px 9px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 0.76rem;
+      font-weight: 700;
+      vertical-align: 2px;
+    }
+    .ck-mod-meta { margin: 2px 0 0; font-size: 0.84rem; color: var(--muted); }
+    /* 两个按钮间距 10px（不用 gap）：子项带上、左外边距，容器用负的上、左外边距抵掉 */
+    .ck-mod-acts { display: flex; flex-wrap: wrap; margin: 0 0 0 -10px; }
+    .ck-mod-acts > * { margin: 10px 0 0 10px; min-width: 96px; }
+    .ck-types {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .ck-type {
+      display: block;
+      min-height: 44px;
+      padding: 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--ink) !important;
+      text-decoration: none;
+    }
+    .ck-type:hover { border-color: var(--blue); }
+    .ck-type b { display: block; font-size: 1.15rem; color: var(--blue); }
+    .ck-type span { display: block; margin-top: 4px; font-size: 0.88rem; color: var(--muted); }
+    .ck-type .ck-type-st { color: var(--green); font-weight: 600; }
+
+    /* ---------- 开始页 ---------- */
+    /* 前测 / 后测切换和「换一个模块」：项距 12px、行距 8px（不用 gap） */
+    .ck-which-row { display: flex; flex-wrap: wrap; align-items: center; margin: 0 0 4px -12px; }
+    .ck-which-row > * { margin: 0 0 8px 12px; }
+    .ck-seg {
+      display: inline-flex;
+      padding: 3px;
+      border: 1.5px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-soft);
+    }
+    .ck-seg a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .ck-seg a + a { margin-left: 3px; }
+    .ck-seg a[aria-current="page"] { background: var(--blue); color: var(--surface); }
+    /* 「换一个模块」这类文字链接也按「至少 44px 高」的触控目标做 */
+    .ck-alt {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+    .ck-rules { margin: 6px 0 12px; padding-left: 1.2em; }
+    .ck-rules li { margin: 0 0 4px; }
+    .ck-note,
+    .ck-confirm {
+      margin: 0 0 14px;
+      padding: 10px 12px 12px;
+      border-radius: 12px;
+      background: var(--sun-soft);
+      border: 1px solid var(--sun);
+    }
+    .ck-note p,
+    .ck-confirm p { margin: 0; }
+    .ck-note .qz-actions,
+    .ck-confirm .qz-actions { margin-top: 8px; }
+    .ck-intro [hidden] { display: none !important; }
+    .ck-field { margin: 4px 0 6px; }
+    .ck-field label { display: block; margin: 0 0 6px; font-size: 0.92rem; font-weight: 700; }
+    .ck-field input {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px; /* 小于 16px 时 iOS 会在聚焦时自动放大页面 */
+    }
+    .ck-field input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+    .ck-field .qz-muted { margin: 6px 0 0; }
+
+    /* ---------- 作答 ---------- */
+    .ck-qhead { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; margin: 0 0 0 -12px; }
+    .ck-qhead > * { margin: 0 0 4px 12px; }
+    .ck-which { font-size: 0.82rem; color: var(--muted); }
+    .ck-card { margin-bottom: 0; }
+    /* 底部导航贴住屏幕下沿：题目长、要往下翻时，「上一题 / 下一题」一直在手边；底色和页面一样，盖住滚到下面的题目 */
+    .ck-nav {
+      position: -webkit-sticky;
+      position: sticky;
+      bottom: 0;
+      z-index: 20;
+      margin: 12px -10px 0;
+      padding: 6px 10px 10px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+      background: var(--bg);
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -6px 12px -10px rgba(43, 45, 66, 0.35);
+    }
+    .ck-need { min-height: 1.4em; margin: 0 0 6px; font-size: 0.84rem; color: var(--muted); text-align: right; }
+    .ck-nav-btns { display: flex; }
+    .ck-nav-btns .qz-btn { margin: 0; }
+    .ck-prev { flex: 0 1 auto; min-width: 104px; }
+    .ck-next { flex: 1 1 auto; margin-left: 10px !important; }
+
+    /* ---------- 小结 ---------- */
+    .ck-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 12px 0 16px;
+    }
+    .ck-stat {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--green-soft);
+    }
+    .ck-stat-warn { background: var(--coral-soft); }
+    .ck-stat-lbl { display: block; font-size: 0.86rem; font-weight: 700; color: var(--muted); }
+    .ck-stat-val { display: block; margin: 2px 0; font-size: 1.3rem; line-height: 1.35; font-variant-numeric: tabular-nums; }
+    .ck-stat-val span,
+    .ck-cmp td span { display: inline-block; white-space: nowrap; }
+    .ck-stat-sub { display: block; font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
+    .ck-h3 { margin: 18px 0 4px; font-size: 1.02rem; }
+    .ck-sub { margin: 0 0 8px !important; }
+    .ck-mcs {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+      margin: 0 0 6px;
+      padding: 0;
+      list-style: none;
+    }
+    .ck-mc {
+      display: flex;
+      align-items: baseline;
+      padding: 8px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-soft);
+    }
+    .ck-mc-name { flex: 1 1 auto; min-width: 0; }
+    .ck-mc-n { flex: none; margin-left: 10px; color: var(--red); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .ck-mc[data-zero] { opacity: 0.7; }
+    .ck-mc[data-zero] .ck-mc-n { color: var(--muted); }
+    .ck-cmp { margin: 4px 0 6px; }
+    .ck-cmp table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .ck-cmp th,
+    .ck-cmp td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .ck-cmp thead th { text-align: right; color: var(--muted); font-size: 0.84rem; white-space: nowrap; }
+    .ck-cmp thead small { display: block; font-weight: 400; }
+    .ck-cmp tbody th { text-align: left; font-weight: 600; }
+    .ck-cmp td { text-align: right; font-variant-numeric: tabular-nums; }
+    .ck-cmp tr.ck-zero { color: var(--muted); }
+    .ck-later { margin: 14px 0 0 !important; }
+    .ck-export { margin-top: 6px; }
+    .ck-msg { margin: 10px 0 0 !important; font-size: 0.86rem; color: var(--green); }
+    /* 还没点下载、复制时不占地方（不用 display:none：读屏软件要能播报随后写进来的文字） */
+    .ck-msg:empty { margin: 0 !important; }
+    .ck-csvtext {
+      display: block;
+      width: 100%;
+      margin: 8px 0 0;
+      padding: 8px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace;
+      white-space: pre;
+      overflow: auto;
+    }
+    .ck-csvtext[hidden] { display: none; }
+    .ck-links { margin-top: 16px; }
+
+    @media (max-width: 600px) {
+      .ck-types { grid-template-columns: minmax(0, 1fr); }
+      .ck-stat { padding: 8px 10px; }
+      .ck-stat-val { font-size: 1.12rem; }
+      .ck-cmp table { font-size: 0.86rem; }
+      .ck-cmp th,
+      .ck-cmp td { padding: 7px 4px; }
+      .ck-links .qz-btn { flex: 1 1 auto; }
+    }
+    @media print {
+      .ck-nav,
+      .ck-export,
+      .ck-links { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- data-no-visit：不记「访问过」，登录用户打开小测页也不触发进度同步（小测的数据只留在本机） -->
+  <script src="shared/topbar.js" data-root="." data-page="check" data-no-visit></script>
+
+  <header class="hero-banner">
+    <div class="hero-inner">
+      <div>
+        <h1>理解小测</h1>
+        <p>这是诊断小测，不计分，数据只保存在这台设备上。</p>
+      </div>
+      <a class="hero-pill-btn" href="index.html">← 返回首页</a>
+    </div>
+  </header>
+
+  <main class="container ck-main">
+    <div id="ck-root" class="qz-review ck" aria-live="off">
+      <noscript><p class="qz-error">这个页面需要打开浏览器的 JavaScript 才能使用。</p></noscript>
+    </div>
+  </main>
+
+  <footer class="footer">ABS-LAB · Authors: Wenzheng Wang · Hang Li</footer>
+  <script src="shared/svgkit.js"></script>
+  <script src="shared/quiz/core.js"></script>
+  <script src="shared/quiz/engine.js"></script>
+  <script src="shared/quiz/check.js"></script>
+</body>
+</html>

@@ -5,7 +5,8 @@
     "circuits": { "name": "电学实验台", "page": "physics/circuits-lab.html", "subject": "physics" },
     "hs-elec": { "name": "电流的微观本质", "page": "physics/hs-electricity.html", "subject": "physics" },
     "neut": { "name": "中和反应实验台", "page": "chemistry/neutralization.html", "subject": "chemistry" },
-    "micro": { "name": "显微镜实验台", "page": "biology/microscope.html", "subject": "biology" }
+    "micro": { "name": "显微镜实验台", "page": "biology/microscope.html", "subject": "biology" },
+    "mpoint": { "name": "动点与函数图象", "page": "math/moving-point.html", "subject": "math" }
   },
   "targets": {
     "circuits-m1": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m1", "no": 1, "title": "通路、断路、短路", "desc": "点开关，再用导线短接灯或电源，看哪种情况会烧坏电源。", "level": "junior", "where": "九年级 第十五章 第 2 节", "done": ["circuits_learned", "m1"] },
@@ -20,7 +21,7 @@
     "circuits-m10": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m10", "no": 10, "title": "填电表挑战", "desc": "在三个圆圈里选填电流表或电压表，让两盏灯并联或串联。", "level": "junior", "where": "九年级 第十五章 第 4 节；第十六章 第 1 节", "done": ["circuits_learned", "m10"] },
     "circuits-m11": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m11", "no": 11, "title": "开关组合", "desc": "三个开关有 8 种组合，每种组合画一张等效电路。", "level": "junior", "where": "九年级 第十五章 第 3 节；第十七章 第 4 节", "done": ["circuits_learned", "m11"] },
     "circuits-m12": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m12", "no": 12, "title": "电路安全：滑片最多能滑到哪", "desc": "电流表、电压表都有量程，先算出变阻器的安全范围，再拖滑片验证。", "level": "junior", "where": "九年级 第十六章 第 4 节；第十七章 第 4 节", "done": ["circuits_learned", "m12"] },
-    "circuits-m13": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m13", "no": 13, "title": "传感器综合题：风速仪", "desc": "风越大滑片移得越远，看电压表、电流表各怎么变；换一个 R₀ 再比较。", "level": "junior", "where": "九年级 第十七章", "done": ["circuits_learned", "m13"] },
+    "circuits-m13": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m13", "no": 13, "title": "传感器综合题：风速仪、电子秤等", "desc": "风速仪、电子秤、酒精测试仪、身高测量仪：被测量变大时，看电流表、电压表各怎么变，改成的表盘刻度是否均匀；换一个 R₀ 再比较。", "level": "junior", "where": "九年级 第十七章", "done": ["circuits_learned", "m13"] },
     "circuits-m14": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m14", "no": 14, "title": "磁场与磁感线", "desc": "拖动指南针，看条形、蹄形磁铁和地球周围的磁场方向。", "level": "junior", "where": "九年级 第二十章 第 1 节", "done": ["circuits_learned", "m14"] },
     "circuits-m15": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m15", "no": 15, "title": "电生磁：奥斯特实验与安培定则", "desc": "先看通电导线旁的小磁针，再把导线绕成螺线管，用安培定则判断 N 极。", "level": "junior", "where": "九年级 第二十章 第 2 节", "done": ["circuits_learned", "m15"] },
     "circuits-m16": { "lab": "circuits", "page": "physics/circuits-lab.html", "module": "m16", "no": 16, "title": "电磁铁的磁性强弱", "desc": "比较匝数、电流、有无铁芯时吸起的大头针数。", "level": "junior", "where": "九年级 第二十章 第 3 节", "done": ["circuits_learned", "m16"] },
@@ -42,7 +43,11 @@
     "micro-focus_low": { "lab": "micro", "page": "biology/microscope.html", "task": "focus_low", "title": "低倍镜下找到并调清物像", "desc": "用 4× 或 10× 物镜，先转粗准焦螺旋找到洋葱表皮细胞，再用细准焦螺旋调清楚。", "level": "junior", "where": "七年级上册 第一单元 第二章 第一节", "done": ["bio_micro_tasks", "focus_low"] },
     "micro-high_mag": { "lab": "micro", "page": "biology/microscope.html", "task": "high_mag", "title": "换高倍物镜后调焦、调亮", "desc": "转到 40× 物镜，只用细准焦螺旋调清，再用大光圈或凹面镜把视野调亮。", "level": "junior", "where": "七年级上册 第一单元 第二章 第一节", "done": ["bio_micro_tasks", "high_mag"] },
     "micro-animal_cell": { "lab": "micro", "page": "biology/microscope.html", "task": "animal_cell", "title": "观察人口腔上皮细胞", "desc": "切换到人口腔上皮细胞并调清楚，和洋葱表皮细胞比较：没有细胞壁。", "level": "junior", "where": "七年级上册 第一单元 第二章 第三节", "done": ["bio_micro_tasks", "animal_cell"] },
-    "micro-organelle": { "lab": "micro", "page": "biology/microscope.html", "task": "organelle", "title": "高倍镜下看白细胞或叶绿体", "desc": "选人血涂片找白细胞，或选黑藻叶片看叶绿体。", "level": "mixed", "where": "人血涂片：七年级下册 第四单元 第四章 第一节；黑藻叶绿体：高中 必修 1 第 3 章 第 2 节", "done": ["bio_micro_tasks", "organelle"], "note": "选人血涂片是初中内容；用高倍镜观察黑藻叶片的叶绿体是高中实验（初中课本里没有黑藻）。" }
+    "micro-organelle": { "lab": "micro", "page": "biology/microscope.html", "task": "organelle", "title": "高倍镜下看白细胞或叶绿体", "desc": "选人血涂片找白细胞，或选黑藻叶片看叶绿体。", "level": "mixed", "where": "人血涂片：七年级下册 第四单元 第四章 第一节；黑藻叶绿体：高中 必修 1 第 3 章 第 2 节", "done": ["bio_micro_tasks", "organelle"], "note": "选人血涂片是初中内容；用高倍镜观察黑藻叶片的叶绿体是高中实验（初中课本里没有黑藻）。" },
+
+    "mpoint-rect": { "lab": "mpoint", "page": "math/moving-point.html", "task": "rect", "title": "矩形上的动点与面积", "desc": "拖动 P 沿 B→C→D→A 走一圈，看面积 y 的图象在哪里拐弯。", "level": "junior", "where": "八年级下册 一次函数", "done": ["math_mpoint_tasks", "rect"] },
+    "mpoint-pq": { "lab": "mpoint", "page": "math/moving-point.html", "task": "pq", "title": "两个动点与三角形面积", "desc": "P、Q 同时出发，先预测面积 y 怎样随时间 t 变化，再拖 P 看面积什么时候最大。", "level": "junior", "where": "九年级上册 二次函数", "done": ["math_mpoint_tasks", "pq"] },
+    "mpoint-time": { "lab": "mpoint", "page": "math/moving-point.html", "task": "time", "title": "变速动点：按时间画图", "desc": "P 在 BC、CD 上的速度不同，拖时间轴上的手柄，看拐点出现在哪个时刻。", "level": "junior", "where": "八年级下册 一次函数", "done": ["math_mpoint_tasks", "time"] }
   },
   "links": [
     { "kp": "physics:k1", "to": "circuits-m5", "note": "保持电阻两端的电压不变，换电阻、记电流，就是探究电流与电阻的关系。" },
@@ -53,11 +58,13 @@
     { "kp": "physics:k2", "to": "hs-ohm" },
     { "kp": "physics:k3", "to": "circuits-m3", "note": "伏安法的电路：电压表测 R₀，电流表测电流，读几组算电阻。" },
     { "kp": "physics:e2", "to": "circuits-m3" },
+    { "kp": "physics:k4", "to": "circuits-m3", "note": "切到「小灯泡」，看 I-U 图像为什么弯。" },
     { "kp": "physics:k6", "to": "circuits-m2", "note": "串联分电压、并联分电流。" },
     { "kp": "physics:k6", "to": "circuits-m8" },
     { "kp": "physics:k6", "to": "circuits-m9" },
     { "kp": "physics:k6", "to": "circuits-m11" },
     { "kp": "physics:k6", "to": "circuits-m12" },
+    { "kp": "physics:k6", "to": "circuits-m13", "note": "切到「电子秤」，电压表分别测 R₀ 和压敏电阻，看压力变大时两个示数各怎么变。" },
     { "kp": "physics:k7", "to": "circuits-m13" },
     { "kp": "physics:k7", "to": "circuits-m19", "note": "控制电路部分就是用欧姆定律算线圈电流。" },
     { "kp": "physics:k8", "to": "circuits-m3", "note": "U-I 图像：找两个端点，各写一句「电源电压 = …」。" },
@@ -122,6 +129,12 @@
     { "kp": "math:c23-2-2", "to": "circuits-m3", "note": "电压表测变阻器时，U-I 图像是一条下降的直线，延长到 I = 0 就是电源电压。" },
     { "kp": "math:c23-4-1", "to": "circuits-m13", "note": "电压表示数随风速均匀变化：先用一组数据求出比例常数。" },
     { "kp": "math:c27-3-1", "to": "circuits-m5", "note": "电压一定时，电流与电阻成反比。" },
-    { "kp": "math:c26-2-1", "to": "circuits-m7", "note": "Q = I²Rt：电阻和时间不变时，发热量是电流的二次函数。" }
+    { "kp": "math:c26-2-1", "to": "circuits-m7", "note": "Q = I²Rt：电阻和时间不变时，发热量是电流的二次函数。" },
+
+    { "kp": "math:c22-2-2", "to": "mpoint-rect", "note": "先看两条轴各表示什么：横轴是路程，纵轴是面积，图象不是 P 走的路线。" },
+    { "kp": "math:c23-4-2", "to": "mpoint-rect", "note": "拖 P 走一圈，看 P 经过 C、D 时图象在哪里拐弯。" },
+    { "kp": "math:c23-4-2", "to": "mpoint-time", "note": "横轴换成时间：看 P 到达 C 的那一刻，拐点落在 t 等于几。" },
+    { "kp": "math:c26-1-1", "to": "mpoint-pq", "note": "先在预测关卡里选出你猜的图象，再拖 P，看函数板上画出的形状和你猜的一样吗。" },
+    { "kp": "math:c26-4-1", "to": "mpoint-pq", "note": "看面积什么时候最大：拖 P，注意那一刻 PB 和 BQ 有什么关系。" }
   ]
 }

@@ -145,6 +145,63 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 .learn-btn{border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
 .learn-btn:hover{border-color:var(--green);color:var(--green)}
 .learn-btn.done{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ===== 理解测试：3 号「小灯泡」、13 号「电子秤」的预测关卡和「练一练」 =====
+ * quiz.css、引擎、画板组件只在第一次打开这两个模块时才加载（见脚本里的 qzAssets），其他模块一个字节都不多下。
+ * 新写的规则里 flex 容器不用 gap（老的 iOS、安卓浏览器不支持），间距用外边距。 */
+/* 本页的 section{display:none} 是切换模块用的；引擎的卡片也是 <section>，要单独放出来 */
+section.qz-card{display:block}
+.qz-host-prompt:empty,.qz-host-ans:empty{display:none}
+/* 不在小灯泡模式（13 号：不在电子秤预设）时：题干、作答区、遮罩都藏起来，引擎里的状态原样保留，切回来接着做 */
+section.qz-off .qz-host-prompt,section.qz-off .qz-host-ans,section.qz-off .stage>.qz-lock{display:none!important}
+/* 定位到题目、提交后滚回模块图时，让开顶上吸住的导航栏（老的 Safari 认 scroll-snap-margin-top） */
+.qz-prompt,.qz-card,.qz-compare,.qz-more,.qz-host-ans,#m3 .grid,#m13 .grid{scroll-margin-top:calc(var(--navh,60px) + 8px);scroll-snap-margin-top:calc(var(--navh,60px) + 8px)}
+.qz-host-ans .qz-card{margin:0}
+/* 预测阶段锁住的控件变灰：一眼看出「现在还不能动」 */
+#m3 .ctl input:disabled,#m3 .ctl button:disabled,#m13 .ctl input:disabled,#m13 .ctl button:disabled{opacity:.4;cursor:not-allowed}
+#m3 .ctl label.off,#m13 .ctl label.off{color:var(--muted)}
+/* 宽屏（和手机横屏）上作答区在右栏，遮罩上的提示改成「在右边」 */
+@media (min-width:900px),(orientation:landscape) and (max-height:520px){
+ #m3 .stage>.qz-lock::after,#m13 .stage>.qz-lock::after{content:"在右边选出你的预测并提交 →"}
+ /* 右栏只有三四百像素宽：带图的选项两个一行，缩略图和文字都不至于挤成一条 */
+ #m3 .qz-host-ans .qz-opts-fig[data-n="4"],#m13 .qz-host-ans .qz-opts-fig[data-n="3"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* 手机上模块图吸在顶上；对比、解释阶段它会盖住对比图和解释框，这时让它跟着页面走。
+   到了反馈阶段（和做过的题 free 阶段）重新吸顶：学生接着拖滑块时，模块图不至于远在一千多像素以外 */
+@media (max-width:899px){section.qz-unstick:not(.qz-off) .stage{position:relative!important;top:auto!important;box-shadow:none!important}}
+/* 「练一练」：默认收起；做小测的链接宽屏时放在同一行右边，手机上放在下面 */
+.qz-more{position:relative;margin-top:18px}
+.qz-practice>summary{display:block;list-style:none;min-height:48px;padding:11px 14px;background:#fff;border:1.5px solid var(--line);border-radius:14px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.qz-practice>summary::-webkit-details-marker{display:none}
+/* 展开标记用边框画（「▸」这类字符在一些安卓字体里只有一个小点） */
+.qz-practice>summary::before{content:"";display:inline-block;width:7px;height:7px;margin:0 12px 2px 2px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:rotate(-45deg);transition:transform .15s}
+.qz-practice[open]>summary::before{transform:rotate(45deg)}
+.qz-practice[open]>summary{border-color:var(--blue);margin-bottom:12px}
+.qz-practice>summary:hover{border-color:var(--blue)}
+.qz-check-link{display:inline-block;margin-top:8px;padding:10px 2px;min-height:44px;line-height:24px;color:var(--blue);font-weight:700;font-size:14px;text-decoration:none}
+.qz-check-link:hover{text-decoration:underline}
+@media (min-width:600px){
+ .qz-practice>summary{padding-right:220px}
+ /* 和 summary 同一行时也保持 44px 高的点按区域（24px 行高 + 上下 10px） */
+ .qz-check-link{position:absolute;top:2px;right:14px;margin:0;padding:10px 0}
+}
+@media (prefers-reduced-motion:reduce){.qz-practice>summary::before{transition:none}}
+/* 13 号的新预设：身高仪的电表说明、「进阶」（电源电压、R-F 图像） */
+.note13{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.adv13{margin-top:6px;border-top:1px dashed var(--line)}
+.adv13>summary{display:block;list-style:none;min-height:44px;padding:11px 0 9px;font-size:13.5px;font-weight:700;color:var(--blue);cursor:pointer}
+.adv13>summary::-webkit-details-marker{display:none}
+.adv13>summary::after{content:"";display:inline-block;width:6px;height:6px;margin:0 0 3px 8px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);transform:rotate(45deg)}
+.adv13[open]>summary::after{transform:rotate(-135deg);margin-bottom:0}
+.cap13{margin:10px 0 2px;font-size:13px;font-weight:700}
+/* 新加的按钮行（3 号的模式、13 号的预设、13 号的电表）不靠 .btns 的 flex gap（iOS 14.5、Chrome 84 以前不认）：
+   gap 归零，子项带上、左外边距，容器用负的左外边距抵掉第一列那一份，效果同 gap:6px；原有的按钮行不动 */
+.btns.nrow{gap:0;margin:0 0 0 -6px}
+.btns.nrow>button{margin:6px 0 0 6px}
+/* 触屏上新按钮至少 44px 高（原有按钮行仍是 42px，不动） */
+@media (pointer:coarse){.btns.nrow>button{min-height:44px}}
+/* 「实际结果」图里变阻器曲线没走过的部分：虚线、淡一些 */
+.lab-rest .sk-stroke{stroke-opacity:.5}
 </style>
 <script src="../shared/auth.js"></script>
 </head>
@@ -187,17 +244,21 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div>
 </section>
 
-<section id="m3">
+<section id="m3" class="qz-off">
 <h2>3 · 滑动变阻器与 U-I 图像</h2><p class="lead">拖动滑片，同时盯住右边的图像：图上的每一个点，都是“此刻的电路”。</p>
+<div class="qz-host-prompt" id="qz-m3-prompt"></div>
 <div class="grid"><div class="stage"><svg id="s3" viewBox="0 0 560 280"></svg></div>
 <div class="side">
+<div class="qz-host-ans" id="qz-m3-ans"></div>
 <div class="card ctl"><h3>操作</h3>
-<label>滑片位置：变阻器接入 <b class="v" id="v3p"></b> Ω<input type="range" id="i3p" min="0" max="50" step="1" value="25"></label>
+<div class="btns nrow"><button type="button" data-m3="r0" class="on">定值电阻 R₀</button><button type="button" data-m3="lamp">小灯泡 L（2.5 V）</button></div>
+<label id="l3p">滑片位置：变阻器接入 <b class="v" id="v3p"></b> Ω<input type="range" id="i3p" min="0" max="50" step="1" value="25"></label>
 <label>定值电阻 R₀ = <b class="v" id="v3r"></b> Ω<input type="range" id="i3r" min="5" max="20" step="5" value="10"></label>
 <div class="btns"><button data-set="vm:0">电压表测 R₀</button><button data-set="vm:1">电压表测变阻器</button></div></div>
-<div class="card"><h3>电压表示数 U 与电流 I</h3><svg id="g3" viewBox="0 0 300 210" style="width:100%"></svg><div class="read" id="r3"></div></div>
-<div class="tip"><b>要点</b><ul><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul></div>
+<div class="card"><h3 id="h3g">电压表示数 U 与电流 I</h3><svg id="g3" viewBox="0 0 300 210" style="width:100%"></svg><div class="read" id="r3"></div><div id="o3"></div></div>
+<div class="tip"><b>要点</b><ul id="t3r0"><li>电源电压不变：U<sub>电源</sub> = U₀ + U<sub>滑</sub>，一个变大另一个就变小。</li><li>测 R₀：图像是过原点的上升直线。测变阻器：图像是下降直线，延长到 I = 0 就是电源电压。</li><li>读图像题：找两个端点，各写一句“电源电压 = …”，联立。</li></ul><ul id="t3lamp" style="display:none"></ul></div>
 </div></div>
+<div class="qz-more"><details class="qz-practice" id="qz-m3-practice"><summary>理解测试（9 题）</summary><div id="qz-m3-more"></div></details><a class="qz-check-link" href="../check.html?m=pa&amp;t=pre">做小测（前测 / 后测）→</a></div>
 </section>
 
 <section id="m4">
@@ -320,18 +381,35 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div>
 </section>
 
-<section id="m13">
-<h2>13 · 传感器类综合题——风速仪</h2><p class="lead">风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
+<section id="m13" class="qz-off">
+<h2>13 · 传感器类综合题</h2><p class="lead">风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？</p>
+<div class="qz-host-prompt" id="qz-m13-prompt"></div>
 <div class="grid"><div class="stage"><svg id="s13" viewBox="0 0 560 280"></svg></div>
 <div class="side">
+<div class="qz-host-ans" id="qz-m13-ans"></div>
 <div class="card ctl"><h3>操作</h3>
+<div class="btns nrow"><button type="button" data-m13="wind" class="on">风速仪</button><button type="button" data-m13="scale">电子秤</button><button type="button" data-m13="alcohol">酒精测试仪</button><button type="button" data-m13="height">身高测量仪</button></div>
+<div id="p13w">
 <label>风速 v = <b class="v" id="v13v"></b> m/s<input type="range" id="i13v" min="0" max="16" step="0.5" value="6"></label>
 <div class="btns"><button data-set="r13:20">R₀ = 20 Ω</button><button data-set="r13:100">R₀ = 100 Ω（更换后）</button></div>
+</div>
+<div id="p13s" style="display:none">
+<div class="btns nrow" id="b13m"><button type="button" data-m13m="A">电流表</button><button type="button" data-m13m="V0">电压表测 R₀</button><button type="button" data-m13m="Vx">电压表测 R<sub>x</sub></button></div>
+<p class="note13" id="h13v" style="display:none">电表：电压表测滑片下方那段电阻丝（量程 0～3 V）</p>
+<label id="l13x"><span id="n13x">压力 F</span> = <b class="v" id="v13x"></b> <span id="u13x">N</span><input type="range" id="i13x" min="0" max="50" step="1" value="20"></label>
+<label id="l13r">定值电阻 R₀ = <b class="v" id="v13r"></b> Ω<input type="range" id="i13r" min="5" max="30" step="5" value="10"></label>
+<details class="adv13"><summary>进阶</summary>
+<label id="l13e">电源电压 U = <b class="v" id="v13e"></b> V<input type="range" id="i13e" min="4" max="8" step="0.5" value="6"></label>
+<div id="w13g"><p class="cap13" id="h13g">R-F 图像</p><svg id="g13" viewBox="0 0 300 160" style="width:100%"></svg></div>
+</details>
+</div>
 <div id="o13"></div></div>
 <div class="card"><h3>读数</h3><div class="read" id="r13"></div></div>
-<div class="tip"><b>分析方法：先找“谁在变”</b><ul><li>电压表几乎不通电流，所以电阻丝整根都串在电路里：电流不随风速变化，变的只是电压表量的那一段长度。</li><li>先用已知的一组数据求出常数 k 和电源电压，再回答其他问题。</li><li>“保证安全”就是让电压表最大示数（P 在 N 端时）不超过 15 V。</li></ul>
+<div class="tip" id="t13s" style="display:none"><b>分析方法：先看电表测的是哪一段</b><ul id="t13l"></ul></div>
+<div class="tip" id="t13w"><b>分析方法：先找“谁在变”</b><ul><li>电压表几乎不通电流，所以电阻丝整根都串在电路里：电流不随风速变化，变的只是电压表量的那一段长度。</li><li>先用已知的一组数据求出常数 k 和电源电压，再回答其他问题。</li><li>“保证安全”就是让电压表最大示数（P 在 N 端时）不超过 15 V。</li></ul>
 <span class="tag">验证：9 V 对应 9 m/s；换成 100 Ω 后最大可测 15 m/s</span></div>
 </div></div>
+<div class="qz-more"><details class="qz-practice" id="qz-m13-practice"><summary>理解测试（9 题）</summary><div id="qz-m13-more"></div></details><a class="qz-check-link" href="../check.html?m=pe&amp;t=pre">做小测（前测 / 后测）→</a></div>
 </section>
 
 <section id="m14">
@@ -475,7 +553,7 @@ footer{color:var(--muted);font-size:12.5px;text-align:center;padding:14px}
 </div></div></section>
 
 </main>
-<footer>这是帮助理解的简化模型：导线、电表和电源都当作理想的，灯丝电阻当作不变。电与磁部分的磁感线是用简化的磁极模型画出的示意图。</footer>
+<footer>这是帮助理解的简化模型：导线、电表和电源都当作理想的，灯丝电阻当作不变（3 号模块的「小灯泡」模式除外）。电与磁部分的磁感线是用简化的磁极模型画出的示意图。</footer>
 <div id="zoom" hidden><div class="zbar"><b id="ztitle"></b><button onclick="zoomClose()">✕ 关闭</button></div><div class="zwrap" id="zwrap"><div id="zbox"></div></div></div>
 
 <script>
@@ -530,7 +608,14 @@ function r2(){
   $('r2').innerHTML=rd([['干路电流 I',f2(I)+' A'],['L₁ 电流 I₁',f2(I1)+' A'],['L₂ 电流 I₂',f2(I2)+' A'],['L₁ 电压 U₁',f2(U1)+' V'],['L₂ 电压 U₂',f2(U2)+' V']]);
 }
 function rheo(x,y,frac,l){const px=x-45+90*frac;return `<rect x="${x-45}" y="${y-9}" width="90" height="18" rx="3" fill="#fff" stroke="#2B2D42" stroke-width="2.2"/><rect x="${x-45}" y="${y-9}" width="${90*frac}" height="18" rx="3" fill="#FFC9B8" stroke="#2B2D42" stroke-width="2.2"/><path d="M${px} ${y-30}V${y-11}" stroke="#F2643D" stroke-width="2.6"/><path d="M${px-6} ${y-19}L${px} ${y-10}L${px+6} ${y-19}Z" fill="#F2643D"/>`+tx(px,y-34,'P','style="fill:#F2643D" font-weight="700"')+tx(x,y+27,l)}
+/* 3 号模块的两种模式：「定值电阻 R₀」走下面 r3() 原来的代码（读数、图像和改动前一字不差）；
+   「小灯泡」走 r3lamp()，数值全部来自 js/sensor-models.js（window.ABSLabSensors，与题库的单元测试用同一份模型）。
+   Q3 是小灯泡模式和预测关卡 phy-m3-lamp 的状态：
+   locked 引擎锁着（预测阶段）；shown 变阻器的曲线可以画了（提交预测后，或这道题做过）；
+   vis 预测提交后滑片走过的接入电阻 [最小, 最大]；f 已经报给引擎的进度；api 引擎给的 onProgress / done */
+const Q3={mode:'r0',locked:false,shown:false,vis:null,f:-1,api:null};
 function r3(){
+  if(Q3.mode=='lamp'){r3lamp();return}
   const U=12,Rp=+$('i3p').value,R0=+$('i3r').value;$('v3p').textContent=Rp;$('v3r').textContent=R0;
   const I=U/(R0+Rp),U0=I*R0,Up=I*Rp,UV=S.vm?Up:U0;
   $('s3').innerHTML=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I)+res(180,90,'R₀ = '+R0+' Ω')+rheo(370,90,Rp/50,'变阻器（最大 50 Ω）')
@@ -545,6 +630,112 @@ function r3(){
   g+=`<polyline points="${P(pts)}" fill="none" stroke="#F2643D" stroke-width="2.6"/><circle cx="${X(I)}" cy="${Y(UV)}" r="6" fill="#3B5BDB" stroke="#fff" stroke-width="2"/>`;
   $('g3').innerHTML=g;
   $('r3').innerHTML=rd([['电流 I',f2(I)+' A'],['R₀ 两端 U₀',f2(U0)+' V'],['变阻器两端 U滑',f2(Up)+' V'],['U₀ + U滑','12 V']]);
+}
+/* ---------- 3 号「小灯泡」模式 ---------- */
+const f3=n=>String(Math.round(n*1000)/1000);
+// 带白色描边的字：压在曲线上也看得清
+const halo='paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round';
+function r3lamp(){
+  const M=window.ABSLabSensors,Rp=+$('i3p').value;$('v3p').textContent=Rp;$('v3r').textContent=$('i3r').value;
+  if(!M){
+    // 模型脚本还在路上（第一次打开 3 号模块就点了「小灯泡」）：先写一句，加载完再画
+    $('s3').innerHTML=tx(280,150,'正在加载小灯泡……','style="fill:#6B7280"');$('g3').innerHTML='';$('r3').innerHTML='';$('o3').innerHTML='';
+    qzAssets().then(()=>{if(cur==2&&Q3.mode=='lamp')draw()},()=>{$('s3').innerHTML=tx(280,150,'小灯泡没有加载成功，请刷新页面再试。','style="fill:#D7263D"')});
+    return}
+  const L=M.LAMP,E=L.E,c=M.lampCircuit(Rp,E),I=c.I,UL=c.UL,Up=c.Up,UV=S.vm?Up:UL;
+  track3(Rp);
+  // 亮度照 6 号模块的做法：实际功率 ÷ 额定功率（额定电压 2.5 V 时的功率）
+  const b=c.P/(L.rated*M.lampI(L.rated));
+  $('s3').innerHTML=wire([[70,90],[490,90],[490,230],[70,230],[70,90]])+flow([[232,230],[490,230],[490,90],[70,90],[70,230],[208,230]],I*3)+lamp(180,90,b,'灯 L（2.5 V）')+rheo(370,90,Rp/50,'变阻器（最大 50 Ω）')
+   +(S.vm?wire([[300,90],[300,150],[440,150],[440,90]],'#3B5BDB')+meter(370,150,'V','','#3B5BDB')+tx(370,180,f2(UV)+' V','font-weight="700" style="fill:#3B5BDB"')+node(300,90)+node(440,90):vlead(180,90,f2(UV)+' V'))
+   // 电流表示数（三位小数）写在电流表左边、右端对齐：放右边会贴着表的圆圈，还可能超出画面
+   +meter(490,165,'A','','#F2643D')+`<text x="468" y="170" text-anchor="end" font-size="13" font-weight="700" style="fill:#F2643D">${f3(I)} A</text>`+batt(220,230)+tx(220,262,'电源 4.5 V','style="fill:#6B7280"')
+   +(c.over?tx(180,152,'超过额定电压 2.5 V','font-size="12.5" font-weight="700" style="fill:#D7263D"'):'');
+  // I-U 图像（横轴 U、纵轴 I，和中考的画法一致；R₀ 模式仍是原来的 U-I 图像）
+  const X=u=>40+u/E*240,Y=i=>180-i/L.iMax*160,xy=p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1),yI=Y(I).toFixed(1);
+  let g=`<path d="M40 14V180H292" fill="none" stroke="#2B2D42" stroke-width="1.6"/>`+tx(18,10,'I/A','font-size="11"')+tx(286,172,'U/V','font-size="11"');
+  [.1,.2,.3].forEach(i=>{g+=`<path d="M40 ${Y(i).toFixed(1)}H280" stroke="#E3E6EC"/>`+tx(24,Y(i)+4,i.toFixed(1),'font-size="10"')});
+  [1,2,3,4,4.5].forEach(u=>{g+=tx(X(u),194,u,'font-size="10"')});
+  g+=`<polyline data-curve="lamp" points="${M.lampCurve().map(xy).join(' ')}" fill="none" stroke="#3B5BDB" stroke-width="2.6"/>`;
+  g+=`<path d="M192 158H210" stroke="#3B5BDB" stroke-width="2.6"/><text x="214" y="162" font-size="11" style="fill:#3B5BDB">灯 L</text>`;
+  const rg=rheoRange3();
+  if(Q3.shown){
+    // 提交预测以后：变阻器的曲线只画滑片走过的那一段；两个工作点在同一条水平线（同一个电流）上，关于 U = 2.25 V 左右对称
+    g+=`<path d="M${X(E/2)} ${Y(L.iMax)}V180" stroke="#0FA3A3" stroke-dasharray="4 3" stroke-width="1.4"/>`+tx(X(E/2),12,'对称轴 U = 2.25 V','font-size="10" style="fill:#0FA3A3"');
+    if(rg)g+=`<polyline data-curve="rheo" points="${M.rheostatCurve(Math.max(2,Math.ceil((rg[1]-rg[0])/0.05)),rg[0],rg[1],E).map(xy).join(' ')}" fill="none" stroke="#F2643D" stroke-width="2.6"/>`;
+    g+=`<path d="M192 172H210" stroke="#F2643D" stroke-width="2.6"/><text x="214" y="176" font-size="11" style="fill:#F2643D">变阻器</text>`;
+    const st=sumTop3(M,X,Y,I,UL,Up);
+    // 直接写 <text>：tx() 自带 font-size="13"，再传 font-size 是重复属性，浏览器只认第一个
+    g+=`<path d="M40 ${yI}H280" stroke="#6B7280" stroke-dasharray="3 3" stroke-width="1.2"/><text x="${X(E/2)}" y="${(st==null?Y(I)-7:st+11).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" data-sum="1" style="${halo}">U灯 + U滑 = 4.5 V</text>`;
+    g+=`<circle data-pt="rheo" data-u="${f3(Up)}" data-i="${f3(I)}" cx="${X(Up).toFixed(1)}" cy="${yI}" r="${S.vm?6.5:5}" fill="#F2643D" stroke="#fff" stroke-width="2"/>`;
+  }else{
+    g+=`<path d="M40 ${yI}H${X(UL).toFixed(1)}V180" fill="none" stroke="#9AA3B2" stroke-dasharray="3 3" stroke-width="1.2"/>`;
+  }
+  g+=`<circle data-pt="lamp" data-u="${f3(UL)}" data-i="${f3(I)}" cx="${X(UL).toFixed(1)}" cy="${yI}" r="${S.vm?5:6.5}" fill="#3B5BDB" stroke="#fff" stroke-width="2"/>`;
+  $('g3').innerHTML=g;
+  $('r3').innerHTML=rd([['电流 I',f3(I)+' A'],['灯两端 U灯',f2(UL)+' V'],['变阻器两端 U滑',f2(Up)+' V'],['灯的电阻 R<sub>L</sub>',f2(c.RL)+' Ω']]);
+  $('o3').innerHTML=c.over?msg('超过额定电压 2.5 V：实际功率比额定功率大，灯比正常发光时更亮，长时间这样会缩短灯的寿命。','bad')
+   :Math.abs(UL-L.rated)<0.02?msg('U灯 = 2.5 V，等于额定电压：小灯泡正常发光。','ok')
+   :msg(`灯丝电阻 R<sub>L</sub> = U灯 ÷ I = ${f2(UL)} V ÷ ${f3(I)} A ≈ ${f2(c.RL)} Ω。电压越高，灯丝越热，电阻越大。`);
+  // 「U灯 + U滑 = 4.5 V」等于把答案说出来了：预测阶段不写，提交以后（和做过的题）才写
+  $('t3lamp').innerHTML='<li>灯丝的温度随电压升高而升高，电阻变大：灯的 I-U 图像越来越平，不是直线。</li>'
+   +(Q3.shown?'<li>灯和变阻器串联：电流相同，U灯 + U滑 = 4.5 V。</li><li>同一个电流下，两个工作点到 U = 2.25 V 的距离相等：变阻器的图像就是灯的图像左右翻过来。它也不是直线，因为灯丝电阻在变。</li>'
+    :'<li>提交预测以后拖动滑片，看变阻器的图像一点点画出来。</li>');
+}
+// 「U灯 + U滑 = 4.5 V」的位置（返回文字框的上沿 y）：以对称轴为中心，不压灯的曲线、整条变阻器曲线和两个工作点。
+// 先试虚线正下方，压到了就往下找：电流大时虚线在顶上，两条曲线在那里挤在一起，标注落到两条曲线交叉点下面的空当里；
+// 电流很小时虚线下面是图例，标注放到虚线上方。虚线两端放不下：一端是工作点，另一端是曲线（离线逐个试过 Rp = 0～50 Ω）
+function sumTop3(M,X,Y,I,UL,Up){
+  const E=M.LAMP.E,w=100,h=15,x0=X(E/2)-w/2,y=Y(I),pts=[];
+  M.lampCurve(90).forEach(p=>{const q=Y(p[1]);pts.push([X(p[0]),q],[X(E-p[0]),q])});
+  const free=t=>t>16&&t+h<=146&&pts.every(q=>q[0]<x0-3||q[0]>x0+w+3||q[1]<t-3||q[1]>t+h+3)
+    &&[UL,Up].every(u=>Math.abs(X(u)-x0-w/2)>w/2+9||Math.abs(y-t-h/2)>h/2+9);
+  for(let t=y+4;t+h<=146;t+=2)if(free(t))return t;
+  return free(y-4-h)?y-4-h:null;
+}
+// 预测提交后（没锁着）滑片走过的范围：完成条件是既到过 ≤ 10 Ω、也到过 ≥ 40 Ω，两个条件各算一半进度。
+// 预测阶段（引擎的卡片在 predict）不算：「重新预测」时引擎先 reset 再锁，这时的位置不能偷偷记进去
+function track3(Rp){
+  if(Q3.mode!='lamp'||Q3.locked||G3.stage()=='predict')return;
+  const v=Q3.vis||(Q3.vis=[Rp,Rp]);if(Rp<v[0])v[0]=Rp;if(Rp>v[1])v[1]=Rp;
+  rep3();
+}
+function rep3(){const v=Q3.vis,f=v?(v[0]<=10?0.5:0)+(v[1]>=40?0.5:0):0;if(f===Q3.f||!Q3.api)return;Q3.f=f;Q3.api.onProgress(f);if(f>=1)Q3.api.done()}
+// 走过的接入电阻范围换成灯两端电压的范围 [uFrom, uTo]（接入电阻越大，灯两端电压越小）
+function rheoRange3(){const M=window.ABSLabSensors,v=Q3.vis;if(!M||!v)return null;return[M.lampCircuit(v[1],M.LAMP.E).UL,M.lampCircuit(v[0],M.LAMP.E).UL]}
+// 「实际结果」：和 p-pa-poe 选项缩略图同一个视野、同一套坐标轴。灯的曲线灰色作参照；
+// 变阻器的曲线整条画成淡的虚线（走过的范围可能碰不到灯的曲线，看不出对称），走过的那一段再用实线描上去
+function result3(){
+  const M=window.ABSLabSensors,L=M.LAMP,r=rheoRange3(),items=[{t:'polyline',pts:M.lampCurve(),color:'muted'},
+   {t:'polyline',pts:M.rheostatCurve(),dash:true,width:1.6,cls:'lab-rest'}];
+  if(r&&r[1]>r[0])items.push({t:'polyline',pts:M.rheostatCurve(Math.max(2,Math.ceil((r[1]-r[0])/0.05)),r[0],r[1],L.E),width:2.6});
+  return{figure:{view:[0,4.5,0,0.35],aspect:'fill',axes:{x:'U/V',y:'I/A',xt:[2.25,4.5],yt:[0.1,0.2,0.3]},items},
+   note:'你拖出来的部分画成实线，虚线是变阻器曲线的其余部分，灰线是灯的曲线'};
+}
+// 锁定只锁滑片和电压表按钮；模式按钮不锁，随时可以切回 R₀ 模式（那时什么都不锁）
+function applyCtl3(){
+  const off=Q3.mode=='lamp'&&Q3.locked,st=document.querySelector('#m3 .stage');
+  $('i3p').disabled=off;$('l3p').classList.toggle('off',off);
+  document.querySelectorAll('#m3 [data-set^="vm:"]').forEach(b=>{b.disabled=off});
+  if(off)st.setAttribute('data-qz-locked','true');else st.removeAttribute('data-qz-locked');
+}
+function setMode3(m,user){
+  const lamp=m=='lamp',i=$('i3p');Q3.mode=lamp?'lamp':'r0';
+  document.querySelectorAll('#m3 [data-m3]').forEach(b=>b.classList.toggle('on',b.dataset.m3==Q3.mode));
+  $('m3').classList.toggle('qz-off',!lamp);
+  // 小灯泡模式步长 0.2 Ω，正常发光的 6.6 Ω 才拖得到；回到 R₀ 模式取整，R₀ 模式的读数仍只出现原来那些整数位置
+  if(lamp)i.step='0.2';else{i.value=Math.round(+i.value);i.step='1'}
+  $('i3r').closest('label').style.display=lamp?'none':'';
+  document.querySelector('#m3 [data-set="vm:0"]').textContent=lamp?'电压表测灯':'电压表测 R₀';
+  $('h3g').textContent=lamp?'小灯泡和变阻器的 I-U 图像':'电压表示数 U 与电流 I';
+  $('t3r0').style.display=lamp?'none':'';$('t3lamp').style.display=lamp?'':'none';
+  if(!lamp)$('o3').innerHTML='';
+  applyCtl3();draw();
+  if(!lamp)return null;
+  const p=G3.start();
+  // 自己点「小灯泡」、而这道题还在预测阶段：把题干滚到导航栏下面，先看题再看图
+  if(user)p.then(()=>{if(Q3.mode=='lamp'&&G3.stage()=='predict')qzJump($('qz-m3-prompt'))});
+  return p;
 }
 const FN={ok:'正常',Lo:'L 断路',Ls:'L 短路',Ro:'R 断路',Rs:'R 短路'};
 function calc4(f,vm){const U=6;let I,UV;
@@ -725,7 +916,14 @@ function r12(){
   $('g12').innerHTML=`<rect x="10" y="10" width="280" height="12" rx="6" fill="#EEF0F4"/>`+(S.show12?`<rect x="${X(2.5)}" y="10" width="${X(10)-X(2.5)}" height="12" rx="6" fill="#12956B"/>`+tx(X(2.5),33,'2.5 Ω','font-size="10"')+tx(X(10),33,'10 Ω','font-size="10"'):'')+`<circle cx="${X(Rp)}" cy="16" r="7" fill="${oa||ov?'#D7263D':'#3B5BDB'}" stroke="#fff" stroke-width="2"/>`;
   if(S.show12)$('o12').innerHTML+=msg('安全范围 2.5 Ω ～ 10 Ω。最小值：4.5 V ÷ 0.6 A = 7.5 Ω，减去 R₀ 得 2.5 Ω。最大值：电压表 3 V 时 R₀ 分 1.5 V，电流 0.3 A，3 V ÷ 0.3 A = 10 Ω。');
 }
+/* 13 号「传感器模板」：风速仪（默认）走下面 r13() 原来的代码，读数和改动前一字不差；
+   电子秤、酒精测试仪、身高测量仪走 r13s()，数值全部来自 js/sensor-models.js。
+   Q13：preset 当前预设；locked / shown / vis / f / api 是电子秤预测关卡 phy-m13-scale 的状态（含义同 Q3），
+   vis 只记「电压表测 R₀」时预测提交后压力 F 走过的范围；scale / alcohol / height 各自记住滑块和电表，换预设再换回来照旧 */
+const Q13={preset:'wind',locked:false,shown:false,vis:null,f:-1,api:null,
+ scale:{v:20,R0:10,E:6,meter:'V0'},alcohol:{v:0,R0:10,E:6,meter:'V0'},height:{v:170,E:6}};
 function r13(){
+  if(Q13.preset!='wind'){r13s();return}
   const v=+$('i13v').value,R0=S.r13,U=30,k=4/9,I=U/(100+R0);$('v13v').textContent=v;
   let Uv=k*I*v*v;const Um=I*100,fr=Math.min(1,Uv/Um);Uv=Math.min(Uv,Um);const over=Uv>15+1e-6;
   const xM=430,xN=150,xP=xM-(xM-xN)*fr;
@@ -738,6 +936,207 @@ function r13(){
   $('s13').innerHTML=h;
   $('r13').innerHTML=rd([['电流（不随风速变）',f2(I)+' A'],['电压表',f2(Uv)+' V'],['P 离 M 端',Math.round(fr*100)+'%'],['P 在 N 端时的示数',f2(Um)+' V']]);
   $('o13').innerHTML=over?msg(`电压表超过 15 V 量程了！R₀ = 20 Ω 时，风速超过约 11.6 m/s 就不安全，所以第 (3) 问要把 R₀ 换大。`,'bad'):fr>=1?msg('滑片已经到 N 端，这是能测的最大风速。','ok'):msg(`U = kIv²，其中 k = 4/9：${f2(k)} × ${f2(I)} × ${v}² = ${f2(Uv)} V。`,'ok');
+}
+/* ---------- 13 号的三个新预设 ---------- */
+// sym 被测量的字母；tick 表盘刻度的间隔（与 dialTicks 一致）；rx 传感器电阻的名字；lead 换到这个预设时的导语
+const PRE13={
+ scale:{name:'压力',sym:'F',unit:'N',min:0,max:50,step:1,tick:10,rx:'压敏电阻',vary:'随 F 变',g:'R-F 图像（压敏电阻）',
+  lead:'压力越大，压敏电阻 R<sub>x</sub> 越小。把电表的表盘改成压力刻度：看刻度线怎样排。'},
+ alcohol:{name:'酒精含量',sym:'c',unit:'mg/100 mL',min:0,max:80,step:1,tick:20,rx:'气敏电阻',vary:'随 c 变',g:'R-c 图像（气敏电阻）',
+  lead:'酒精含量 c 越大，气敏电阻 R<sub>x</sub> 越小。换一换电表：哪一种示数随 c 增大而变大？'},
+ height:{name:'身高',sym:'h',unit:'cm',min:150,max:190,step:1,tick:10,
+  lead:'人站上去，头顶推着滑片 P 上下移动。电压表测滑片下方那段电阻丝：身高刻度均匀吗？'}};
+const LEAD13='风越大，滑片 P 从 M 端向 N 端移得越远。注意：电流表示数会不会随风速变化？';
+const MT13={A:'电流表示数',V0:'电压表示数（测 R₀）',Vx:'电压表示数（测 R<sub>x</sub>）',Vh:'电压表示数（测下段）'};
+// 当前预设的电路状态、电表示数、表盘角度、刻度（全部由模型算）
+function st13(M){
+  const p=Q13.preset,d=PRE13[p],s=Q13[p],meter=p=='height'?'Vh':s.meter,R0=p=='height'?M.HEIGHT.R0:s.R0,E=s.E;
+  const st=M.presetState(p,s.v,R0,E),reading=M.meterReading(st,meter),Mt=M.METERS[meter];
+  return{p,d,s,meter,R0,E,st,reading,Mt,angle:M.dialAngle(reading,Mt.max),over:reading>Mt.max+1e-9,
+   ticks:M.dialTicks(p,{R0,E,meter}),Rx:p=='height'?st.Rlow:st.Rx};
+}
+const fmR=(r,mt)=>mt.unit=='A'?f3(r):f2(r);
+// 半圆表盘：左端是示数 0（0°），右端满偏（180°），角度用模型的 dialXY 算
+const DC=[440,198],DR=88;
+function dpt(M,a,r){const q=M.dialXY(a,r);return[DC[0]+q[0],DC[1]-q[1]]}
+const pth=(a,b,o)=>`<path d="M${a[0].toFixed(1)} ${a[1].toFixed(1)}L${b[0].toFixed(1)} ${b[1].toFixed(1)}" ${o}/>`;
+// 改装表盘的刻度数字：每条刻度都要有数字（这个表盘就是让学生看清刻度间隔的）。按刻度顺序逐个放，候选位置依次是：
+// 弧线外侧（13px）→ 更外一圈（12px，带引线）→ 弧线内侧（10px）→ 再缩小字号试外侧、更外两圈、内侧。
+// 和已经写好的数字、任何一条刻度线、里圈电表的刻度碰上就换下一个位置。字框按基线估：粗体数字宽 ≈ 0.64 × 字号 × 位数，
+// 上到基线以上 1 个字号、下到基线以下 0.3 个字号，四周再留 1.5 个单位（比实际字形略大，保证画出来不重叠）。
+// 所有位置都放不下时才不写（只在五六条刻度挤在三十几度以内时出现，例如电子秤换成「电压表测 Rₓ」且 R₀ 很小）
+const LBL13=[[102,13],[118,12],[64,10],[102,10],[118,10],[64,9],[134,10],[102,8],[118,8],[134,8],[64,8]];
+function dialLabels13(M,ticks,mark){
+  const boxes=[],pad=1.5,hit=(b)=>boxes.some(o=>b.x0<o.x1&&b.x1>o.x0&&b.y0<o.y1&&b.y1>o.y0);
+  const add=(x,y,w,hh)=>boxes.push({x0:x-w/2,x1:x+w/2,y0:y-hh/2,y1:y+hh/2});
+  // 障碍：外圈每条刻度线（沿线每 2 个单位一个小方块）、里圈电表的刻度线和数字（见 dial13）、指针轴心
+  ticks.forEach(t=>{const c=mark[t.v];for(let r=c?68:74;r<=(c?95:DR);r+=2){const q=dpt(M,t.angle,r);add(q[0],q[1],3,3)}});
+  for(let k=0;k<=6;k++){for(let r=56;r<=(k%2?60:64);r+=2){const q=dpt(M,k*30,r);add(q[0],q[1],2.5,2.5)}
+    if(k%2==0){const q=dpt(M,k*30,45);add(q[0],q[1]-0.5,k==6?30:22,11)}}
+  let h='';
+  ticks.forEach(t=>{const c=mark[t.v],str=String(t.v);
+    for(let i=0;i<LBL13.length;i++){const r=LBL13[i][0],fs=LBL13[i][1],q=dpt(M,t.angle,r),base=q[1]+fs*0.36,hw=0.32*fs*str.length+pad;
+      const b={x0:q[0]-hw,x1:q[0]+hw,y0:base-fs-pad,y1:base+0.3*fs+pad};
+      if(b.x0<0||b.x1>560||b.y0<0||b.y1>DC[1]+14||hit(b))continue;
+      // 放到更外面两圈的数字离刻度远：沿刻度方向补一条浅色引线（从弧线外到数字下沿）。
+      // 引线会穿过已写好的数字时就不画（数字照写，它仍在自己刻度的延长方向上）；画了的引线也算障碍
+      let lead=[];
+      if(r>110){for(let rr=DR+2;rr<=r-fs*0.75;rr+=2){const z=dpt(M,t.angle,rr);lead.push({x0:z[0]-1,x1:z[0]+1,y0:z[1]-1,y1:z[1]+1})}
+        if(lead.some(hit))lead=[]}
+      boxes.push(b);lead.forEach(z=>boxes.push(z));
+      if(lead.length)h+=pth(dpt(M,t.angle,DR+2),dpt(M,t.angle,r-fs*0.75),'stroke="#CBD5E1" stroke-width="1"');
+      h+=`<text x="${q[0].toFixed(1)}" y="${base.toFixed(1)}" text-anchor="middle" font-size="${fs}" font-weight="700" data-tick-label="${t.v}" data-ring="${r<DR?'in':r>125?'out3':r>110?'out2':'out'}"${c?` style="fill:${c}"`:''}>${str}</text>`;
+      break}});
+  return h;
+}
+function dial13(M,o,showTicks){
+  const Mt=o.Mt;
+  let h=`<path d="M${DC[0]-DR} ${DC[1]}A${DR} ${DR} 0 0 1 ${DC[0]+DR} ${DC[1]}Z" fill="#F8FAFC" stroke="#9AA3B2" stroke-width="1.6"/>`;
+  // 里圈浅色：电表自己的刻度（均匀），和外圈改装后的刻度对照着看
+  for(let k=0;k<=6;k++){const a=k*30;h+=pth(dpt(M,a,56),dpt(M,a,k%2?60:64),'stroke="#9AA3B2" stroke-width="1.2"');
+    if(k%2==0){const t=dpt(M,a,45);h+=tx(t[0].toFixed(1),(t[1]+3).toFixed(1),String(+(Mt.max*k/6).toFixed(2))+(k==6?' '+Mt.unit:''),'font-size="9" style="fill:#9AA3B2"')}}
+  // 外圈：按被测量等间隔取值（F 每 10 N、c 每 20、h 每 10 cm）画在模型算出的角度上；只画量程内的
+  if(showTicks){
+    const mark=o.p=='alcohol'?{20:'#E8A317',80:'#D7263D'}:{},shown=o.ticks.filter(t=>t.inRange);
+    shown.forEach(t=>{const c=mark[t.v],q=dpt(M,t.angle,c?68:74),w=dpt(M,t.angle,c?95:DR);
+      h+=pth(q,w,`data-tick="${t.v}" data-angle="${M.round(t.angle,4)}" stroke="${c||'#2B2D42'}" stroke-width="${c?3:2}"`)});
+    h+=dialLabels13(M,shown,mark);
+    if(o.p=='alcohol')h+=`<path d="M350 263H364" stroke="#E8A317" stroke-width="3"/><text x="368" y="267" font-size="11" style="fill:#9A6400">20 饮酒驾车</text><path d="M448 263H462" stroke="#D7263D" stroke-width="3"/><text x="466" y="267" font-size="11" style="fill:#D7263D">80 醉酒驾车</text>`;
+  }else h+=tx(DC[0],DC[1]-30,'?','font-size="22" font-weight="700" style="fill:#9AA3B2"');
+  // 指针：超量程时打到头（dialAngle 已经截在 180°）、变红
+  const pc=o.over?'#D7263D':'#F2643D';
+  h+=pth(DC,dpt(M,o.angle,80),`data-pointer="1" data-angle="${M.round(o.angle,4)}" stroke="${pc}" stroke-width="3" stroke-linecap="round"`)+`<circle cx="${DC[0]}" cy="${DC[1]}" r="5" fill="${pc}"/>`;
+  h+=tx(DC[0],224,`${o.d.sym} = ${o.s.v} ${o.d.unit}`,'font-size="15" font-weight="700"');
+  h+=o.over?tx(DC[0],244,'超过量程！指针打到头了','font-size="12.5" font-weight="700" style="fill:#D7263D"')
+   :tx(DC[0],244,(o.Mt.unit=='A'?'电流表示数 ':'电压表示数 ')+fmR(o.reading,o.Mt)+' '+o.Mt.unit,'font-size="12" style="fill:#6B7280"');
+  return h;
+}
+// 电子秤、酒精测试仪的电路：传感器电阻画成带斜箭头的可变电阻；只画选中的那只电表（表盘就是它）
+function circ13(o){
+  const st=o.st,mc=o.over?'#D7263D':'#3B5BDB',vl=(x,y,v)=>wire([[x-46,y],[x-46,y-42],[x+46,y-42],[x+46,y]],mc)+meter(x,y-42,'V',v,mc)+node(x-46,y)+node(x+46,y);
+  let h=wire([[40,100],[280,100],[280,230],[40,230],[40,100]])+flow([[172,230],[280,230],[280,100],[40,100],[40,230],[148,230]],st.I*3);
+  h+=res(100,100,'')+`<path d="M72 117L124 87" stroke="#2B2D42" stroke-width="2"/>`+arrowAt(124,87,-30,'#2B2D42')
+   +tx(100,129,o.d.rx+' R<tspan font-size="10" dy="3">x</tspan>','font-size="12"')+tx(100,149,o.d.vary,'font-size="12" font-weight="700" style="fill:#F2643D"');
+  h+=res(210,100,'R₀ = '+o.R0+' Ω')+batt(160,230)+tx(160,262,'电源 '+o.E+' V','style="fill:#6B7280"');
+  const rv=fmR(o.reading,o.Mt)+' '+o.Mt.unit;
+  if(o.meter=='A')h+=meter(280,165,'A',rv,o.over?'#D7263D':'#F2643D');
+  else h+=vl(o.meter=='V0'?210:100,100,rv);
+  return h;
+}
+// 身高测量仪：电阻丝竖着放，滑片 P 连着压在头顶的水平板；电压表并在滑片下方那段（浅红色）两端。
+// 身高刻度画成板子左端外侧的一把竖尺（板子从 x = 40 起，尺子的数字在 x ≤ 30），板子压到哪一格都盖不住数字；
+// 「P」写在滑片右边、引线下方，滑片升到 190 cm 时也碰不到上面的 R₀
+function circH(o){
+  const st=o.st,yP=220-(st.h-150)/40*160,mc=o.over?'#D7263D':'#3B5BDB';
+  let h=wire([[150,60],[150,40],[280,40],[280,240],[150,240],[150,220]])+flow([[262,40],[280,40],[280,240],[150,240],[150,40],[238,40]],st.I*3);
+  h+=`<rect x="141" y="60" width="18" height="160" rx="3" fill="#fff" stroke="#2B2D42" stroke-width="2.2"/><rect x="141" y="${yP.toFixed(1)}" width="18" height="${(220-yP).toFixed(1)}" rx="3" fill="#FFC9B8" stroke="#2B2D42" stroke-width="2.2"/>`;
+  h+=`<path d="M36 60V220" stroke="#C4CAD4" stroke-width="1.2"/><text x="30" y="46" text-anchor="end" font-size="9" style="fill:#9AA3B2">cm</text>`;
+  for(let k=0;k<=4;k++){const y=220-k*40;h+=`<path d="M134 ${y}H140" stroke="#9AA3B2" stroke-width="1.4"/><path d="M31 ${y}H37" stroke="#9AA3B2" stroke-width="1.4"/><text x="29" y="${y+3}" text-anchor="end" font-size="9" data-hlabel="${150+k*10}" style="fill:#9AA3B2">${150+k*10}</text>`}
+  h+=res(190,40,'')+tx(182,24,'R₀ = '+o.R0+' Ω','font-size="12"')+batt(250,40)+tx(244,70,'电源 '+o.E+' V','font-size="12" style="fill:#6B7280"');
+  h+=wire([[166,yP],[190,yP],[190,150],[199,150]],mc)+wire([[231,150],[250,150],[250,240]],mc)+node(250,240)+meter(215,150,'V',f2(o.reading)+' V',mc);
+  h+=`<rect x="40" y="${(yP-3).toFixed(1)}" width="96" height="6" rx="2" fill="#9AA3B2"/><circle cx="84" cy="${(yP+15).toFixed(1)}" r="11" fill="#FFE8DC" stroke="#2B2D42" stroke-width="1.8"/><path d="M66 ${(yP+44).toFixed(1)}Q84 ${(yP+26).toFixed(1)} 102 ${(yP+44).toFixed(1)}" fill="none" stroke="#2B2D42" stroke-width="1.8"/>`
+   +`<rect x="134" y="${(yP-5).toFixed(1)}" width="32" height="10" rx="2" fill="#F2643D"/><text x="169" y="${(yP+14).toFixed(1)}" font-size="12" font-weight="700" data-plabel="1" style="fill:#F2643D">P</text>`;
+  return h;
+}
+// R-F（R-c）小图：放在「进阶」里，标出当前点
+function g13(M,o){
+  const sc=o.p=='scale',vm=sc?50:80,Rm=sc?30:60,X=x=>40+x/vm*240,Y=r=>135-r/Rm*105,v=o.s.v;
+  let g=`<path d="M40 18V135H294" fill="none" stroke="#2B2D42" stroke-width="1.4"/>`+tx(28,12,'R<tspan font-size="8" dy="2">x</tspan><tspan dy="-2">/Ω</tspan>','font-size="10"')+`<text x="296" y="130" text-anchor="end" font-size="10">${sc?'F/N':'c/(mg/100 mL)'}</text>`;
+  (sc?[10,20,30]:[20,40,60]).forEach(r=>{g+=`<path d="M40 ${Y(r).toFixed(1)}H280" stroke="#E3E6EC"/>`+tx(27,Y(r)+3,r,'font-size="9.5"')});
+  (sc?[10,20,30,40,50]:[20,40,60,80]).forEach(x=>{g+=tx(X(x).toFixed(1),150,x,'font-size="9.5"')});
+  const pts=[];for(let i=0;i<=40;i++){const x=vm*i/40;pts.push([X(x).toFixed(1),Y(sc?M.scaleRx(x):M.alcoholRx(x)).toFixed(1)])}
+  g+=`<polyline points="${P(pts)}" fill="none" stroke="#F2643D" stroke-width="2.4"/>`;
+  g+=`<path d="M${X(v).toFixed(1)} 135V${Y(o.Rx).toFixed(1)}H40" fill="none" stroke="#9AA3B2" stroke-dasharray="3 3"/><circle cx="${X(v).toFixed(1)}" cy="${Y(o.Rx).toFixed(1)}" r="5" fill="#3B5BDB" stroke="#fff" stroke-width="2"/>`;
+  $('g13').innerHTML=g;
+}
+function r13s(){
+  const M=window.ABSLabSensors,p=Q13.preset,d=PRE13[p],s=Q13[p];
+  if(!M){
+    $('s13').innerHTML=tx(280,150,'正在加载……','style="fill:#6B7280"');$('r13').innerHTML='';$('o13').innerHTML='';
+    qzAssets().then(()=>{if(cur==12&&Q13.preset!='wind')draw()},()=>{$('s13').innerHTML=tx(280,150,'没有加载成功，请刷新页面再试。','style="fill:#D7263D"')});
+    return}
+  // 三个预设共用一组滑块：读出当前值，记进这个预设自己的状态（换预设时 setPreset13 再写回滑块）
+  s.v=+$('i13x').value;s.E=+$('i13e').value;if(p!='height')s.R0=+$('i13r').value;
+  $('v13x').textContent=s.v;$('v13r').textContent=s.R0||'';$('v13e').textContent=s.E;
+  document.querySelectorAll('#m13 [data-m13m]').forEach(b=>b.classList.toggle('on',b.dataset.m13m==s.meter));
+  if(p=='scale')track13(s.v);
+  const o=st13(M),showT=p!='scale'||Q13.shown;
+  $('s13').innerHTML=(p=='height'?circH(o):circ13(o))+dial13(M,o,showT);
+  const rv=fmR(o.reading,o.Mt)+' '+o.Mt.unit;
+  $('r13').innerHTML=rd([['电流 I',f3(o.st.I)+' A'],[MT13[o.meter],o.over?`<span style="color:#D7263D">${rv}（超过量程）</span>`:rv],
+   [p=='height'?'下段电阻丝 R<sub>下</sub>':d.rx+' R<sub>x</sub>',f2(o.Rx)+' Ω'],[d.name+' '+d.sym,s.v+' '+d.unit]]);
+  // 提示：超量程 → 预测阶段 → 电表不是预测题说的那种 → 刻度间隔（预测提交后才说，免得泄露答案）
+  let m;
+  if(o.over){m=msg(`超过量程：${o.Mt.unit=='A'?'电流表':'电压表'}最大 ${o.Mt.max} ${o.Mt.unit}，按电路算应该是 ${rv}，指针已经打到头，这个${d.name}读不出来。`
+     +(p=='scale'&&o.meter=='V0'?`R₀ = ${o.R0} Ω、电源 ${o.E} V 时，最多能称 ${f2(M.scaleFmax(o.R0,o.E))} N。`:''),'bad')}
+  else if(p=='scale'&&!Q13.shown)m=msg('先在上面选出你的预测并提交，再拖压力 F，看表盘上的刻度。');
+  else if(p=='scale'&&o.meter!='V0'&&G13.stage()=='operate')m=msg('预测题说的是「电压表测 R₀」：切回它，把压力 F 拖到 10 N 以下，再拖到 40 N 以上。');
+  else{
+    const gp=M.tickGaps(o.ticks).map(x=>Math.round(x*10)/10);
+    if(gp.length<2)m=msg(`量程内只有 ${gp.length+1} 条刻度线：换一个 R₀ 或电表试试。`);
+    else{const uni=Math.max(...gp)-Math.min(...gp)<0.5,up=gp[gp.length-1]>gp[0];
+      m=msg(`${d.name}每增加 ${d.tick} ${d.unit}，指针转过 ${gp.join('°、')}°：刻度${uni?'均匀':up?'越来越疏，不均匀':'越来越密，不均匀'}。`
+       +(o.meter=='Vx'?'示数随被测量增大反而变小，刻度从右往左排。':''),uni?'ok':'')}
+  }
+  $('o13').innerHTML=m;
+  const tips={
+   scale:['先看电表测的是哪一段，再写出示数和压力 F 的关系。','改装表盘：把电表的每一个示数换成对应的压力，写在表盘上。']
+    .concat(Q13.shown?['U₀ = U × R₀ ÷ (R₀ + R<sub>x</sub>)：R<sub>x</sub> 随 F 均匀变小，但它在分母里，示数不随 F 均匀变化，刻度就不均匀。','电压表测 R₀、满偏 3 V（电源 6 V）时 R<sub>x</sub> = R₀：R₀ 越小，能称的压力越大。']:[]),
+   alcohol:['R<sub>x</sub> = 60 Ω ÷ (1 + 0.05c)：酒精含量越大，气敏电阻越小，电流越大。','电压表测 R₀ 时示数随 c 增大而变大；测 R<sub>x</sub> 时反而变小（U<sub>x</sub> = U − U₀）。','表盘上的黄线、红线是 20（饮酒驾车）和 80（醉酒驾车），只作参照。'],
+   height:['电压表几乎不通电流，整根电阻丝都串在电路里：电流 I = U ÷ (R₀ + 20 Ω)，不随身高变。','电压表测滑片下方那段：U = I × R<sub>下</sub>，R<sub>下</sub> 与身高的增加量成正比，所以刻度均匀。']};
+  $('t13l').innerHTML=tips[p].map(t=>'<li>'+t+'</li>').join('');
+  if(p!='height')g13(M,o);
+}
+// 预测提交后（没锁着）、电表是「电压表测 R₀」时压力 F 走过的范围：完成条件是既到过 ≤ 10 N、也到过 ≥ 40 N，各算一半
+function track13(F){
+  if(Q13.preset!='scale'||Q13.locked||G13.stage()=='predict'||Q13.scale.meter!='V0')return;
+  const v=Q13.vis||(Q13.vis=[F,F]);if(F<v[0])v[0]=F;if(F>v[1])v[1]=F;
+  rep13();
+}
+function rep13(){const v=Q13.vis,f=v?(v[0]<=10?0.5:0)+(v[1]>=40?0.5:0):0;if(f===Q13.f||!Q13.api)return;Q13.f=f;Q13.api.onProgress(f);if(f>=1)Q13.api.done()}
+// 「实际结果」：R₀ = 10 Ω、电压表测 R₀ 时 F = 0～40 N 五条刻度线的位置，画法、视野和 p-pe-poe 的选项缩略图一样。
+// 数字贴着刻度外端、朝外写（svgkit 的 pos 按屏幕像素偏移 6px）：窄屏上画板缩小、字不缩小，数字也不会互相碰上。
+// 下一条刻度离得不到 16°（0 和 10 只差 12.9°）时，这个数字写在刻度左边（右端对齐）；右端 180° 那条写在里面下方
+function result13(){
+  const M=window.ABSLabSensors,T=M.dialTicks('scale',{R0:10,meter:'V0'}).slice(0,5),arc=[];
+  for(let a=0;a<=180;a+=7.5)arc.push(M.dialXY(a,1));
+  const items=[{t:'polyline',pts:arc,color:'muted'}];
+  T.forEach((t,k)=>{const nx=T[k+1],a=t.angle,tight=nx&&nx.angle-a<16;
+    items.push({t:'segment',a:M.dialXY(a,0.82),b:M.dialXY(a,1),width:2});
+    items.push(a>170?{t:'text',at:M.dialXY(a,0.91),s:String(t.v),pos:'s'}
+     :tight?{t:'text',at:M.dialXY(a,1.08),s:String(t.v),pos:'w'}
+     :{t:'text',at:M.dialXY(a,1),s:String(t.v),pos:a<80?'nw':a<=112?'n':a<135?'ne':'e'})});
+  return{figure:{view:[-1.25,1.25,-0.15,1.3],aspect:'equal',axes:null,pad:10,items},
+   note:'这是 R₀ = 10 Ω 时 0～40 N 五条刻度线的实际位置'};
+}
+// 锁定只锁电子秤的控件（主滑块、R₀、电源电压、电表按钮）；预设按钮不锁，别的预设照常可用
+function applyCtl13(){
+  const off=Q13.preset=='scale'&&Q13.locked,st=document.querySelector('#m13 .stage');
+  ['i13x','i13r','i13e'].forEach(id=>{$(id).disabled=off});['l13x','l13r','l13e'].forEach(id=>$(id).classList.toggle('off',off));
+  document.querySelectorAll('#m13 [data-m13m]').forEach(b=>{b.disabled=off});
+  if(off)st.setAttribute('data-qz-locked','true');else st.removeAttribute('data-qz-locked');
+}
+function setPreset13(p,user){
+  if(!PRE13[p])p='wind';Q13.preset=p;const w=p=='wind',hgt=p=='height';
+  document.querySelectorAll('#m13 [data-m13]').forEach(b=>b.classList.toggle('on',b.dataset.m13==p));
+  $('m13').classList.toggle('qz-off',p!='scale');
+  $('p13w').style.display=w?'':'none';$('p13s').style.display=w?'none':'';
+  $('t13w').style.display=w?'':'none';$('t13s').style.display=w?'none':'';
+  const lead=document.querySelector('#m13 > p.lead');
+  if(w)lead.textContent=LEAD13;
+  else{
+    const d=PRE13[p],s=Q13[p],i=$('i13x');lead.innerHTML=d.lead;
+    // 先改范围再写值：值会被夹在 min～max 里
+    i.min=d.min;i.max=d.max;i.step=d.step;i.value=s.v;$('n13x').textContent=d.name+' '+d.sym;$('u13x').textContent=d.unit;
+    if(!hgt)$('i13r').value=s.R0;$('i13e').value=s.E;
+    $('l13r').style.display=hgt?'none':'';$('b13m').style.display=hgt?'none':'';$('h13v').style.display=hgt?'':'none';
+    $('w13g').style.display=hgt?'none':'';if(!hgt)$('h13g').textContent=d.g;
+  }
+  applyCtl13();draw();
+  if(p!='scale')return null;
+  const pr=G13.start();
+  if(user)pr.then(()=>{if(Q13.preset=='scale'&&G13.stage()=='predict')qzJump($('qz-m13-prompt'))});
+  return pr;
 }
 /* ===================== 电与磁（九年级第二十章） ===================== */
 const NC='#D7263D',SC='#3B5BDB',CU='#B5651D',DEG=180/Math.PI;
@@ -1105,7 +1504,131 @@ function ACT(a){const p=a.split(':'),k=p[0],rnd=n=>Math.floor(Math.random()*n);
  else if(k=='a21'){S.a21[+p[1]]=+p[2]}else if(k=='r21'){S.a21={};S.yn=null}else if(k=='yn'){if(!S.yn)S.yn=p[1]}
  else return}
 
-const MODS=[['m1','通路·断路·短路',0,r1],['m2','串联和并联',0,r2],['m3','变阻器与图像',0,r3],['m4','故障侦探',0,r4],['m5','探究实验',0,r5],['m6','电功率',1,r6],['m7','家庭电路',1,r7],['m8','去表法',2,r8],['m9','动态电路',2,r9],['m10','填电表挑战',2,r10],['m11','开关组合',2,r11],['m12','电路安全',2,r12],['m13','风速仪',2,r13],['m14','磁场与磁感线',1,r14],['m15','电生磁',1,r15],['m16','电磁铁',1,r16],['m17','电动机',1,r17],['m18','磁生电',1,r18],['m19','电磁继电器',2,r19],['m20','弹簧与电磁铁',2,r20],['m21','原理辨析',2,r21]];
+/* ===================== 理解测试（3 号、13 号模块的预测关卡与练一练） ===================== */
+/* 懒加载：第一次打开 3 号或 13 号模块时才插入 quiz.css 和四个脚本（模型、画板组件、判定规则、作答界面），其他模块一个都不加载。
+   脚本设 async=false：动态插入的脚本照插入顺序执行（engine.js 要在 core.js 之后）。
+   样式表插在本页 <style> 前面：同样的优先级时本页的规则说了算（例如 section.qz-card 要显示出来）。 */
+const QZ={p:null},QZ_MODS=[2,12];
+function qzAssets(){
+  if(QZ.p)return QZ.p;
+  const one=(el,soft)=>new Promise((ok,no)=>{el.onload=()=>ok();el.onerror=()=>soft?ok():no(new Error('加载失败：'+(el.src||el.href)))});
+  const css=document.createElement('link');css.rel='stylesheet';css.href='../shared/quiz/quiz.css';
+  const ps=[one(css,true)];document.head.insertBefore(css,document.head.querySelector('style'));
+  ['js/sensor-models.js','../shared/svgkit.js','../shared/quiz/core.js','../shared/quiz/engine.js'].forEach(src=>{
+    const s=document.createElement('script');s.src=src;s.async=false;ps.push(one(s));document.body.appendChild(s)});
+  QZ.p=Promise.all(ps).then(()=>true);
+  QZ.p.then(null,()=>{}); // 失败由各个用处自己处理；这里接住，免得控制台多一条「未处理的 Promise 拒绝」
+  return QZ.p;
+}
+// 滚到某个元素：让开顶上吸住的导航栏（手机横屏时导航栏不吸顶）
+function qzJump(el){
+  if(!el)return;const n=$('nav'),top=getComputedStyle(n).position=='sticky'?n.offsetHeight:0;
+  window.scrollTo(0,Math.max(0,Math.round(el.getBoundingClientRect().top+window.pageYOffset-top-8)));
+}
+// 手机上：对比、解释阶段模块图不再吸顶（CSS 里的 .qz-unstick），否则它会盖住对比图和解释框；
+// 反馈阶段重新吸顶，学生接着拖滑块时模块图就在眼前
+function qzWatch(sec){
+  const ans=$('qz-'+sec+'-ans'),el=$(sec);
+  const upd=()=>{const c=ans.querySelector('.qz-card[data-stage]');el.classList.toggle('qz-unstick',!!c&&/^(compare|explain)$/.test(c.getAttribute('data-stage')))};
+  try{new MutationObserver(upd).observe(ans,{subtree:true,childList:true,attributes:true,attributeFilter:['data-stage']})}catch(e){}
+  upd();
+}
+/* 预测关卡：模块是页面上现成的 DOM，用引擎的「外部部件」写法（registerExternal）。
+   o = { wid 部件 id, qid 题目 id, sec 模块的 section id, st 状态（locked/shown/vis/f/api）,
+         apply() 按状态锁、放控件, redraw() 重画模块, rep() 报进度, result() 实际结果图 }
+   第一次切到对应的模式时才 start()：注册、mount（题干放模块图上方，作答区放模块图紧下方）。
+   引擎决定锁不锁：没做过的题锁住（预测阶段），做过的题是 free（不锁，只给「重新预测」）。 */
+function qzGate(o){
+  const st=o.st,g={o,p:null,ctrl:null};
+  g.stage=()=>{const c=g.ctrl&&g.ctrl.card(o.qid);return c?c.stage():''};
+  g.start=()=>{
+    if(g.p)return g.p;
+    const ans=$('qz-'+o.sec+'-ans'),pr=$('qz-'+o.sec+'-prompt');
+    ans.innerHTML='<p class="qz-loading">正在加载预测题……</p>';
+    // 引擎或题库没加载成功：模块照常可用，变阻器的曲线也照常画，不让学生卡在锁上
+    const fail=()=>{st.locked=false;st.shown=true;o.apply();o.redraw();pr.innerHTML='';ans.innerHTML='<p class="qz-error">预测题没有加载成功，模块可以直接操作；刷新页面可以再试一次。</p>'};
+    g.p=qzAssets().then(()=>{
+      const Q=window.ABSLabQuiz;
+      Q.registerExternal(o.wid,{
+        cover:()=>document.querySelector('#'+o.sec+' .stage'),
+        // 提交预测后滚到 .grid：手机上模块图正好吸在导航栏下面，控件紧跟在作答区后面
+        scrollTarget:()=>document.querySelector('#'+o.sec+' .grid'),
+        bind:api=>{st.api=api;return{
+          lock(){st.locked=true;st.shown=false;o.apply();o.redraw()},
+          unlock(){st.locked=false;st.shown=true;o.apply();o.redraw();
+            // 引擎解锁后会先清空进度提示、80 ms 后再写「现在动手验证……」；滑片原来就在 ≤ 10 Ω 或 ≥ 40 Ω 时，等它写完再报一次
+            setTimeout(()=>{if(!st.locked&&st.f>0){st.f=-1;o.rep()}},150)},
+          reset(){st.vis=null;st.f=-1;o.redraw()},
+          result:o.result}}});
+      return Q.mount(ans,{items:[o.qid],mode:'poe',promptHost:pr});
+    }).then(ctrl=>{g.ctrl=ctrl;if(!ctrl.card(o.qid))fail();else qzWatch(o.sec);return ctrl},()=>{fail();return null});
+    return g.p;
+  };
+  return g;
+}
+const G3=qzGate({wid:'phy-m3-lamp',qid:'p-pa-poe',sec:'m3',st:Q3,apply:applyCtl3,redraw:()=>{if(cur==2)draw()},rep:rep3,result:result3});
+const G13=qzGate({wid:'phy-m13-scale',qid:'p-pe-poe',sec:'m13',st:Q13,apply:applyCtl13,redraw:()=>{if(cur==12)draw()},rep:rep13,result:result13});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-m3]'),q=e.target.closest('[data-m13]'),m=e.target.closest('[data-m13m]');
+  if(b&&b.dataset.m3!=Q3.mode)setMode3(b.dataset.m3,true);
+  else if(q&&q.dataset.m13!=Q13.preset)setPreset13(q.dataset.m13,true);
+  else if(m&&!m.disabled&&Q13[Q13.preset]&&Q13.preset!='height'){Q13[Q13.preset].meter=m.dataset.m13m;draw()}});
+/* 练一练：第一次展开时才出题（该模块 retest:true 的题，按题库顺序，practice 模式）。
+   没出成题（脚本或题库没加载到、这个模块的题库文件读不到、引擎一张卡片都没挂上）：写一句出错的话，不缓存，
+   收起再展开会重新试一次 */
+const QP={};
+function qzPractice(sec,mod){
+  if(QP[sec])return QP[sec];
+  const host=$('qz-'+sec+'-more');host.innerHTML='<p class="qz-loading">正在加载题目……</p>';
+  const fail=()=>{QP[sec]=null;host.innerHTML='<p class="qz-error">题目没有加载成功：收起再展开可以再试一次，还不行就刷新页面。</p>';return null};
+  return QP[sec]=qzAssets().then(()=>window.ABSLabQuiz.load()).then(b=>{
+    const ids=b.items.filter(it=>it.module==mod&&it.retest===true).map(it=>it.id);
+    if(!ids.length)throw new Error('没有这个模块的题');
+    return window.ABSLabQuiz.mount(host,{mode:'practice',items:ids});
+  }).then(ctrl=>ctrl&&ctrl.cards.length?ctrl:fail(),fail);
+}
+$('qz-m3-practice').addEventListener('toggle',e=>{if(e.currentTarget.open)qzPractice('m3','pa')});
+$('qz-m13-practice').addEventListener('toggle',e=>{if(e.currentTarget.open)qzPractice('m13','pe')});
+/* 深链 #qz-<题目 id>（导图上的「理解测试」标签、review.html 的「回到题目所在页面」）：
+   p-pa- → 3 号模块、p-pe- → 13 号模块；预测关卡切到小灯泡模式 / 电子秤预设，其他题展开练一练；卡片渲染出来后滚到题目。
+   原来的 #3、#m3 照旧 */
+const QZ_DEEP={pa:{sec:'m3',k:2,gate:G3,open:()=>setMode3('lamp')},pe:{sec:'m13',k:12,gate:G13,open:()=>setPreset13('scale')}};
+function qzDeepOf(hash){const m=/^#qz-(p-(pa|pe)-[a-z0-9-]+)$/.exec(hash||'');return m&&QZ_DEEP[m[2]]?{id:m[1],mod:m[2],d:QZ_DEEP[m[2]]}:null}
+function qzDeep(q){
+  let p;
+  if(q.id==q.d.gate.o.qid)p=q.d.open();
+  else{$('qz-'+q.d.sec+'-practice').open=true;p=qzPractice(q.d.sec,q.mod)}
+  if(p)p.then(()=>qzJump(document.getElementById('qz-'+q.id)));
+}
+addEventListener('hashchange',()=>{const q=qzDeepOf(location.hash);if(!q)return;if(cur!=q.d.k)go(q.d.k);qzDeep(q)});
+/* 测试钩子（e2e 用，只读） */
+window.__lab={
+  assets:()=>QZ.p,
+  m3:()=>{
+    const Rp=+$('i3p').value,R0=+$('i3r').value,M=window.ABSLabSensors,locked=Q3.mode=='lamp'&&Q3.locked,visited=Q3.vis?Q3.vis.slice():null;
+    if(Q3.mode=='lamp'){
+      // 模型还在加载（或没加载成功）：小灯泡的数值算不出来，一律给 null，不拿 R₀ 的式子顶替
+      if(!M)return{mode:'lamp',Rp,R0,vm:S.vm,I:null,U0:null,Up:null,UL:null,RL:null,locked,visited,rheo:null};
+      const c=M.lampCircuit(Rp,M.LAMP.E),rg=Q3.shown?rheoRange3():null;
+      return{mode:'lamp',Rp,R0,vm:S.vm,I:c.I,U0:null,Up:c.Up,UL:c.UL,RL:c.RL,locked,visited,rheo:rg}}
+    const I=12/(R0+Rp);return{mode:Q3.mode,Rp,R0,vm:S.vm,I,U0:I*R0,Up:I*Rp,UL:null,RL:null,locked,visited,rheo:null};
+  },
+  m13:()=>{
+    // visited 只记电子秤（预测关卡）的范围：别的预设给 null
+    const p=Q13.preset,M=window.ABSLabSensors,locked=p=='scale'&&Q13.locked,visited=p=='scale'&&Q13.vis?Q13.vis.slice():null;
+    if(p=='wind'){
+      // 风速仪：与 r13() 同一套式子（U = kIv²，电压表最大是 P 到 N 端时的 I × 100 Ω）
+      const v=+$('i13v').value,R0=S.r13,I=30/(100+R0),Um=I*100,Uv=Math.min(4/9*I*v*v,Um);
+      return{preset:p,meter:'V',v,R0,E:30,I,reading:Uv,Rx:null,angle:null,over:Uv>15+1e-6,locked,visited,ticks:[]}}
+    // 新预设的模型还在加载（或没加载成功）：数值一律给 null，不拿风速仪的式子顶替
+    if(!M){const s=Q13[p];return{preset:p,meter:p=='height'?'Vh':s.meter,v:s.v,R0:p=='height'?null:s.R0,E:s.E,I:null,reading:null,Rx:null,angle:null,over:null,locked,visited,ticks:[]}}
+    const o=st13(M);
+    return{preset:p,meter:o.meter,v:o.s.v,R0:o.R0,E:o.E,I:o.st.I,reading:o.reading,Rx:o.Rx,angle:o.angle,over:o.over,locked,visited,
+     ticks:o.ticks.map(t=>({v:t.v,angle:t.angle,inRange:t.inRange}))};
+  }
+};
+
+const MODS=[['m1','通路·断路·短路',0,r1],['m2','串联和并联',0,r2],['m3','变阻器与图像',0,r3],['m4','故障侦探',0,r4],['m5','探究实验',0,r5],['m6','电功率',1,r6],['m7','家庭电路',1,r7],['m8','去表法',2,r8],['m9','动态电路',2,r9],['m10','填电表挑战',2,r10],['m11','开关组合',2,r11],['m12','电路安全',2,r12],['m13','传感器',2,r13],['m14','磁场与磁感线',1,r14],['m15','电生磁',1,r15],['m16','电磁铁',1,r16],['m17','电动机',1,r17],['m18','磁生电',1,r18],['m19','电磁继电器',2,r19],['m20','弹簧与电磁铁',2,r20],['m21','原理辨析',2,r21]];
 let cur=0;
 function draw(){MODS[cur][3]();document.querySelectorAll('[data-t]').forEach(b=>{if(b.tagName=='BUTTON')b.classList.toggle('on',!!S[b.dataset.t])});
   document.querySelectorAll('[data-set]').forEach(b=>{const[k,v]=b.dataset.set.split(':');b.classList.toggle('on',S[k]==v)});
@@ -1174,7 +1697,7 @@ function go(i){i=Math.max(0,Math.min(MODS.length-1,i));if(Z.svg)zoomClose();cur=
  const cb=document.querySelectorAll('#chips button');cb.forEach((b,k)=>b.classList.toggle('on',k==i));
  $('nav').dataset.g=g;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',+b.dataset.g==g));$('msel').value=i;
  try{localStorage.setItem('mx_lab_cur',i)}catch(e){}try{history.replaceState(null,'','#'+(i+1))}catch(e){}
- draw();navH();window.scrollTo(0,0)}
+ draw();navH();window.scrollTo(0,0);if(QZ_MODS.indexOf(i)>=0)qzAssets()}
 function navH(){document.documentElement.style.setProperty('--navh',$('nav').offsetHeight+'px')}
 addEventListener('resize',()=>{navH();zoomFit()});
 try{new ResizeObserver(navH).observe($('nav'))}catch(e){}
@@ -1205,7 +1728,8 @@ document.addEventListener('click',e=>{
   else return;
   draw()});
 document.addEventListener('input',e=>{if(e.target.dataset.a){if(S.trip){e.target.checked=false;return}S.on7[e.target.dataset.a]=e.target.checked}draw()});
-{try{history.scrollRestoration='manual'}catch(e){}let s=0;const h=location.hash.replace(/^#m?/,''),k=/^\d+$/.test(h)?+h-1:-1;if(k>=0&&k<MODS.length)s=k;else{try{const v=+localStorage.getItem('mx_lab_cur');if(v>=0&&v<MODS.length)s=v}catch(e){}}go(s)}
+{try{history.scrollRestoration='manual'}catch(e){}let s=0;const h=location.hash.replace(/^#m?/,''),k=/^\d+$/.test(h)?+h-1:-1;if(k>=0&&k<MODS.length)s=k;else{try{const v=+localStorage.getItem('mx_lab_cur');if(v>=0&&v<MODS.length)s=v}catch(e){}}
+ const q=qzDeepOf(location.hash);if(q)s=q.d.k;go(s);if(q)qzDeep(q)}
 let _lt=performance.now();setInterval(()=>{const n=performance.now(),dt=Math.min(.1,(n-_lt)/1000);_lt=n;if(document.hidden)return;const f=TK[MODS[cur][0]];if(f&&f(dt))MODS[cur][3]()},40);
 </script>
 <script src="../shared/linker.js" data-mode="lab" data-lab="circuits"></script>

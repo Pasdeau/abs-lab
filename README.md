@@ -112,6 +112,7 @@ git push -u origin feat/physics-optics
 abs-lab/
 ├── index.html                    # 平台总门户（按数学、物理、化学、生物排列，点学科进入学科页）
 ├── review.html                   # 今日重测（理解测试里记下的错误概念，按计划重测）
+├── check.html                    # 理解小测（前测 / 后测，诊断用，不计分，数据只留在本机）
 ├── vercel.json                   # Vercel 部署配置
 ├── api/                          # 云端登录与进度同步接口（Upstash Redis）
 │   ├── _redis.js
@@ -134,14 +135,16 @@ abs-lab/
 │       ├── core.js               # 纯逻辑：判定、重测排期、选题、交错、掌握门槛（node 也能用）
 │       ├── engine.js             # 出题、预测关卡、反馈、存储、重测页（window.ABSLabQuiz）
 │       ├── quiz.css              # 题目卡片样式（类名前缀 qz-）
+│       ├── check.js              # 理解小测页（check.html）的脚本
 │       ├── misconceptions.json   # 错误概念标签库
 │       ├── index.json            # 知识点 → 题目（脚本生成）
-│       └── items/                # 题库，一个学科或模块一个文件（math-demo.json：示范题）
-├── math/                         # 📐 数学（学科页 index.html、知识导图、示范题 demo-poe.html、画板自测页 svgkit-demo.html）
-├── physics/                      # ⚡ 物理（学科页、知识导图、电学实验台、电流的微观本质）
+│       └── items/                # 题库，一个学科或模块一个文件（math-demo.json 示范题；physics-pa / physics-pe / math-m1：第 1 批 A）
+├── math/                         # 📐 数学（学科页 index.html、知识导图、示范题 demo-poe.html、画板自测页 svgkit-demo.html、
+│                                 #   动点与函数图象 moving-point.html；js/moving-point-model.js 是它的几何模型）
+├── physics/                      # ⚡ 物理（学科页、知识导图、电学实验台、电流的微观本质；js/sensor-models.js 是电学实验台 3、13 号的模型）
 ├── chemistry/                    # 🧪 化学（学科页、知识导图、中和反应实验台）
 ├── biology/                      # 🧬 生物（学科页、知识导图、显微镜实验台与标本图）
-├── tests/                        # node --test tests/（单元测试）；e2e_batch0.py（端到端，Playwright）
+├── tests/                        # node --test tests/（单元测试）；e2e_batch0.py、e2e_batch1a.py（端到端，Playwright）
 ├── tools/
 │   ├── sync-maps.py              # 把项目里的知识导图同步成网站公开版
 │   ├── build-index.py            # 生成搜索索引和题库索引，检查关联表和题库（导图、关联表、题库改动后运行）
@@ -192,7 +195,7 @@ abs-lab/
 
 ## 五、理解测试引擎（`shared/quiz/`）
 
-四科共用的「理解测试」：预测关卡、二段式 + 把握度题目、错误概念标签库，作答结果接到错题本和学习状态上。示范题：`math/demo-poe.html`；重测页：`review.html`。
+四科共用的「理解测试」：预测关卡、二段式 + 把握度题目、错误概念标签库，作答结果接到错题本和学习状态上。示范题：`math/demo-poe.html`；重测页：`review.html`；理解小测（前测 / 后测）：`check.html`。
 
 ### 1. 写题
 
@@ -219,9 +222,14 @@ abs-lab/
 ```
 
 - 选项上的 `mc` 是错误概念标签，写在**错误**的答案或理由上；标签必须在 `shared/quiz/misconceptions.json` 里。
+- 选项、理由按数组顺序显示，字母 A、B、C（理由 1、2、3）按位置标，和选项 `id` 无关。**正确答案、正确理由不要总排在同一个位置**（见下面的位置检查）；改排列时 id、对错、标签都不用动。
+- 理由写「方法」，不写「结果」：二段式题的答案和理由同屏出现，理由里写出答案的数值就等于把答案告诉了学生。几条理由写成并列的几种算法或想法。
+- 预测关卡可以带可选的 `"ask"`：预测那一问的提问文字（缺省是「先预测：你认为图象是哪一个？」），预测的对象不是图象时用，例如电子秤的刻度疏密。
 - 静态图（题图、选项缩略图）用声明式写法，由 `ABSLabSVG.figure` 画：
   `{ "view": [xmin, xmax, ymin, ymax], "aspect": "fill" | "equal", "axes": { "x": "x", "y": "y", "xt": [6, 10], "yt": [12] } 或 null, "items": [ {"t":"polyline","pts":[[0,0],[6,12]]}, {"t":"polygon","pts":[…],"fill":false}, {"t":"segment","a":[0,0],"b":[6,0],"dash":true}, {"t":"point","at":[2,0],"label":"P"}, {"t":"text","at":[0,4],"s":"A","pos":"nw"} ] }`；线条可加 `"dash": true`、`"accent": true`。
-- **同一个错误概念至少配两道不同情境（context）的题**：两道都答成错误概念才标「稳定迷思」。`build-index.py` 现在只对此报警告，第 1 批起改为报错。
+- **同一个错误概念至少配两道不同情境（context）的题**：两道都答成错误概念才标「稳定迷思」。从第 1 批起 `build-index.py` 对此报错（第 0 批只报警告）。
+- **模块完整性**：`tools/build-index.py` 顶部的 `MODULE_RULES` 列出的模块（现在是 `pa`、`pe`、`m1`），每个至少 1 道预测关卡（predict）、6 道二段式题（twotier，每道至少有一个答案或理由选项带 `mc` 标签）、2 道迁移题（transfer）、1 道逆向题（inverse），不够就报错。新模块上线时把它加进这个常量。
+- **正确选项的位置**（同样只查 `MODULE_RULES` 里的模块）：按题库顺序，正确答案排在同一个位置的题不超过一半（题数是奇数时向上取整，例如 9 道二选一的理由最多 5 道同位），也不能连续 3 道落在同一个位置；正确理由同样检查。不满足就报错。
 
 错误概念标签库 `shared/quiz/misconceptions.json`：
 
@@ -265,6 +273,28 @@ ABSLabQuiz.mount(el, { items: ["m-dd-area-poe"], mode: "poe" });   // 练习题 
 
 预测关卡第一次打开时锁定（「先预测，再动手」），提交预测后解锁；做过以后部件可以自由操作，旁边有「重新预测」。预测阶段只露出锁着的部件和作答区（进度提示、「看对比」在提交后才出现）；示范题的部件在手机上还会先藏起空的函数板，让预测选项紧跟在几何板下面。
 
+**外部部件**：部件的 DOM 已经在页面上（例如电学实验台里现成的模块），不能交给引擎在卡片里新建时，用 `registerExternal`。引擎只负责锁定、解锁、读进度和结果，不建部件、不清空容器：
+
+```js
+ABSLabQuiz.registerExternal("phy-m3-lamp", {
+  cover: document.querySelector("#m3 .stage"),  // 「先预测，再动手」遮罩盖在这里（元素，或返回元素的函数）
+  scrollTarget: null,                           // 可选：提交预测后滚到哪里，缺省是 cover
+  bind: function (api) {                        // 卡片挂上时调用；api.onProgress / api.done 同上
+    return { lock: function () {}, unlock: function () {}, reset: function () {}, result: function () { return { figure: {} }; } };
+  }
+});
+// 先注册，再 mount；promptHost 可选：题头、题干、题图放进 promptHost（页面把它放在模块图上方），
+// 作答区留在 mount 的容器里（页面把它放在模块图紧下方，手机上预测选项就紧跟在模块图下面）
+ABSLabQuiz.mount(answerEl, { items: ["p-pa-poe"], mode: "poe", promptHost: promptEl });
+```
+
+- 遮罩是 `cover > .qz-lock`，锁定时 cover 带 `data-qz-locked="true"`；cover 原来是 static 定位时引擎补一个 `position: relative`。控件由部件自己的 `lock()` / `unlock()` 锁住、放开（例如把滑块设成 disabled）。
+- 题干块是 `promptHost > .qz-prompt#qz-<题目 id>`（锚点跟着题干走），作答块是 `section.qz-card.qz-card-ext`（没有 id）；两块都带 `data-stage`。
+- 提交预测以后到解释之前，作答区收起成一行「你的预测：……」，不把模块的操作区隔开；反馈阶段再展开、在选项上标对错。
+- 同一个外部部件同一时间只挂一张卡片：重新 mount 时自动撤掉上一张卡片的遮罩和题干。
+- `result()` 除了 `figure` 还可以给 `note`：「实际结果」下面的说明文字（缺省是「你刚才拖出来的图象」）。普通部件也可以用。
+- `registerWidget` 的写法和行为不变（第 0 批示范题、`tests/e2e_batch0.py` 不受影响）。
+
 ### 4. 记录、错题本、重测
 
 - 登录（云端账号）后：作答记在 `api/quiz`（Redis `abslab:quiz:<用户名>`，每题最近 20 次）；答成 `mc` / `gap` 的按**错误概念**写进错题本（`mc-<标签>`，没有标签的按题 `qz-<题目>`），`origin: "quiz"`，带 `mc`、`qids`、`review` 字段。
@@ -285,10 +315,36 @@ ABSLabQuiz.mount(el, { items: ["m-dd-area-poe"], mode: "poe" });   // 练习题 
 ### 6. 测试
 
 ```bash
-node --test tests/                 # 单元测试（判定、排期、选题、交错、掌握门槛、几何函数）
+node --test tests/                 # 单元测试（判定、排期、选题、交错、掌握门槛、几何函数、第 1 批 A 的模型和题目数值）
 python3 tools/build-index.py --check
 python3 tests/e2e_batch0.py        # 端到端（需要 Playwright；自己启动 dev-server 8090）
+python3 tests/e2e_batch1a.py       # 第 1 批 A 的端到端（自己启动 dev-server 8092）
 ```
+
+- `tests/batch1a-content.test.js`：用模型函数（`physics/js/sensor-models.js`、`math/js/moving-point-model.js`）把第 1 批 A 每道题里的数值、正确选项、缩略图折线点重新算一遍，和题库对上；改题库或模型以后先跑它。
+- Python Playwright 要和本机浏览器的版本对得上（例如预装的是 Node Playwright 1.63 带的浏览器，就装 `pip install playwright==1.63.0`），否则 `chromium.launch()` 找不到浏览器。
+
+### 7. 理解小测（`check.html`）
+
+给一个班做前测、后测，比较正确率和「有把握却答错」的比例怎么变。地址 `check.html?m=pa|pe|m1&t=pre|post`（缺 m 或 t 时页面让人选）。
+
+- 按题库顺序出这个模块全部 `retest: true` 的题（二段式、迁移、逆向；不出预测关卡），一屏一题，作答时不给反馈、不标对错；可以退回去改。
+- 不需要登录，不调 `api/quiz`、`api/mistakes`，不写错题本：只读题库，作答只存本机 `localStorage["abslab.check.v1"]`（`runs[模块][pre|post]`，另有没做完的草稿）。顶栏脚本带 `data-no-visit`，这一页不记「访问过」。
+- 小结：正确率 = `pass` 题数 ÷ 总题数；有把握却答错 = 答案错且选了「有把握」的题数 ÷ 总题数；每个错误概念被答中的次数（同一题的答案和理由指向同一个错误概念时只记一次）。同一台设备上前测、后测都有时并排显示。
+- 「下载 CSV」：列为 `模块,前测 / 后测,日期,题目 id,答案,理由,把握,判定,错误概念标签,用时（秒）,编号`（编号可不填，只写进 CSV）；答案、理由写「题库选项 id（显示为 字母）」，判定写 `pass` / `unsure` / `mc` / `gap`；UTF-8 带 BOM。微信里下载不了时用「复制 CSV 文本」。
+- 选项的显示顺序就是题库的排列；`check.js` 顶部的 `SHUFFLE` 打开时会在这个基础上再按题目 id 固定打乱（现在关着）。
+
+### 8. 第 1 批 A 的模块
+
+| 模块 | 在哪里 | 模型 | 题库（module） | 预测关卡（部件 id） |
+| --- | --- | --- | --- | --- |
+| P-A 小灯泡的 I-U 图像 | `physics/circuits-lab.html` 3 号模块，「小灯泡 L（2.5 V）」模式 | `physics/js/sensor-models.js`（lampCircuit 等，二分法求工作点） | `physics-pa.json`（pa） | 外部部件 `phy-m3-lamp` |
+| P-E 传感器模板 | `physics/circuits-lab.html` 13 号模块：风速仪（原样）、电子秤、酒精测试仪、身高测量仪 | `physics/js/sensor-models.js`（scaleState、alcoholState、heightState、dialTicks…） | `physics-pe.json`（pe） | 外部部件 `phy-m13-scale` |
+| M1 动点与函数图象 | `math/moving-point.html`（任务 rect、pq、time，进度键 `math_mpoint_tasks`） | `math/js/moving-point-model.js` | `math-m1.json`（m1） | 外部部件 `m1-pq` |
+
+- 电学实验台只在第一次打开 3 号或 13 号模块时才加载 `quiz.css`、`sensor-models.js`、`svgkit.js`、`core.js`、`engine.js`；打开别的模块一个都不多下载。3 号的「定值电阻 R₀」模式、13 号的风速仪仍走原来的代码，读数和改动前逐字一致（风速仪的式子在 `sensor-models.js` 里也有一份 `windState`，端到端测试用它核对页面）。
+- 每个模块下面有可折叠的「理解测试（9 题）」（练一练）和「做小测（前测 / 后测）→」链接；深链 `circuits-lab.html#qz-<题目 id>` 会打开对应模块（预测关卡切到对应模式，其他题展开练一练）。
+- 测试钩子（只给端到端测试用）：电学实验台 `window.__lab`（`assets()`、`m3()`、`m13()`），动点页 `window.__mp`，小测页 `window.__check`。
 
 ---
 

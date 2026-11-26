@@ -1,0 +1,1109 @@
+{
+  "v": 1,
+  "items": [
+    {
+      "id": "m-m1-poe",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c26-1-1",
+        "math:c22-2-2"
+      ],
+      "type": "predict",
+      "level": "junior",
+      "context": "双动点面积",
+      "retest": false,
+      "page": "math/moving-point.html",
+      "widget": "m1-pq",
+      "stem": "正方形 ABCD 边长 4。P 从 A 沿 AB 向 B、Q 从 B 沿 BC 向 C，同时出发，速度都是每秒 1。设时间为 t，△PBQ 的面积为 y。先预测：y 随 t 变化的图象是什么样的？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "先上升再下降的两段直线",
+            "figure": {
+              "view": [0, 4, 0, 2.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y"
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 2], [4, 0]]
+                }
+              ]
+            },
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "c",
+            "text": "一直上升的直线",
+            "figure": {
+              "view": [0, 4, 0, 2.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y"
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [4, 2]]
+                }
+              ]
+            },
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "d",
+            "text": "先上升再保持不变",
+            "figure": {
+              "view": [0, 4, 0, 2.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y"
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 2], [4, 2]]
+                }
+              ]
+            }
+          },
+          {
+            "id": "a",
+            "text": "开口向下的抛物线，t = 2 时最大",
+            "figure": {
+              "view": [0, 4, 0, 2.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y"
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [0, 0], [0.1, 0.195], [0.2, 0.38], [0.3, 0.555], [0.4, 0.72], [0.5, 0.875],
+                    [0.6, 1.02], [0.7, 1.155], [0.8, 1.28], [0.9, 1.395], [1, 1.5], [1.1, 1.595],
+                    [1.2, 1.68], [1.3, 1.755], [1.4, 1.82], [1.5, 1.875], [1.6, 1.92], [1.7, 1.955],
+                    [1.8, 1.98], [1.9, 1.995], [2, 2], [2.1, 1.995], [2.2, 1.98], [2.3, 1.955],
+                    [2.4, 1.92], [2.5, 1.875], [2.6, 1.82], [2.7, 1.755], [2.8, 1.68], [2.9, 1.595],
+                    [3, 1.5], [3.1, 1.395], [3.2, 1.28], [3.3, 1.155], [3.4, 1.02], [3.5, 0.875],
+                    [3.6, 0.72], [3.7, 0.555], [3.8, 0.38], [3.9, 0.195], [4, 0]
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": null,
+      "confidence": true,
+      "explain": {
+        "prompt": "用一句话说一说：为什么面积先变大后变小？",
+        "min": 6
+      },
+      "feedback": {
+        "ref": "PB = 4 − t 越来越短，BQ = t 越来越长，y = ½·t·(4 − t)。一条边变长、一条边变短，乘积在 t = 2（两条边相等）时最大，为 2。两个点都匀速，但面积是两个变化的长度相乘，所以图象是曲线。"
+      }
+    },
+    {
+      "id": "m-m1-tt-pq6",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c26-1-1"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "双动点面积（不同速度）",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "正方形 ABCD 边长 6。P 从 A 沿 AB 向 B 每秒走 1，Q 从 B 沿 BC 向 C 每秒走 2，同时出发；0 ≤ t ≤ 3。y = S△PBQ 的图象是？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "直线",
+            "figure": {
+              "view": [0, 3, 0, 10],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [1, 2, 3],
+                "yt": [9]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [3, 9]]
+                }
+              ]
+            },
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "a",
+            "text": "越来越平的上升曲线（抛物线的一部分）",
+            "figure": {
+              "view": [0, 3, 0, 10],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [1, 2, 3],
+                "yt": [9]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [0, 0], [0.1, 0.59], [0.2, 1.16], [0.3, 1.71], [0.4, 2.24], [0.5, 2.75],
+                    [0.6, 3.24], [0.7, 3.71], [0.8, 4.16], [0.9, 4.59], [1, 5], [1.1, 5.39],
+                    [1.2, 5.76], [1.3, 6.11], [1.4, 6.44], [1.5, 6.75], [1.6, 7.04], [1.7, 7.31],
+                    [1.8, 7.56], [1.9, 7.79], [2, 8], [2.1, 8.19], [2.2, 8.36], [2.3, 8.51],
+                    [2.4, 8.64], [2.5, 8.75], [2.6, 8.84], [2.7, 8.91], [2.8, 8.96], [2.9, 8.99],
+                    [3, 9]
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "c",
+            "text": "先升后降",
+            "figure": {
+              "view": [0, 3, 0, 10],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [1, 2, 3],
+                "yt": [9]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [0, 0], [0.1, 1.16], [0.2, 2.24], [0.3, 3.24], [0.4, 4.16], [0.5, 5],
+                    [0.6, 5.76], [0.7, 6.44], [0.8, 7.04], [0.9, 7.56], [1, 8], [1.1, 8.36],
+                    [1.2, 8.64], [1.3, 8.84], [1.4, 8.96], [1.5, 9], [1.6, 8.96], [1.7, 8.84],
+                    [1.8, 8.64], [1.9, 8.36], [2, 8], [2.1, 7.56], [2.2, 7.04], [2.3, 6.44],
+                    [2.4, 5.76], [2.5, 5], [2.6, 4.16], [2.7, 3.24], [2.8, 2.24], [2.9, 1.16],
+                    [3, 0]
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "P、Q 都在匀速运动，所以 y 随 t 均匀变化",
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "r1",
+            "text": "y = ½·(6 − t)·2t = t·(6 − t)，是二次函数"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "t = 0 / 1 / 2 / 3 时，y = 0 / 5 / 8 / 9，每秒增加的面积越来越少。"
+      }
+    },
+    {
+      "id": "m-m1-tt-square",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c26-1-1"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "边长匀速增长的正方形",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "一个正方形的边长从 0 开始每秒增加 1 cm。它的面积 y（cm²）与时间 t（s）的图象是？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "过原点、越来越陡的曲线"
+          },
+          {
+            "id": "b",
+            "text": "过原点的直线",
+            "mc": "uniformislinear"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "y = t²，不是一次函数"
+          },
+          {
+            "id": "r2",
+            "text": "边长均匀增加，面积也均匀增加",
+            "mc": "uniformislinear"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "边长均匀增加，但面积等于边长乘边长；t = 1 / 2 / 3 时，y = 1 / 4 / 9。"
+      }
+    },
+    {
+      "id": "m-m1-tt-kink",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c23-4-2"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "矩形路线的拐点",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "矩形 ABCD，AB = 3，BC = 5。P 从 B 出发沿 B→C→D 运动，路程为 x，y = S△ABP。图象在 x 等于几时出现拐点？",
+      "figures": [
+        {
+          "view": [-1, 6, -1, 4],
+          "aspect": "equal",
+          "axes": null,
+          "maxHeight": 180,
+          "alt": "矩形 ABCD，P 的路线 B→C→D",
+          "items": [
+            {
+              "t": "polygon",
+              "pts": [[0, 3], [0, 0], [5, 0], [5, 3]],
+              "fill": false
+            },
+            {
+              "t": "polyline",
+              "pts": [[0, 0], [5, 0], [5, 3]],
+              "dash": true,
+              "accent": true
+            },
+            {
+              "t": "text",
+              "at": [0, 3],
+              "s": "A",
+              "pos": "nw"
+            },
+            {
+              "t": "text",
+              "at": [0, 0],
+              "s": "B",
+              "pos": "sw"
+            },
+            {
+              "t": "text",
+              "at": [5, 0],
+              "s": "C",
+              "pos": "se"
+            },
+            {
+              "t": "text",
+              "at": [5, 3],
+              "s": "D",
+              "pos": "ne"
+            },
+            {
+              "t": "text",
+              "at": [0, 1.5],
+              "s": "3",
+              "pos": "w"
+            },
+            {
+              "t": "text",
+              "at": [2.5, 0],
+              "s": "5",
+              "pos": "s"
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "x = 4",
+            "mc": "kinkwhere"
+          },
+          {
+            "id": "c",
+            "text": "x = 3"
+          },
+          {
+            "id": "a",
+            "text": "x = 5"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "拐点在整段路程的中间",
+            "mc": "kinkwhere"
+          },
+          {
+            "id": "r1",
+            "text": "P 到达 C 以后，三角形的高不再变化，面积开始保持不变"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "0 ≤ x ≤ 5 时 y = 1.5x，到 7.5；5 ≤ x ≤ 8 时 y = 7.5。拐点对应 P 经过顶点 C。"
+      }
+    },
+    {
+      "id": "m-m1-tt-time",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c23-4-2"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "按时间画图的拐点",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "矩形 ABCD，AB = 4、BC = 6、CD = 4。P 从 B 出发沿 B→C→D 运动，在 BC 上每秒走 2，在 CD 上每秒走 1。以时间 t 为横轴画 y = S△ABP 的图象，拐点在 t 等于几？",
+      "figures": [
+        {
+          "view": [-1, 7, -1, 5],
+          "aspect": "equal",
+          "axes": null,
+          "maxHeight": 180,
+          "alt": "矩形 ABCD，P 的路线 B→C→D",
+          "items": [
+            {
+              "t": "polygon",
+              "pts": [[0, 4], [0, 0], [6, 0], [6, 4]],
+              "fill": false
+            },
+            {
+              "t": "polyline",
+              "pts": [[0, 0], [6, 0], [6, 4]],
+              "dash": true,
+              "accent": true
+            },
+            {
+              "t": "text",
+              "at": [0, 4],
+              "s": "A",
+              "pos": "nw"
+            },
+            {
+              "t": "text",
+              "at": [0, 0],
+              "s": "B",
+              "pos": "sw"
+            },
+            {
+              "t": "text",
+              "at": [6, 0],
+              "s": "C",
+              "pos": "se"
+            },
+            {
+              "t": "text",
+              "at": [6, 4],
+              "s": "D",
+              "pos": "ne"
+            },
+            {
+              "t": "text",
+              "at": [0, 2],
+              "s": "4",
+              "pos": "w"
+            },
+            {
+              "t": "text",
+              "at": [3, 0],
+              "s": "6",
+              "pos": "s"
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "t = 3"
+          },
+          {
+            "id": "b",
+            "text": "t = 6",
+            "mc": "kinkwhere"
+          },
+          {
+            "id": "c",
+            "text": "t = 5"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "拐点的横坐标等于 BC 的长度",
+            "mc": "kinkwhere"
+          },
+          {
+            "id": "r1",
+            "text": "拐点是 P 到达 C 的时刻，用 BC 的长度除以 P 在 BC 上的速度"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "横轴换成时间后，拐点要用「路程 ÷ 速度」算到达顶点的时刻。0 ≤ t ≤ 3 时 y = 4t；3 ≤ t ≤ 7 时 y = 12。"
+      }
+    },
+    {
+      "id": "m-m1-tt-walk",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c22-2-2"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "先走平路再爬坡",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "小明匀速走过一段平路，再以同样的速度沿斜坡向上走。y 表示他走过的路程，t 表示时间。y 随 t 的图象是？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "先水平、再上升",
+            "figure": {
+              "view": [0, 4, 0, 6.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 0], [4, 2]]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "a",
+            "text": "一条一直上升的直线",
+            "figure": {
+              "view": [0, 4, 0, 6.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 2], [4, 4]]
+                }
+              ]
+            }
+          },
+          {
+            "id": "c",
+            "text": "先上升、再上升得更陡",
+            "figure": {
+              "view": [0, 4, 0, 6.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 2], [4, 6]]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "d",
+            "text": "先上升、再下降",
+            "figure": {
+              "view": [0, 4, 0, 6.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 2], [4, 0]]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "速度不变，走过的路程随时间均匀增加"
+          },
+          {
+            "id": "r2",
+            "text": "平路对应水平的线，斜坡对应上升的线",
+            "mc": "graphaspath"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "纵轴是「走过的路程」，不是「高度」。路是平是斜，不影响路程增加的快慢。"
+      }
+    },
+    {
+      "id": "m-m1-tt-fill",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c22-2-2"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "向下细上粗的容器注水",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "向一个下细上粗的容器（如图）里匀速注水，水面高度 h 与时间 t 的图象是？",
+      "figures": [
+        {
+          "view": [-2.5, 2.5, -0.3, 3.3],
+          "aspect": "equal",
+          "axes": null,
+          "maxHeight": 150,
+          "alt": "下细上粗的容器",
+          "items": [
+            {
+              "t": "polyline",
+              "pts": [[-2, 3], [-0.5, 0], [0.5, 0], [2, 3]]
+            },
+            {
+              "t": "segment",
+              "a": [-1.1, 1.2],
+              "b": [1.1, 1.2],
+              "color": "blue",
+              "width": 2
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "和容器轮廓一样、向两边张开的图形",
+            "figure": {
+              "view": [0, 4, 0, 3.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "h",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 3], [1, 0], [3, 0], [4, 3]]
+                }
+              ]
+            },
+            "mc": "graphaspath"
+          },
+          {
+            "id": "c",
+            "text": "一条上升的直线",
+            "figure": {
+              "view": [0, 4, 0, 3.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "h",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [4, 3]]
+                }
+              ]
+            },
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "a",
+            "text": "先陡后缓的上升曲线",
+            "figure": {
+              "view": [0, 4, 0, 3.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "h",
+                "xt": [],
+                "yt": []
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [0, 0], [0.2, 0.3229], [0.4, 0.5811], [0.6, 0.8028], [0.8, 1], [1, 1.1794],
+                    [1.2, 1.3452], [1.4, 1.5], [1.6, 1.6458], [1.8, 1.7839], [2, 1.9155], [2.2, 2.0414],
+                    [2.4, 2.1623], [2.6, 2.2787], [2.8, 2.3912], [3, 2.5], [3.2, 2.6056], [3.4, 2.7081],
+                    [3.6, 2.8079], [3.8, 2.9051], [4, 3]
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "图象画出来就是容器的样子",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "r3",
+            "text": "匀速注水，水面也匀速升高",
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "r1",
+            "text": "越往上横截面越大，相同时间内水面升得越少"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "每秒注入的水一样多，但上面更宽，同样多的水只能升高一点点。"
+      }
+    },
+    {
+      "id": "m-m1-tr-start",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c23-4-2"
+      ],
+      "type": "transfer",
+      "level": "junior",
+      "context": "换起点",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "矩形 ABCD，AB = 4、BC = 6。P 改从 C 出发沿 C→D→A 运动，路程为 x，y = S△ABP。图象是？",
+      "figures": [
+        {
+          "view": [-1, 7, -1, 5],
+          "aspect": "equal",
+          "axes": null,
+          "maxHeight": 180,
+          "alt": "矩形 ABCD，P 的路线 C→D→A",
+          "items": [
+            {
+              "t": "polygon",
+              "pts": [[0, 4], [0, 0], [6, 0], [6, 4]],
+              "fill": false
+            },
+            {
+              "t": "polyline",
+              "pts": [[6, 0], [6, 4], [0, 4]],
+              "dash": true,
+              "accent": true
+            },
+            {
+              "t": "text",
+              "at": [0, 4],
+              "s": "A",
+              "pos": "nw"
+            },
+            {
+              "t": "text",
+              "at": [0, 0],
+              "s": "B",
+              "pos": "sw"
+            },
+            {
+              "t": "text",
+              "at": [6, 0],
+              "s": "C",
+              "pos": "se"
+            },
+            {
+              "t": "text",
+              "at": [6, 4],
+              "s": "D",
+              "pos": "ne"
+            },
+            {
+              "t": "text",
+              "at": [0, 2],
+              "s": "4",
+              "pos": "w"
+            },
+            {
+              "t": "text",
+              "at": [3, 0],
+              "s": "6",
+              "pos": "s"
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "先保持 12，再均匀减小到 0",
+            "figure": {
+              "view": [0, 10, 0, 14],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [4, 6, 10],
+                "yt": [12]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 12], [4, 12], [10, 0]]
+                }
+              ]
+            }
+          },
+          {
+            "id": "b",
+            "text": "先上升到 12，再保持不变",
+            "figure": {
+              "view": [0, 10, 0, 14],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [4, 6, 10],
+                "yt": [12]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [6, 12], [10, 12]]
+                }
+              ]
+            }
+          },
+          {
+            "id": "c",
+            "text": "一直保持 12",
+            "figure": {
+              "view": [0, 10, 0, 14],
+              "aspect": "fill",
+              "axes": {
+                "x": "x",
+                "y": "y",
+                "xt": [4, 6, 10],
+                "yt": [12]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 12], [10, 12]]
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "P 在 CD 上时高（P 到 AB 的距离）是 6，不变；在 DA 上时高从 6 减小到 0"
+          },
+          {
+            "id": "r2",
+            "text": "和从 B 出发的图象一样"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "0 ≤ x ≤ 4 时 y = 12；4 ≤ x ≤ 10 时 y = 2·(10 − x)，从 12 减小到 0。"
+      }
+    },
+    {
+      "id": "m-m1-tr-speed",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c26-1-1"
+      ],
+      "type": "transfer",
+      "level": "junior",
+      "context": "改速度",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "正方形 ABCD 边长 4，P 从 A 向 B 每秒走 1，Q 从 B 向 C 改为每秒走 2；0 ≤ t ≤ 2。y = S△PBQ 的图象是？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "t = 1 时最大的抛物线",
+            "figure": {
+              "view": [0, 2, 0, 4.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [1, 2],
+                "yt": [4]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [0, 0], [0.1, 0.76], [0.2, 1.44], [0.3, 2.04], [0.4, 2.56], [0.5, 3],
+                    [0.6, 3.36], [0.7, 3.64], [0.8, 3.84], [0.9, 3.96], [1, 4], [1.1, 3.96],
+                    [1.2, 3.84], [1.3, 3.64], [1.4, 3.36], [1.5, 3], [1.6, 2.56], [1.7, 2.04],
+                    [1.8, 1.44], [1.9, 0.76], [2, 0]
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "a",
+            "text": "一直上升、越来越平的曲线，t = 2 时 y = 4",
+            "figure": {
+              "view": [0, 2, 0, 4.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [1, 2],
+                "yt": [4]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [0, 0], [0.1, 0.39], [0.2, 0.76], [0.3, 1.11], [0.4, 1.44], [0.5, 1.75],
+                    [0.6, 2.04], [0.7, 2.31], [0.8, 2.56], [0.9, 2.79], [1, 3], [1.1, 3.19],
+                    [1.2, 3.36], [1.3, 3.51], [1.4, 3.64], [1.5, 3.75], [1.6, 3.84], [1.7, 3.91],
+                    [1.8, 3.96], [1.9, 3.99], [2, 4]
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "id": "c",
+            "text": "一条直线",
+            "figure": {
+              "view": [0, 2, 0, 4.5],
+              "aspect": "fill",
+              "axes": {
+                "x": "t",
+                "y": "y",
+                "xt": [1, 2],
+                "yt": [4]
+              },
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [[0, 0], [2, 4]]
+                }
+              ]
+            },
+            "mc": "uniformislinear"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "两个点都匀速，所以是直线",
+            "mc": "uniformislinear"
+          },
+          {
+            "id": "r1",
+            "text": "y = ½·(4 − t)·2t = t·(4 − t)，在 0～2 上一直增大"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "t = 0 / 1 / 2 时，y = 0 / 3 / 4。Q 先到 C，所以只能取到顶点 t = 2 为止。"
+      }
+    },
+    {
+      "id": "m-m1-inv-sides",
+      "subject": "math",
+      "module": "m1",
+      "kp": [
+        "math:c23-4-2"
+      ],
+      "type": "inverse",
+      "level": "junior",
+      "context": "由图象反推边长",
+      "retest": true,
+      "page": "math/moving-point.html",
+      "widget": null,
+      "stem": "P 从 B 出发沿矩形 ABCD 的边 B→C→D→A 运动，路程为 x，y = S△ABP。图象经过 (0, 0)、(4, 12)、(10, 12)、(14, 0)（如图）。AB、BC 分别是多少？",
+      "figures": [
+        {
+          "view": [0, 15, 0, 14],
+          "aspect": "fill",
+          "axes": {
+            "x": "x",
+            "y": "y",
+            "xt": [4, 10, 14],
+            "yt": [12]
+          },
+          "alt": "y 与 x 的关系图象",
+          "items": [
+            {
+              "t": "segment",
+              "a": [4, 0],
+              "b": [4, 12],
+              "color": "muted",
+              "dash": true
+            },
+            {
+              "t": "segment",
+              "a": [10, 0],
+              "b": [10, 12],
+              "color": "muted",
+              "dash": true
+            },
+            {
+              "t": "polyline",
+              "pts": [[0, 0], [4, 12], [10, 12], [14, 0]]
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "AB = 4，BC = 6"
+          },
+          {
+            "id": "c",
+            "text": "AB = 12，BC = 4",
+            "mc": "graphaspath"
+          },
+          {
+            "id": "a",
+            "text": "AB = 6，BC = 4"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "上升段长度等于 BC，水平段长度等于 CD（= AB）"
+          },
+          {
+            "id": "r2",
+            "text": "图象的最高点就是矩形一条边的长度",
+            "mc": "graphaspath"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "上升段长 4，所以 BC = 4；水平段长 6，所以 CD = AB = 6；再核对：最大面积 ½ × 6 × 4 = 12。"
+      }
+    }
+  ]
+}

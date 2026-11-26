@@ -1,0 +1,857 @@
+{
+  "v": 1,
+  "items": [
+    {
+      "id": "p-pe-poe",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k7"
+      ],
+      "type": "predict",
+      "level": "junior",
+      "context": "电子秤表盘",
+      "retest": false,
+      "page": "physics/circuits-lab.html",
+      "widget": "phy-m13-scale",
+      "ask": "先预测：你认为刻度线之间的距离会怎样？",
+      "stem": "电子秤：R₀ = 10 Ω，电压表测 R₀，把表盘改成压力刻度。压力每增加 10 N 画一条刻度线，刻度线之间的距离会怎样？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "都相等",
+            "figure": {
+              "view": [-1.25, 1.25, -0.15, 1.3],
+              "aspect": "equal",
+              "axes": null,
+              "pad": 10,
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [-1, 0], [-0.9914, 0.1305], [-0.9659, 0.2588], [-0.9239, 0.3827], [-0.866, 0.5], [-0.7934, 0.6088],
+                    [-0.7071, 0.7071], [-0.6088, 0.7934], [-0.5, 0.866], [-0.3827, 0.9239], [-0.2588, 0.9659], [-0.1305, 0.9914],
+                    [0, 1], [0.1305, 0.9914], [0.2588, 0.9659], [0.3827, 0.9239], [0.5, 0.866], [0.6088, 0.7934],
+                    [0.7071, 0.7071], [0.7934, 0.6088], [0.866, 0.5], [0.9239, 0.3827], [0.9659, 0.2588], [0.9914, 0.1305],
+                    [1, 0]
+                  ],
+                  "color": "muted"
+                },
+                {
+                  "t": "segment",
+                  "a": [0, 0.82],
+                  "b": [0, 1],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0, 1.18],
+                  "s": "0",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.3138, 0.7576],
+                  "b": [0.3827, 0.9239],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.4516, 1.0902],
+                  "s": "10",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.5798, 0.5798],
+                  "b": [0.7071, 0.7071],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.8344, 0.8344],
+                  "s": "20",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.7576, 0.3138],
+                  "b": [0.9239, 0.3827],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [1.0902, 0.4516],
+                  "s": "30",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.82, 0],
+                  "b": [1, 0],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.91, 0],
+                  "s": "40",
+                  "pos": "s"
+                }
+              ]
+            },
+            "mc": "scaleuniform"
+          },
+          {
+            "id": "a",
+            "text": "越来越大",
+            "figure": {
+              "view": [-1.25, 1.25, -0.15, 1.3],
+              "aspect": "equal",
+              "axes": null,
+              "pad": 10,
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [-1, 0], [-0.9914, 0.1305], [-0.9659, 0.2588], [-0.9239, 0.3827], [-0.866, 0.5], [-0.7934, 0.6088],
+                    [-0.7071, 0.7071], [-0.6088, 0.7934], [-0.5, 0.866], [-0.3827, 0.9239], [-0.2588, 0.9659], [-0.1305, 0.9914],
+                    [0, 1], [0.1305, 0.9914], [0.2588, 0.9659], [0.3827, 0.9239], [0.5, 0.866], [0.6088, 0.7934],
+                    [0.7071, 0.7071], [0.7934, 0.6088], [0.866, 0.5], [0.9239, 0.3827], [0.9659, 0.2588], [0.9914, 0.1305],
+                    [1, 0]
+                  ],
+                  "color": "muted"
+                },
+                {
+                  "t": "segment",
+                  "a": [0, 0.82],
+                  "b": [0, 1],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0, 1.18],
+                  "s": "0",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.1825, 0.7994],
+                  "b": [0.2225, 0.9749],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.2626, 1.1504],
+                  "s": "10",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.41, 0.7101],
+                  "b": [0.5, 0.866],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.59, 1.0219],
+                  "s": "20",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.6634, 0.482],
+                  "b": [0.809, 0.5878],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.9546, 0.6936],
+                  "s": "30",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.82, 0],
+                  "b": [1, 0],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.91, 0],
+                  "s": "40",
+                  "pos": "s"
+                }
+              ]
+            }
+          },
+          {
+            "id": "c",
+            "text": "越来越小",
+            "figure": {
+              "view": [-1.25, 1.25, -0.15, 1.3],
+              "aspect": "equal",
+              "axes": null,
+              "pad": 10,
+              "items": [
+                {
+                  "t": "polyline",
+                  "pts": [
+                    [-1, 0], [-0.9914, 0.1305], [-0.9659, 0.2588], [-0.9239, 0.3827], [-0.866, 0.5], [-0.7934, 0.6088],
+                    [-0.7071, 0.7071], [-0.6088, 0.7934], [-0.5, 0.866], [-0.3827, 0.9239], [-0.2588, 0.9659], [-0.1305, 0.9914],
+                    [0, 1], [0.1305, 0.9914], [0.2588, 0.9659], [0.3827, 0.9239], [0.5, 0.866], [0.6088, 0.7934],
+                    [0.7071, 0.7071], [0.7934, 0.6088], [0.866, 0.5], [0.9239, 0.3827], [0.9659, 0.2588], [0.9914, 0.1305],
+                    [1, 0]
+                  ],
+                  "color": "muted"
+                },
+                {
+                  "t": "segment",
+                  "a": [0, 0.82],
+                  "b": [0, 1],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0, 1.18],
+                  "s": "0",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.482, 0.6634],
+                  "b": [0.5878, 0.809],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.6936, 0.9546],
+                  "s": "10",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.7101, 0.41],
+                  "b": [0.866, 0.5],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [1.0219, 0.59],
+                  "s": "20",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.7994, 0.1825],
+                  "b": [0.9749, 0.2225],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [1.1504, 0.2626],
+                  "s": "30",
+                  "pos": "c"
+                },
+                {
+                  "t": "segment",
+                  "a": [0.82, 0],
+                  "b": [1, 0],
+                  "width": 2
+                },
+                {
+                  "t": "text",
+                  "at": [0.91, 0],
+                  "s": "40",
+                  "pos": "s"
+                }
+              ]
+            }
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": null,
+      "confidence": true,
+      "explain": {
+        "prompt": "用一句话说一说：为什么刻度不均匀？",
+        "min": 6
+      },
+      "feedback": {
+        "ref": "U₀ = 6 V × 10 Ω ÷ (40 Ω − 0.5F)。Rₓ 随 F 均匀减小，但它在分母里，所以 U₀ 不随 F 均匀变化：每多 10 N，示数分别多 0.21、0.29、0.4、0.6 V。"
+      }
+    },
+    {
+      "id": "p-pe-tt-ammeter",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k7"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "电子秤电流表",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "同一台电子秤（电源 6 V，R₀ = 10 Ω，压敏电阻 Rₓ = (30 − 0.5F) Ω），改用电流表当压力表，刻度均匀吗？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "均匀",
+            "mc": "scaleuniform"
+          },
+          {
+            "id": "a",
+            "text": "不均匀"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "电流随压力增大而增大，所以刻度均匀",
+            "mc": "scaleuniform"
+          },
+          {
+            "id": "r1",
+            "text": "I = 6 V ÷ (40 Ω − 0.5F)，不是 F 的一次函数"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "「示数随被测量增大而增大」只说明刻度朝一个方向排，不能说明间隔相等；间隔相等要求示数是被测量的一次函数。"
+      }
+    },
+    {
+      "id": "p-pe-tt-height",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k7"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "身高测量仪",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "身高测量仪（电源 6 V，R₀ = 20 Ω，20 Ω 的电阻丝竖直放置，对应身高 150～190 cm）：电流不变，电压表测滑片下方那段电阻丝。表盘改成身高刻度，均匀吗？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "均匀"
+          },
+          {
+            "id": "b",
+            "text": "不均匀"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "电流不变，电压表示数与那段电阻丝的长度成正比，也就与身高的增加量成正比"
+          },
+          {
+            "id": "r2",
+            "text": "示数随身高增大而增大，所以刻度均匀",
+            "mc": "scaleuniform"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "这道题的答案对，但「示数随身高增大而增大」这个理由不对。刻度均匀的真正原因是电流不变，电压与长度成正比。"
+      }
+    },
+    {
+      "id": "p-pe-tt-range-scale",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k10",
+        "physics:k7"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "电子秤量程",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "电子秤（电源 6 V，压敏电阻 Rₓ = (30 − 0.5F) Ω）：电压表（0～3 V）测 R₀，R₀ = 10 Ω 时最大只能称 40 N。要称到 50 N，可以怎么改？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "把 R₀ 换成 20 Ω",
+            "mc": "rangerule"
+          },
+          {
+            "id": "c",
+            "text": "换一个电压更高的电源"
+          },
+          {
+            "id": "a",
+            "text": "把 R₀ 换成 5 Ω"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "电压表满偏时 Rₓ = R₀；R₀ 越小，满偏时对应的 Rₓ 越小，压力越大"
+          },
+          {
+            "id": "r2",
+            "text": "定值电阻越大越能保护电路，能测的范围就越大",
+            "mc": "rangerule"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "F_max = 2 × (30 − R₀)，R₀ = 5 Ω 时正好是 50 N，换成 20 Ω 反而只剩 20 N。到底换大还是换小，要看电表测的是哪一段。"
+      }
+    },
+    {
+      "id": "p-pe-tt-range-wind",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k10"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "风速仪量程",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "风速仪：电压表（0～15 V）测电阻丝的一段，风速越大示数越大。R₀ = 20 Ω 时最大只能测约 11.6 m/s。要测到 15 m/s，应把 R₀ 换成？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "100 Ω"
+          },
+          {
+            "id": "b",
+            "text": "5 Ω",
+            "mc": "rangerule"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "和电子秤一样，R₀ 换小就能测得更多",
+            "mc": "rangerule"
+          },
+          {
+            "id": "r1",
+            "text": "R₀ 越大，电流越小，同样风速下电压表示数越小，就能测更大的风速"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "风速仪里电压表测的是电阻丝的一段，电流越小示数越小；电子秤里电压表测的是 R₀。两者的电表位置不同，结论也相反，所以不能套口诀。"
+      }
+    },
+    {
+      "id": "p-pe-tt-alcohol",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k6",
+        "physics:k7"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "酒精测试仪",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "酒精测试仪：电源 6 V，气敏电阻 Rₓ 与 R₀ = 10 Ω 串联，酒精含量增大时 Rₓ 变小。电压表并在 Rₓ 两端，示数怎样变化？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "变大",
+            "mc": "allvoltageup"
+          },
+          {
+            "id": "c",
+            "text": "不变"
+          },
+          {
+            "id": "a",
+            "text": "变小"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "电流变大，每个电阻两端的电压都变大",
+            "mc": "allvoltageup"
+          },
+          {
+            "id": "r1",
+            "text": "电流变大，R₀ 两端电压变大，Uₓ = 6 V − U₀ 变小"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "c 从 0 增大到 80 时，Uₓ 从约 5.14 V 降到约 3.27 V。"
+      }
+    },
+    {
+      "id": "p-pe-tt-scale-vx",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k6"
+      ],
+      "type": "twotier",
+      "level": "junior",
+      "context": "电子秤电压表测压敏电阻",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "电子秤（电源 6 V，压敏电阻 Rₓ 与 R₀ = 10 Ω 串联，压力越大 Rₓ 越小）：电压表并在压敏电阻 Rₓ 两端，压力增大时示数怎样变化？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "变大",
+            "mc": "allvoltageup"
+          },
+          {
+            "id": "a",
+            "text": "变小"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "Rₓ 变小，电流变大，R₀ 分得的电压变大，Rₓ 分得的变小"
+          },
+          {
+            "id": "r2",
+            "text": "电流变大，Rₓ 两端电压也变大",
+            "mc": "allvoltageup"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "F 从 0 增大到 50 N 时，Uₓ 从 4.5 V 降到 2.0 V。串联电路里电压按电阻分，电阻变小的那个分得少。"
+      }
+    },
+    {
+      "id": "p-pe-tr-design",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k7",
+        "physics:k6"
+      ],
+      "type": "transfer",
+      "level": "junior",
+      "context": "设计要求",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "设计一台电子秤：压敏电阻与定值电阻 R₀ 串联在电源上，压力越大，压敏电阻越小。要求压力越大，电表示数越大。电表应该怎么接？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "a",
+            "text": "电流表串联在电路里，或电压表并在 R₀ 两端"
+          },
+          {
+            "id": "b",
+            "text": "电压表并在压敏电阻两端",
+            "mc": "allvoltageup"
+          },
+          {
+            "id": "c",
+            "text": "三种接法都可以"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "压力越大电流越大，每个元件两端电压都越大",
+            "mc": "allvoltageup"
+          },
+          {
+            "id": "r1",
+            "text": "压力越大电流越大，R₀ 两端电压也越大，压敏电阻两端电压反而越小"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "压力越大，压敏电阻越小，总电阻越小，电流越大；R₀ 不变，它两端的电压 U₀ = IR₀ 也越大；电源电压不变，压敏电阻两端的电压 Uₓ = U − U₀ 反而越小。所以电流表、并在 R₀ 两端的电压表都符合要求，并在压敏电阻两端的电压表不符合。"
+      }
+    },
+    {
+      "id": "p-pe-tr-battery",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k10"
+      ],
+      "type": "transfer",
+      "level": "junior",
+      "context": "电池用久了",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "电子秤（R₀ = 10 Ω，压敏电阻 Rₓ = (30 − 0.5F) Ω，电压表测 R₀，表盘按 6 V 电源刻好）用久了，电源电压从 6 V 降到 5 V。称同一个物体时，显示的压力会？",
+      "figures": [],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "不变"
+          },
+          {
+            "id": "c",
+            "text": "偏大"
+          },
+          {
+            "id": "a",
+            "text": "偏小"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r1",
+            "text": "U₀ = U × R₀ ÷ (R₀ + Rₓ)，压力相同时示数与电源电压成正比"
+          },
+          {
+            "id": "r2",
+            "text": "压力相同，压敏电阻相同，示数就相同"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "压力相同时 Rₓ 相同，U₀ = U × R₀ ÷ (R₀ + Rₓ) 随电源电压一起变成原来的 5/6，指针偏转变小，指到的是更小的压力刻度。例如称 20 N 的物体：6 V 时 U₀ = 2.0 V，5 V 时 U₀ ≈ 1.67 V，按原来的刻度只显示 8 N。"
+      }
+    },
+    {
+      "id": "p-pe-inv-force",
+      "subject": "physics",
+      "module": "pe",
+      "kp": [
+        "physics:k7",
+        "physics:k8"
+      ],
+      "type": "inverse",
+      "level": "junior",
+      "context": "由电流反推压力",
+      "retest": true,
+      "page": "physics/circuits-lab.html",
+      "widget": null,
+      "stem": "下图是压敏电阻 Rₓ 与压力 F 的关系图像（从 (0 N, 30 Ω) 到 (50 N, 5 Ω) 的直线）。电源 6 V，Rₓ 与 R₀ = 10 Ω 串联，电流表示数为 0.2 A。此时压力多大？",
+      "figures": [
+        {
+          "view": [0, 52, 0, 32],
+          "aspect": "fill",
+          "axes": {
+            "x": "F/N",
+            "y": "Rₓ/Ω",
+            "xt": [10, 20, 30, 40, 50],
+            "yt": [5, 10, 15, 20, 25, 30]
+          },
+          "ratio": 0.7,
+          "alt": "压敏电阻 Rₓ 与压力 F 的关系图像",
+          "items": [
+            {
+              "t": "segment",
+              "a": [10, 0],
+              "b": [10, 32],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [20, 0],
+              "b": [20, 32],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [30, 0],
+              "b": [30, 32],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [40, 0],
+              "b": [40, 32],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [50, 0],
+              "b": [50, 32],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [0, 5],
+              "b": [52, 5],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [0, 10],
+              "b": [52, 10],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [0, 15],
+              "b": [52, 15],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [0, 20],
+              "b": [52, 20],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [0, 25],
+              "b": [52, 25],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "segment",
+              "a": [0, 30],
+              "b": [52, 30],
+              "color": "muted",
+              "dash": true,
+              "width": 1
+            },
+            {
+              "t": "polyline",
+              "pts": [[0, 30], [50, 5]]
+            }
+          ]
+        }
+      ],
+      "answer": {
+        "options": [
+          {
+            "id": "b",
+            "text": "40 N"
+          },
+          {
+            "id": "a",
+            "text": "20 N"
+          },
+          {
+            "id": "c",
+            "text": "10 N"
+          },
+          {
+            "id": "d",
+            "text": "30 N"
+          }
+        ],
+        "correct": "a"
+      },
+      "reason": {
+        "options": [
+          {
+            "id": "r2",
+            "text": "用电源电压除以电流，直接当作 Rₓ 去图像上找"
+          },
+          {
+            "id": "r1",
+            "text": "用电源电压除以电流得到总电阻，减去 R₀ 得到 Rₓ，再到图像上找对应的压力"
+          }
+        ],
+        "correct": "r1"
+      },
+      "confidence": true,
+      "explain": null,
+      "feedback": {
+        "ref": "6 V ÷ 0.2 A = 30 Ω 是总电阻，不是 Rₓ。减去 R₀ 得 Rₓ = 30 Ω − 10 Ω = 20 Ω，再在图像上找 Rₓ = 20 Ω 的点，对应 F = 20 N。"
+      }
+    }
+  ]
+}

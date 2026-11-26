@@ -4,6 +4,9 @@
   var PAGE = (currentScript && currentScript.getAttribute("data-page")) || "home";
   var COMPACT = currentScript && currentScript.getAttribute("data-mode") === "compact";
   var SUPPORTS_LANG = currentScript && currentScript.getAttribute("data-bilingual") === "true";
+  // data-no-visit：这一页不记「访问过」。理解小测页（check.html）说好数据只留在本机，登录用户打开它时
+  // 也不该因为记访问而触发一次进度同步（POST api/progress）
+  var NO_VISIT = !!(currentScript && currentScript.hasAttribute("data-no-visit"));
 
   function url(rel) {
     return ROOT === "." ? rel : ROOT + "/" + rel;
@@ -85,7 +88,7 @@
 
   function mount() {
     injectStyles();
-    if (window.ABSLabAuth && PAGE) {
+    if (window.ABSLabAuth && PAGE && !NO_VISIT) {
       window.ABSLabAuth.markVisited(PAGE);
     }
 
@@ -175,7 +178,7 @@
               : '<span class="abs-shell-badge local">本地模式</span>') +
           '</div>' +
           '<div class="abs-shell-stats">' +
-            '<div class="abs-shell-stat"><span>📐 数学</span><b>导图掌握 ' + mapsMastered("math") + '</b></div>' +
+            '<div class="abs-shell-stat"><span>📐 数学</span><b>导图掌握 ' + mapsMastered("math") + ' · 动点 ' + summary.mpointDone + '/' + summary.mpointTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>⚡ 物理</span><b>导图 ' + summary.kmMastered + ' · 实验台 ' + summary.circuitsDone + '/' + summary.circuitsTotal + ' · 高中 ' + summary.hsDone + '/' + summary.hsTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>🧪 化学</span><b>导图掌握 ' + mapsMastered("chemistry") + ' · 中和 ' + summary.chemDone + '/' + summary.chemTotal + '</b></div>' +
             '<div class="abs-shell-stat"><span>🧬 生物</span><b>导图掌握 ' + mapsMastered("biology") + ' · 显微镜 ' + summary.bioDone + '/' + summary.bioTotal + '</b></div>' +

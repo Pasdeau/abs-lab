@@ -42,6 +42,60 @@
   box-sizing: border-box;
 }
 
+/* ---------- 外部部件（registerExternal）：题干一块、作答区一块 ----------
+ * 部件是页面上现成的模块（例如电学实验台）：mount 给了 promptHost 时，题头、题干、题图放在 .qz-prompt 里（页面把它放在模块图上方），
+ * 作答区仍是 .qz-card（页面把它放在模块图紧下方）。.qz-prompt 的外观和卡片一样；遮罩挂在页面的元素上，不在卡片里，
+ * 所以 hidden 要单独压过 .qz-lock 的 display:flex */
+.qz-prompt {
+  position: relative;
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 14px 18px 4px;
+  background: var(--surface, #fff);
+  border: 1.5px solid var(--line, #e3e6ec);
+  border-radius: var(--radius, 16px);
+  box-shadow: var(--shadow, 0 2px 10px rgba(43, 45, 66, 0.05));
+  color: var(--ink, #2b2d42);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.qz-prompt * {
+  box-sizing: border-box;
+}
+.qz-prompt [hidden],
+.qz-lock[hidden] {
+  display: none !important;
+}
+.qz-prompt .qz-stem {
+  margin-bottom: 10px;
+}
+/* 提交预测以后到解释之前，作答区收起成一行「你的预测：……」 */
+.qz-picked {
+  display: none;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--blue-soft, #e8edff);
+  color: var(--ink, #2b2d42);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.qz-answer[data-collapsed] > .qz-part,
+.qz-answer[data-collapsed] > .qz-actions {
+  display: none;
+}
+.qz-answer[data-collapsed] > .qz-picked {
+  display: block;
+}
+.qz-stage-ext {
+  margin: 0;
+}
+.qz-card-ext[data-stage="free"] .qz-answer {
+  display: none;
+}
+
 /* 行距 6px、项距 10px（不用 gap 的写法见文件开头）；它是卡片第一个子元素，卡片有内边距，负的上外边距不会和外面合并 */
 .qz-head {
   display: flex;
@@ -892,6 +946,10 @@
 @media (max-width: 600px) {
   .qz-card {
     padding: 12px;
+    border-radius: 13px;
+  }
+  .qz-prompt {
+    padding: 12px 12px 2px;
     border-radius: 13px;
   }
   .qz-panel {

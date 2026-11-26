@@ -1,7 +1,10 @@
 {
  "v": 1,
  "files": [
-  "items/math-demo.json"
+  "items/math-demo.json",
+  "items/math-m1.json",
+  "items/physics-pa.json",
+  "items/physics-pe.json"
  ],
  "kps": {
   "math:c22-2-2": [
@@ -28,6 +31,24 @@
     "type": "inverse",
     "page": "math/demo-poe.html",
     "level": "junior"
+   },
+   {
+    "id": "m-m1-poe",
+    "type": "predict",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tt-walk",
+    "type": "twotier",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tt-fill",
+    "type": "twotier",
+    "page": "math/moving-point.html",
+    "level": "junior"
    }
   ],
   "math:c23-4-2": [
@@ -53,6 +74,262 @@
     "id": "m-dd-area-inverse",
     "type": "inverse",
     "page": "math/demo-poe.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tt-kink",
+    "type": "twotier",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tt-time",
+    "type": "twotier",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tr-start",
+    "type": "transfer",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-inv-sides",
+    "type": "inverse",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   }
+  ],
+  "math:c26-1-1": [
+   {
+    "id": "m-m1-poe",
+    "type": "predict",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tt-pq6",
+    "type": "twotier",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tt-square",
+    "type": "twotier",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   },
+   {
+    "id": "m-m1-tr-speed",
+    "type": "transfer",
+    "page": "math/moving-point.html",
+    "level": "junior"
+   }
+  ],
+  "physics:e2": [
+   {
+    "id": "p-pa-tt-report",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tt-compare",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tr-fixed",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   }
+  ],
+  "physics:k10": [
+   {
+    "id": "p-pe-tt-range-scale",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-range-wind",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tr-battery",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   }
+  ],
+  "physics:k3": [
+   {
+    "id": "p-pa-tt-table",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tt-report",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tt-compare",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tr-fixed",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   }
+  ],
+  "physics:k4": [
+   {
+    "id": "p-pa-poe",
+    "type": "predict",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tt-graph",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tt-table",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tr-switchon",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   }
+  ],
+  "physics:k6": [
+   {
+    "id": "p-pa-tt-meter",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tr-fixed",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-inv-rp",
+    "type": "inverse",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-alcohol",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-scale-vx",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tr-design",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   }
+  ],
+  "physics:k7": [
+   {
+    "id": "p-pe-poe",
+    "type": "predict",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-ammeter",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-height",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-range-scale",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tt-alcohol",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-tr-design",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-inv-force",
+    "type": "inverse",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   }
+  ],
+  "physics:k8": [
+   {
+    "id": "p-pa-poe",
+    "type": "predict",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tt-which",
+    "type": "twotier",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-tr-fixed",
+    "type": "transfer",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pa-inv-rp",
+    "type": "inverse",
+    "page": "physics/circuits-lab.html",
+    "level": "junior"
+   },
+   {
+    "id": "p-pe-inv-force",
+    "type": "inverse",
+    "page": "physics/circuits-lab.html",
     "level": "junior"
    }
   ]
@@ -109,6 +386,379 @@
    "retest": true,
    "context": "动点面积",
    "module": "demo"
+  },
+  "m-m1-poe": {
+   "subject": "math",
+   "type": "predict",
+   "kp": [
+    "math:c26-1-1",
+    "math:c22-2-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": false,
+   "context": "双动点面积",
+   "module": "m1"
+  },
+  "m-m1-tt-pq6": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c26-1-1"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "双动点面积（不同速度）",
+   "module": "m1"
+  },
+  "m-m1-tt-square": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c26-1-1"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "边长匀速增长的正方形",
+   "module": "m1"
+  },
+  "m-m1-tt-kink": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c23-4-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "矩形路线的拐点",
+   "module": "m1"
+  },
+  "m-m1-tt-time": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c23-4-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "按时间画图的拐点",
+   "module": "m1"
+  },
+  "m-m1-tt-walk": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c22-2-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "先走平路再爬坡",
+   "module": "m1"
+  },
+  "m-m1-tt-fill": {
+   "subject": "math",
+   "type": "twotier",
+   "kp": [
+    "math:c22-2-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "向下细上粗的容器注水",
+   "module": "m1"
+  },
+  "m-m1-tr-start": {
+   "subject": "math",
+   "type": "transfer",
+   "kp": [
+    "math:c23-4-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "换起点",
+   "module": "m1"
+  },
+  "m-m1-tr-speed": {
+   "subject": "math",
+   "type": "transfer",
+   "kp": [
+    "math:c26-1-1"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "改速度",
+   "module": "m1"
+  },
+  "m-m1-inv-sides": {
+   "subject": "math",
+   "type": "inverse",
+   "kp": [
+    "math:c23-4-2"
+   ],
+   "page": "math/moving-point.html",
+   "level": "junior",
+   "retest": true,
+   "context": "由图象反推边长",
+   "module": "m1"
+  },
+  "p-pa-poe": {
+   "subject": "physics",
+   "type": "predict",
+   "kp": [
+    "physics:k4",
+    "physics:k8"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": false,
+   "context": "小灯泡与变阻器 I-U 图像",
+   "module": "pa"
+  },
+  "p-pa-tt-graph": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k4"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "I-U 图像读图",
+   "module": "pa"
+  },
+  "p-pa-tt-table": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k4",
+    "physics:k3"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "实验数据表",
+   "module": "pa"
+  },
+  "p-pa-tt-report": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k3",
+    "physics:e2"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "实验报告评价",
+   "module": "pa"
+  },
+  "p-pa-tt-compare": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k3",
+    "physics:e2"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "和定值电阻对比",
+   "module": "pa"
+  },
+  "p-pa-tt-which": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k8"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "两条图像辨认",
+   "module": "pa"
+  },
+  "p-pa-tt-meter": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k6"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "电压表改测变阻器",
+   "module": "pa"
+  },
+  "p-pa-tr-fixed": {
+   "subject": "physics",
+   "type": "transfer",
+   "kp": [
+    "physics:k8",
+    "physics:k3",
+    "physics:e2",
+    "physics:k6"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "把灯换成定值电阻",
+   "module": "pa"
+  },
+  "p-pa-tr-switchon": {
+   "subject": "physics",
+   "type": "transfer",
+   "kp": [
+    "physics:k4"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "开灯瞬间",
+   "module": "pa"
+  },
+  "p-pa-inv-rp": {
+   "subject": "physics",
+   "type": "inverse",
+   "kp": [
+    "physics:k8",
+    "physics:k6"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "由图像反推",
+   "module": "pa"
+  },
+  "p-pe-poe": {
+   "subject": "physics",
+   "type": "predict",
+   "kp": [
+    "physics:k7"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": false,
+   "context": "电子秤表盘",
+   "module": "pe"
+  },
+  "p-pe-tt-ammeter": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k7"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "电子秤电流表",
+   "module": "pe"
+  },
+  "p-pe-tt-height": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k7"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "身高测量仪",
+   "module": "pe"
+  },
+  "p-pe-tt-range-scale": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k10",
+    "physics:k7"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "电子秤量程",
+   "module": "pe"
+  },
+  "p-pe-tt-range-wind": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k10"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "风速仪量程",
+   "module": "pe"
+  },
+  "p-pe-tt-alcohol": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k6",
+    "physics:k7"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "酒精测试仪",
+   "module": "pe"
+  },
+  "p-pe-tt-scale-vx": {
+   "subject": "physics",
+   "type": "twotier",
+   "kp": [
+    "physics:k6"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "电子秤电压表测压敏电阻",
+   "module": "pe"
+  },
+  "p-pe-tr-design": {
+   "subject": "physics",
+   "type": "transfer",
+   "kp": [
+    "physics:k7",
+    "physics:k6"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "设计要求",
+   "module": "pe"
+  },
+  "p-pe-tr-battery": {
+   "subject": "physics",
+   "type": "transfer",
+   "kp": [
+    "physics:k10"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "电池用久了",
+   "module": "pe"
+  },
+  "p-pe-inv-force": {
+   "subject": "physics",
+   "type": "inverse",
+   "kp": [
+    "physics:k7",
+    "physics:k8"
+   ],
+   "page": "physics/circuits-lab.html",
+   "level": "junior",
+   "retest": true,
+   "context": "由电流反推压力",
+   "module": "pe"
   }
  }
 }

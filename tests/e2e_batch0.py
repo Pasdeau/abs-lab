@@ -59,7 +59,12 @@ QID_INV = "m-dd-area-inverse"
 QZ_POE = "qz-mddareapoe"
 QZ_TT = "qz-mddsttwotier"
 # 能在重测页出的三道题的正确答案（答案、理由），重测里出到哪道就答哪道
-RIGHT = {QID_TT: ("b", "r2"), QID_TR: ("a", "r1"), QID_INV: ("a", "r1")}
+RIGHT = {QID_TT: ("b", "r2"), QID_TR: ("a", "r1"), QID_INV: ("a", "r1"),
+         # 第 1 批 A 的 math-m1.json 里也有带 graphaspath、可以重测的题，重测页按选题规则可能出它们
+         "m-m1-tt-walk": ("a", "r1"), "m-m1-tt-fill": ("a", "r1"), "m-m1-inv-sides": ("a", "r1")}
+# 上面这些题的情境（与题库里的 context 一致）
+RIGHT_CTX = {QID_TT: "距离—时间读图", QID_TR: "动点面积", QID_INV: "动点面积",
+             "m-m1-tt-walk": "先走平路再爬坡", "m-m1-tt-fill": "向下细上粗的容器注水", "m-m1-inv-sides": "由图象反推边长"}
 TAG = "graphaspath"
 TAG_NAME = "图象即轨迹"
 # 解释至少 6 个字（math-demo.json 里 explain.min = 6），写一句完整的中文
@@ -76,14 +81,24 @@ OFFLINE_PAGES = [
 # 本批新增的页面：390px 下不得出现横向滚动（CONTRACT §0）；旧页面只报告，不判失败
 NEW_PAGES = ("math/demo-poe.html", "math/svgkit-demo.html", "review.html")
 
-# CONTRACT §9 的基线（main 上测得：1280×900、游客、等 2 秒；只数祖先链上没有 display:none 的 .lk-chip）
+# CONTRACT §9 的基线（main 上测得：1280×900、游客、等 2 秒；只数祖先链上没有 display:none 的 .lk-chip）。
+# 第 1 批 A 按任务书第 6.6 节新增了 7 条关联：物理 k4 → circuits-m3、k6 → circuits-m13（+2），
+# 数学 c23-4-2 → mpoint-rect / mpoint-time、c22-2-2 → mpoint-rect、c26-1-1 → mpoint-pq、c26-4-1 → mpoint-pq（+5）；
+# 第 0 批时物理 47 / 48、数学 7。其余学科不变。
 BASELINE = {
-    "physics": {"default": 47, "hs": 48},
+    "physics": {"default": 49, "hs": 50},
     "chemistry": {"default": 4, "hs": 7},
-    "math": {"default": 7, "hs": None},
+    "math": {"default": 12, "hs": None},
     "biology": {"default": 13, "hs": None},
 }
-QUIZ_CHIPS = {"math": ["math:c22-2-2", "math:c23-4-2"], "physics": [], "chemistry": [], "biology": []}
+# 有测试题的知识点（第 1 批 A 起物理也有：physics-pa.json、physics-pe.json）
+QUIZ_CHIPS = {
+    "math": ["math:c22-2-2", "math:c23-4-2", "math:c26-1-1"],
+    "physics": ["physics:e2", "physics:k3", "physics:k4", "physics:k6", "physics:k7", "physics:k8", "physics:k10"],
+    "chemistry": [], "biology": [],
+}
+# 测试标签链到这个知识点在题库里的第一道题所在的页面（题库文件按文件名排序：math-demo.json 在 math-m1.json 前面）
+QUIZ_PAGES = {"math:c22-2-2": "math/demo-poe.html", "math:c23-4-2": "math/demo-poe.html", "math:c26-1-1": "math/moving-point.html"}
 
 # 拖动路线 B→C→D（世界坐标），P 必须一直在这条折线上
 POLY = [(0.0, 0.0), (6.0, 0.0), (6.0, 4.0)]
@@ -954,8 +969,9 @@ def sc_stable(R):
         R.check(pre + ".schedule", rv.get("step") == step and rv.get("due") == want_due and m.get("status") == status and rv.get("stable") is True,
                 "want step %s due %r status %s stable True；got step %r due %r status %r stable %r" % (
                     step, want_due, status, rv.get("step"), rv.get("due"), m.get("status"), rv.get("stable")), page)
-    # 情境交替：距离—时间读图（题 2）和动点面积（题 3、4）轮着出
-    ctx_of = lambda q: "st" if q == QID_TT else "area"
+    # 情境交替：相邻两次出的题情境不同（第 0 批只有「距离—时间读图」（题 2）和「动点面积」（题 3、4）两种；
+    # 第 1 批 A 起 math-m1.json 里带 graphaspath 的题也会出，按题目各自的 context 比）
+    ctx_of = lambda q: RIGHT_CTX.get(q, q)
     R.check("chain.context_alternates", all(ctx_of(a) != ctx_of(b) for a, b in zip([QID_TT] + served, served)),
             "D+1 起依次出的题：%s" % ([QID_TT] + served))
 
@@ -1246,7 +1262,7 @@ def sc_regression(R):
             texts = [q["text"] for q in c["quiz"]]
             R.check("chips.math.quiz_guest_text", texts and all(t == "理解测试 →" for t in texts), "游客文字 %s" % texts, page)
             hrefs = [q["href"] for q in c["quiz"]]
-            R.check("chips.math.quiz_href", hrefs and all("demo-poe.html" in h and "#qz-" in h for h in hrefs), "链接 %s" % hrefs, page)
+            R.check("chips.math.quiz_href", hrefs and all(QUIZ_PAGES.get(q["ref"], "?") in q["href"] and "#qz-" in q["href"] for q in c["quiz"]), "链接 %s" % hrefs, page)
         has_toggle = page.evaluate("() => !!document.getElementById('hsToggle')")
         if base["hs"] is not None:
             if not has_toggle:
@@ -1255,8 +1271,10 @@ def sc_regression(R):
             page.evaluate("() => { var t = document.getElementById('hsToggle'); t.checked = true; t.dispatchEvent(new Event('change', { bubbles: true })); }")
             page.wait_for_timeout(800)
             c = page.evaluate("() => window.__e2e.chips()")
-            R.check("chips.%s.hs" % subj, c["nonquiz"] == base["hs"] and not c["quiz"],
-                    "开高中后非测试标签 %d（基线 %d），测试标签 %d" % (c["nonquiz"], base["hs"], len(c["quiz"])), page)
+            # 开高中后测试标签不变（第 1 批 A 的题都是初中题）
+            hs_refs = sorted(q["ref"] for q in c["quiz"])
+            R.check("chips.%s.hs" % subj, c["nonquiz"] == base["hs"] and hs_refs == sorted(QUIZ_CHIPS[subj]),
+                    "开高中后非测试标签 %d（基线 %d），测试标签 %s" % (c["nonquiz"], base["hs"], hs_refs), page)
             page.evaluate("() => { var t = document.getElementById('hsToggle'); t.checked = false; t.dispatchEvent(new Event('change', { bubbles: true })); }")
         elif has_toggle:
             R.info("%s 导图出现了 #hsToggle（基线没有）" % subj)
