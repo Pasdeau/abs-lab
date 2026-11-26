@@ -17,6 +17,8 @@
   try {
     if (/^https?:$/.test(location.protocol) && SCRIPT && SCRIPT.src) API_BASE = SCRIPT.src.replace(/shared\/mistakes\.js(\?.*)?$/, "api/");
   } catch (e) {}
+  // 网站根目录（线上在 /abs-lab/ 子路径下），用来拼重测页和标签库的地址
+  var ROOT = (SCRIPT && SCRIPT.src) ? SCRIPT.src.replace(/shared\/mistakes\.js(\?.*)?$/, "") : "../";
 
   var STATUS = ["未订正", "已订正", "已掌握"];
   var TAGS = ["概念不清", "审题", "计算", "方法", "粗心", "实验", "其他"];
@@ -142,12 +144,24 @@
     ".mk-opts label{display:inline-flex;align-items:center;gap:4px;cursor:pointer}",
     ".mk-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}",
     ".mk-empty{text-align:center;color:#64748b;padding:30px 10px}",
+    /* 来自理解测试的错题：错误概念、稳定迷思、下次重测。导图页不加载 theme.css，变量都带回退值（取抽屉原有的配色） */
+    ".mk-mc{font-size:12.5px;font-weight:600;background:var(--sun-soft,#fef3c7);color:#7a4a00;border-radius:4px;padding:0 6px}",
+    ".mk-stable{font-size:12px;font-weight:700;background:var(--red,#be123c);color:#fff;border-radius:4px;padding:0 6px}",
+    ".mk-due{font-size:12.5px;color:var(--muted,#64748b)}",
+    /* 「去重测」看起来是个小标签，伪元素把可点的范围撑到 44px 高，手机上好点 */
+    ".mk-retest{position:relative;display:inline-block;font-size:13px;font-weight:700;line-height:1.5;color:var(--blue,#1d4ed8)!important;text-decoration:none!important;border:1px solid currentColor;border-radius:12px;padding:0 10px;background:var(--blue-soft,#eef2ff)}",
+    ".mk-retest::after{content:'';position:absolute;left:-4px;right:-4px;top:50%;height:44px;transform:translateY(-50%)}",
+    /* :hover 和 :focus-visible 分开写：选择器列表里有一个不认识就整条作废，iOS 15.4、Chrome 86 以前不认识 :focus-visible，
+       合在一起时连悬停效果也没了 */
+    ".mk-retest:hover{background:var(--surface,#fff)}",
+    ".mk-retest:focus-visible{background:var(--surface,#fff)}",
     "@media (max-width:640px){.mk-drawer{width:100vw}.mk-row{grid-template-columns:1fr}.mk-fab{left:10px;bottom:12px;font-size:14px;padding:8px 13px}}",
     "@media print{.mk-fab,.mk-kp,.mk-mask,.mk-drawer{display:none!important}}"
   ].join("\n");
 
   /* ---------- 状态 ---------- */
-  var S = { items: [], loaded: false, loading: false, error: "", token: null, view: "list", editing: null, kpFilter: "", q: "", st: "", ch: "", flash: "", confirmDel: "" };
+  // orig：点「编辑」时那一条的快照，保存测试错题时拿它判断学生在表单里改了哪些字段
+  var S = { items: [], loaded: false, loading: false, error: "", token: null, view: "list", editing: null, orig: null, kpFilter: "", q: "", st: "", ch: "", flash: "", confirmDel: "" };
   var root, fab, lastFocus = null;
 
   function token() { return window.ABSLabAuth && window.ABSLabAuth.getToken ? window.ABSLabAuth.getToken() : null; }
@@ -155,6 +169,69 @@
   function mine() { return S.items.filter(function (it) { return it.subject === SUBJECT; }); }
   function newId() { return ID_PREFIX + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
   function today() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
+
+  /* ---------- 来自理解测试的错题（origin "quiz"） ----------
+   * 这些条目由测试引擎按错误概念写入，额外带 mc（标签 id）、qids（题目 id）、review（重测计划）。
+   * 错题本不加载 shared/quiz/core.js（大多数人只记手写的错题），用到的几条规则在这里内联，并注明出处。 */
+  var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  // 日期加减按 UTC 算，与 core.addDays 相同：避开夏令时切换那天差一小时
+  function addDays(d, n) {
+    if (!DATE_RE.test(String(d || ""))) return "";
+    var p = d.split("-"), x = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2]) + n * 86400000);
+    return x.getUTCFullYear() + "-" + ("0" + (x.getUTCMonth() + 1)).slice(-2) + "-" + ("0" + x.getUTCDate()).slice(-2);
+  }
+  function fmtMD(d) { var p = String(d).split("-"); return (+p[1]) + " 月 " + (+p[2]) + " 日"; }
+  function isQuiz(it) { return !!it && it.origin === "quiz"; }
+  function reviewOf(it) { return isQuiz(it) && it.review && typeof it.review === "object" ? it.review : null; }
+  // 重测入口：按标签记的 mc-<标签> 去 ?tag=，按题记的 qz-… 去 ?item=<最近一道题>（与 core.keyOfMistake 相同）
+  function retestHref(it) {
+    if (/^mc-/.test(it.id)) return ROOT + "review.html?tag=" + encodeURIComponent(it.id.slice(3));
+    var q = Array.isArray(it.qids) && it.qids.length ? it.qids[it.qids.length - 1] : "";
+    return /^qz-/.test(it.id) && q ? ROOT + "review.html?item=" + encodeURIComponent(q) : "";
+  }
+  // 手动改订正状态时的重测计划，与 core.manualStatus 同一规则：标成「已掌握」就不再安排重测（due 清空）；
+  // 从已掌握改回未订正 / 已订正、又没有到期日，就从明天起接着测。只在状态真的变了时才动 review
+  function reviewAfterManual(it, status) {
+    var r = reviewOf(it);
+    if (!r || +it.status === status) return it.review;
+    r = Object.assign({}, r);
+    if (status === 2) r.due = "";
+    else if (!r.due) r.due = addDays(today(), 1);
+    return r;
+  }
+  // 错误概念的名称在 shared/quiz/misconceptions.json，第一次显示测试错题时才读；读不到就显示标签 id
+  var TAGLIB = null, tagLoading = false;
+  function tagName(id) { return (TAGLIB && TAGLIB[id] && TAGLIB[id].name) || id; }
+  function loadTagNames() {
+    if (TAGLIB || tagLoading) return;
+    tagLoading = true;
+    fetch(ROOT + "shared/quiz/misconceptions.json")
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { TAGLIB = (j && j.tags && typeof j.tags === "object") ? j.tags : {}; })
+      .catch(function () { TAGLIB = {}; })
+      .then(function () {
+        tagLoading = false;
+        renderListIfIdle();
+      });
+  }
+  // 异步结果回来以后的重画只在列表视图里做：表单里重画会冲掉正在填写的内容，搜索框里正在打字也不打断
+  function renderListIfIdle() {
+    var a = document.activeElement;
+    if (root && root.classList.contains("mk-open") && S.view === "list" && !(a && a.hasAttribute && a.hasAttribute("data-mk-in"))) render();
+  }
+  function quizMeta(it) {
+    if (!isQuiz(it)) return "";
+    var h = "", r = reviewOf(it);
+    (Array.isArray(it.mc) ? it.mc : []).forEach(function (id) { h += '<span class="mk-mc" title="错误概念">' + esc(tagName(id)) + "</span>"; });
+    if (r && r.stable === true) h += '<span class="mk-stable" title="在两种不同情境的题上都出现过这个错误想法">稳定迷思</span>';
+    // 已掌握的不再安排重测（与 core.dueList 一致）
+    if (r && +it.status < 2 && DATE_RE.test(String(r.due || ""))) {
+      h += '<span class="mk-due">下次重测：' + fmtMD(r.due) + "</span>";
+      var href = retestHref(it);
+      if (href && r.due <= today()) h += '<a class="mk-retest" href="' + esc(href) + '">去重测 →</a>';
+    }
+    return h;
+  }
 
   async function call(method, body) {
     var t = token();
@@ -173,21 +250,54 @@
     return j;
   }
 
-  async function load(force) {
+  // loadSeq：每次读取的编号，后发的读取让先发的作废（先发后到的旧数据不能盖掉新的）。
+  // writeSeq：本页每写成功一次加一，后台读取期间写过，读到的就可能是写之前的版本
+  var loadSeq = 0, writeSeq = 0;
+  function sigOf(list) { return list.map(function (x) { return x ? x.id + "@" + x.updatedAt : ""; }).join("|"); }
+
+  // bg：打开抽屉、页面从往返缓存恢复时在后台重读——测试引擎会在别的页面改同一批错题，只读一次的列表会过时。
+  // 手上已有这个账号的列表时照常显示，不闪「正在读取」；读取失败也保留手上的列表（以前打开抽屉根本不重读）；
+  // 读到的和手上的一样就不重画，变了也只在列表视图里重画
+  async function load(force, bg) {
     var t = token();
-    if (!API_BASE || !t) { S.items = []; S.loaded = false; S.token = null; S.error = ""; refresh(); return; }
+    if (!API_BASE || !t) { loadSeq++; S.items = []; S.loaded = false; S.loading = false; S.token = null; S.error = ""; refresh(); return; }
     if (!force && S.token === t && (S.loaded || S.loading)) return;
-    S.token = t; S.loading = true; S.error = ""; refresh();
+    var quiet = !!bg && S.loaded && S.token === t;
+    var my = ++loadSeq, w = writeSeq, before = quiet ? sigOf(S.items) : "";
+    S.token = t; S.loading = true;
+    if (!quiet) { S.error = ""; refresh(); }
     try {
       var j = await call("GET");
-      S.items = Array.isArray(j.items) ? j.items : [];
+      if (my !== loadSeq) return;
+      // 后台读取期间本页保存、改过状态或删过：写成功时已经更新了手上的列表，比这次读到的新
+      if (!quiet || w === writeSeq) S.items = Array.isArray(j.items) ? j.items : [];
       S.loaded = true;
     } catch (e) {
-      S.error = e.status === 401 ? "登录状态已过期，请重新登录后再打开错题本。" : e.status === 503 ? "云端数据库暂时没有连接，错题本不能用。" : "错题本读取失败：" + e.message;
-      S.loaded = false;
+      if (my !== loadSeq) return;
+      if (!quiet) {
+        S.error = e.status === 401 ? "登录状态已过期，请重新登录后再打开错题本。" : e.status === 503 ? "云端数据库暂时没有连接，错题本不能用。" : "错题本读取失败：" + e.message;
+        S.loaded = false;
+      }
     }
     S.loading = false;
-    refresh();
+    if (!quiet) { refresh(); return; }
+    if (sigOf(S.items) !== before) { decorate(); renderListIfIdle(); }
+  }
+
+  // 测试引擎（示范页、重测页）会改同一条错题的 review（重测记录、稳定迷思）、qids、题目和错因，这一页手上的副本可能是早先读的。
+  // 写回测试错题前先取服务器上的最新版本作底，不然旧副本会把引擎新写的内容整条盖掉。取不到就用手上的副本（与以前相同）
+  async function latest(id, fallback) {
+    try {
+      var j = await call("GET");
+      if (Array.isArray(j.items)) S.items = j.items;
+    } catch (e) {}
+    return S.items.find(function (x) { return x.id === id; }) || fallback;
+  }
+  // 写成功后用服务器返回的那条替换手上的
+  function put(item) {
+    writeSeq++;
+    var i = S.items.findIndex(function (x) { return x.id === item.id; });
+    if (i >= 0) S.items[i] = item; else S.items.unshift(item);
   }
 
   /* ---------- 知识点列表（从页面读） ---------- */
@@ -267,7 +377,8 @@
     S.editing = opts.editing || null;
     root.classList.add("mk-open");
     document.documentElement.classList.add("mk-lock");
-    load(false);
+    // 已经读过就在后台重读一次（别的页面可能刚写过）；还没读完的不重复发请求
+    load(S.loaded, true);
     render();
     var x = $(".mk-x", root); if (x) x.focus({ preventScroll: true });
   }
@@ -300,11 +411,13 @@
     groups.forEach(function (g) { chs.push(g.ch); });
     all.forEach(function (it) { var c = chapterOfItem(it); if (chs.indexOf(c) === -1) chs.push(c); });
     var q = S.q.trim().toLowerCase();
+    if (all.some(function (it) { return isQuiz(it) && Array.isArray(it.mc) && it.mc.length; })) loadTagNames();
     var shown = all.filter(function (it) {
       if (S.kpFilter && it.kp !== S.kpFilter) return false;
       if (S.st !== "" && String(it.status) !== S.st) return false;
       if (S.ch && chapterOfItem(it) !== S.ch) return false;
-      if (q && [it.question, it.wrong, it.fix, it.source, it.kpName, it.chapter, (it.tags || []).join(" ")].join(" ").toLowerCase().indexOf(q) === -1) return false;
+      var mcNames = isQuiz(it) && Array.isArray(it.mc) ? it.mc.map(tagName).join(" ") : "";
+      if (q && [it.question, it.wrong, it.fix, it.source, it.kpName, it.chapter, (it.tags || []).join(" "), mcNames].join(" ").toLowerCase().indexOf(q) === -1) return false;
       return true;
     });
     var open = all.filter(function (it) { return it.status < 2; }).length;
@@ -342,7 +455,7 @@
     return '<div class="mk-item" data-s="' + it.status + '"><div class="mk-meta"><span class="mk-st" data-s="' + it.status + '">' + STATUS[it.status] + "</span>" +
       (it.source ? "<span>" + esc(it.source) + "</span>" : "") + (it.date ? "<span>" + esc(it.date) + "</span>" : "") +
       (kn ? (k ? '<button type="button" class="mk-kplink" data-mk-jump="' + esc(it.kp) + '">' + esc(kn) + "</button>" : "<span>" + esc(kn) + "</span>") : "") +
-      (it.tags || []).map(function (t) { return '<span class="mk-tg">' + esc(t) + "</span>"; }).join("") + "</div>" +
+      (it.tags || []).map(function (t) { return '<span class="mk-tg">' + esc(t) + "</span>"; }).join("") + quizMeta(it) + "</div>" +
       field("题目", it.question) + field("当时错在哪", it.wrong) + field("正确做法 / 要点", it.fix) +
       '<div class="mk-acts"><button type="button" class="mk-btn sm" data-mk-edit="' + esc(it.id) + '">编辑</button>' +
       (it.status < 2 ? '<button type="button" class="mk-btn sm" data-mk-next="' + esc(it.id) + '">标为' + STATUS[it.status + 1] + "</button>" : "") +
@@ -365,6 +478,7 @@
       '<label class="l">错因类型</label><div class="mk-opts">' + TAGS.map(function (t) { return '<label><input type="checkbox" name="tags" value="' + t + '"' + ((it.tags || []).indexOf(t) !== -1 ? " checked" : "") + ">" + t + "</label>"; }).join("") + "</div>" +
       '<label class="l" for="mkF">正确做法 / 要点</label><textarea id="mkF" name="fix" maxlength="4000">' + esc(it.fix) + "</textarea>" +
       '<label class="l">订正状态</label><div class="mk-opts">' + STATUS.map(function (n, i) { return '<label><input type="radio" name="status" value="' + i + '"' + (it.status === i ? " checked" : "") + ">" + n + "</label>"; }).join("") + "</div>" +
+      (reviewOf(it) ? '<p class="mk-note">这条错题来自理解测试，会按计划安排重测；标为「已掌握」后不再安排，改回来会重新安排。</p>' : "") +
       '<div class="mk-foot"><button type="submit" class="mk-btn pri">保存</button><button type="button" class="mk-btn" data-mk-act="cancel">取消</button></div>' +
       '<p class="mk-note">🔒 只有你自己能看到。题目、错因、正确做法、来源至少填一项。</p></form>';
   }
@@ -374,7 +488,10 @@
     return { id: newId(), subject: SUBJECT, kp: k ? k.id : "", kpName: k ? k.name : "", chapter: k ? k.chapter : "", source: "", date: today(), question: "", wrong: "", fix: "", tags: [], status: 0 };
   }
 
+  // 表单里能改的字段：保存测试错题时，只有这些字段里学生真的改过的才写到服务器的最新版本上
+  var FORM_KEYS = ["kp", "kpName", "chapter", "source", "date", "question", "wrong", "fix", "tags", "status"];
   async function save(form) {
+    // 在原对象的副本上改：origin、mc、qids、review 这些表单里没有的字段原样带回服务器
     var it = Object.assign({}, S.editing), fd = new FormData(form);
     var kp = String(fd.get("kp") || "");
     if (kp.indexOf("chap:") === 0) { it.kp = ""; it.kpName = ""; it.chapter = kp.slice(5); }
@@ -383,24 +500,46 @@
     ["source", "date", "question", "wrong", "fix"].forEach(function (n) { it[n] = String(fd.get(n) || ""); });
     it.tags = fd.getAll("tags");
     it.status = +fd.get("status") || 0;
+    // 比较「改了什么」要拿点编辑时的快照：保存失败后再点保存，S.editing 已经是上次填的内容
+    var orig = S.orig && S.orig.id === it.id ? S.orig : S.editing;
     S.editing = it;
     var btn = $("button[type=submit]", form); if (btn) { btn.disabled = true; btn.textContent = "保存中…"; }
     try {
-      var j = await call("POST", { op: "upsert", item: it });
-      var i = S.items.findIndex(function (x) { return x.id === j.item.id; });
-      if (i >= 0) S.items[i] = j.item; else S.items.unshift(j.item);
-      S.error = ""; S.view = "list"; S.editing = null; S.flash = "已保存。";
+      var item = it;
+      if (isQuiz(orig)) {
+        // 以服务器上的最新版本为底，只覆盖学生在表单里改过的字段：引擎在别的页面新写的 review.hist、qids、稳定迷思，
+        // 以及按最近一次作答重写的题目、错因，学生没动就保留。重测计划按最新版本和最终的状态重算
+        var base = await latest(it.id, orig);
+        item = Object.assign({}, base);
+        FORM_KEYS.forEach(function (k) { if (JSON.stringify(it[k]) !== JSON.stringify(orig[k])) item[k] = it[k]; });
+        if (reviewOf(base)) item.review = reviewAfterManual(base, item.status);
+      }
+      var j = await call("POST", { op: "upsert", item: item });
+      put(j.item);
+      S.error = ""; S.view = "list"; S.editing = null; S.orig = null; S.flash = "已保存。";
     } catch (e) {
       S.error = "保存失败：" + e.message;
     }
     refresh();
   }
 
+  // 「标为…」按钮
   async function update(id, patch) {
     var it = S.items.find(function (x) { return x.id === id; }); if (!it) return;
     try {
-      var j = await call("POST", { op: "upsert", item: Object.assign({}, it, patch) });
-      Object.assign(it, j.item); S.flash = "";
+      var item = Object.assign({}, it, patch);
+      if (isQuiz(it)) {
+        // 同 save：在服务器上的最新版本上改状态，重测计划也按最新版本算
+        var base = await latest(id, it);
+        item = Object.assign({}, base, patch);
+        if ("status" in patch) {
+          // 按钮只往前推：别的页面刚把状态推得更靠后（重测通过 → 已订正 / 已掌握），不因为这里显示的是旧状态就退回去
+          item.status = Math.max(+patch.status || 0, +base.status || 0);
+          if (reviewOf(base)) item.review = reviewAfterManual(base, item.status);
+        }
+      }
+      var j = await call("POST", { op: "upsert", item: item });
+      put(j.item); S.flash = "";
     } catch (e) { S.flash = ""; S.error = "更新失败：" + e.message; render(); S.error = ""; return; }
     refresh();
   }
@@ -408,6 +547,7 @@
   async function remove(id) {
     try {
       await call("POST", { op: "delete", id: id });
+      writeSeq++;
       S.items = S.items.filter(function (x) { return x.id !== id; });
       S.flash = "已删除。";
     } catch (e) { S.flash = ""; S.error = "删除失败：" + e.message; render(); S.error = ""; return; }
@@ -475,12 +615,13 @@
       if (act === "login") { closeDrawer(); if (window.ABSLabOpenAuth) window.ABSLabOpenAuth("login"); return; }
       if (act === "reload") { load(true); return; }
       if (act === "new") { S.flash = ""; S.view = "form"; S.editing = blank(S.kpFilter); render(); return; }
-      if (act === "cancel") { S.error = ""; S.view = "list"; S.editing = null; render(); return; }
+      if (act === "cancel") { S.error = ""; S.view = "list"; S.editing = null; S.orig = null; render(); return; }
       if (act === "clearkp") { S.kpFilter = ""; render(); return; }
       if (act === "export") { exportJSON(); return; }
       if (act === "import") { var f = $("[data-mk-file]", drawer); if (f) f.click(); return; }
       var id;
-      if ((id = b.getAttribute("data-mk-edit"))) { var it = S.items.find(function (x) { return x.id === id; }); if (it) { S.flash = ""; S.view = "form"; S.editing = Object.assign({}, it); render(); } return; }
+      if ((id = b.getAttribute("data-mk-edit"))) { var it = S.items.find(function (x) { return x.id === id; }); if (it) { S.flash = ""; S.view = "form"; S.editing = Object.assign({}, it); S.orig = S.editing; render(); } return; }
+      // 测试错题的重测计划在 update 里按服务器上的最新版本重算
       if ((id = b.getAttribute("data-mk-next"))) { var x = S.items.find(function (y) { return y.id === id; }); if (x) update(id, { status: Math.min(2, x.status + 1) }); return; }
       if ((id = b.getAttribute("data-mk-del"))) { if (S.confirmDel === id) remove(id); else { S.confirmDel = id; S.flash = ""; render(); } return; }
       if ((id = b.getAttribute("data-mk-jump"))) { jumpTo(id); return; }
@@ -499,6 +640,8 @@
     drawer.addEventListener("change", function (e) { if (e.target.hasAttribute("data-mk-file") && e.target.files[0]) { importJSON(e.target.files[0]); e.target.value = ""; } });
 
     window.addEventListener("abs-auth-changed", function () { var t = token(); if (t !== S.token) load(true); else decorate(); });
+    // 从往返缓存（后退 / 前进）回到这一页时脚本不重新运行，列表还是离开时的；多半是刚在示范页、重测页做完题回来，后台重读一次
+    window.addEventListener("pageshow", function (e) { if (e.persisted) load(true, true); });
     // 导图会重新渲染文字版（改状态名称、筛选等），按钮丢了就补上
     var timer = 0;
     new MutationObserver(function (list) {

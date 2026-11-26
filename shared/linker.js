@@ -59,6 +59,17 @@
     ".lk-chip[data-kind=kp]:hover,.lk-chip[data-kind=kp]:focus-visible{border-color:#1d4ed8;background:#e8f0ff}",
     ".lk-chip[data-kind=kp] .lk-tag{background:#1d4ed8}",
     ".lk-chip[data-kind=kp][data-lv=senior] .lk-tag{background:#6b46c1}",
+    /* 理解测试标签：整个标签只有一段文字（测试按 textContent 判断），颜色表示测试进度。
+       导图页不加载 theme.css，所以主题变量都带回退值 */
+    ".lk-chip[data-kind=quiz]{padding:2px 10px;font-weight:600;white-space:nowrap;border-color:var(--sun,#f2c46d);background:var(--sun-soft,#fff8e6);color:#7a4a00}",
+    /* :hover 和 :focus-visible 分开写：选择器列表里有一个不认识就整条作废，iOS 15.4、Chrome 86 以前不认识 :focus-visible，
+       合在一起时连悬停效果也没了。两条紧挨着放在下面各状态颜色之前，层叠顺序与合写时相同 */
+    ".lk-chip[data-kind=quiz]:hover{border-color:currentColor;background:var(--sun-soft,#fff8e6);box-shadow:inset 0 0 0 1px currentColor}",
+    ".lk-chip[data-kind=quiz]:focus-visible{border-color:currentColor;background:var(--sun-soft,#fff8e6);box-shadow:inset 0 0 0 1px currentColor}",
+    ".lk-chip[data-kind=quiz][data-qs=passed],.lk-chip[data-kind=quiz][data-qs=passed]:hover{border-color:var(--green,#15803d);background:var(--green-soft,#f0fdf4);color:var(--green,#15803d)}",
+    ".lk-chip[data-kind=quiz][data-qs=partial],.lk-chip[data-kind=quiz][data-qs=partial]:hover{border-color:var(--blue,#1d4ed8);background:var(--blue-soft,#eef2ff);color:var(--blue,#1d4ed8)}",
+    ".lk-chip[data-kind=quiz][data-qs=none],.lk-chip[data-kind=quiz][data-qs=none]:hover{border-color:var(--line,#cbd5e1);background:var(--surface-soft,#f8fafc);color:var(--muted,#475569)}",
+    ".lk-chip[data-kind=quiz][data-qs=verify],.lk-chip[data-kind=quiz][data-qs=verify]:hover{border-color:var(--coral,#ea580c);background:var(--coral-soft,#fff1eb);color:var(--red,#b91c1c)}",
     "body:not(.show-hs) .lk-hs-only{display:none!important}",
     /* 实验页：每个模块、任务的初中 / 高中和对应知识点 */
     ".lk-lab{margin:8px 0 6px;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;font-size:13.5px;line-height:1.5;color:#334155;font-weight:400}",
@@ -88,6 +99,11 @@
     ".lk-pop .lk-pdone{font-size:13px;color:#15803d;font-weight:700}",
     ".lk-pop .lk-x{position:absolute;top:6px;right:6px;width:30px;height:30px;border:0;background:none;border-radius:50%;font-size:22px;line-height:1;color:#64748b;cursor:pointer}",
     ".lk-pop .lk-x:hover{background:#f1f5f9}",
+    ".lk-pop .lk-qd{color:#64748b;font-size:13px}",
+    ".lk-pop .lk-pn.lk-qs{border-left-color:var(--sun,#f2c46d)}",
+    ".lk-pop .lk-pn.lk-qs[data-qs=passed]{border-left-color:var(--green,#15803d)}",
+    ".lk-pop .lk-pn.lk-qs[data-qs=partial]{border-left-color:var(--blue,#1d4ed8)}",
+    ".lk-pop .lk-pn.lk-qs[data-qs=verify]{border-left-color:var(--coral,#ea580c)}",
     "@media (max-width:720px),(hover:none){.lk-pop.lk-sheet{position:fixed;left:0!important;right:0;top:auto!important;bottom:0;width:100%;border-radius:14px 14px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -8px 28px rgba(15,23,42,.22)}}",
     /* 回到来处 */
     ".lk-pill{position:fixed;left:14px;bottom:16px;z-index:45;display:flex;align-items:center;max-width:calc(100vw - 28px);background:#1e3a8a;color:#fff;border-radius:22px;box-shadow:0 4px 14px rgba(15,23,42,.28);font:600 14px/1.3 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}",
@@ -165,6 +181,146 @@
       .catch(function () { MISTAKES = null; });
   }
 
+  /* ---------- 理解测试（只在导图上用） ----------
+   * shared/quiz/index.json（build-index.py 生成）列出每个知识点有哪些测试题，题目摘要够 core.mastery 计算，
+   * 不必下载题库全文。读不到就当没有测试题，导图照常。
+   * 登录（有云端令牌）后一次 GET api/quiz 取测试记录，core.js 第一次要用时才加载：
+   * 大多数人打开导图不会登录，不该为他们多下载一个脚本。 */
+  var QUIZ = null, QUIZ_BY = null, QUIZ_ITEMS = null;
+  var QREC = null, QREC_TOKEN = null, qrecFor = null, qrecSeq = 0, coreLoading = null;
+  var QTYPE = { predict: "预测关卡", twotier: "二段式", transfer: "迁移", inverse: "逆向" };
+  var QLABEL = { guest: "理解测试 →", passed: "测试达标 ✓", partial: "测试 1 / 2", none: "未测", verify: "待验证" };
+  function authToken() {
+    var A = window.ABSLabAuth;
+    return A && A.getToken ? A.getToken() : null;
+  }
+  // 本科每个知识点 → 能出的题（按题库顺序）。高中题只在有「显示高中内容」开关的物理、化学导图上算，
+  // 与实验标签的规则一致；数学、生物一律不出高中题
+  function quizBy() {
+    var by = {};
+    var kps = (QUIZ && QUIZ.kps) || {};
+    var hsOk = HAS_HS && (SUBJECT === "physics" || SUBJECT === "chemistry");
+    Object.keys(kps).forEach(function (ref) {
+      var r = parseRef(ref); if (!r || r.s !== SUBJECT || !Array.isArray(kps[ref])) return;
+      var list = kps[ref].filter(function (q) { return q && q.id && q.page && (q.level !== "senior" || hsOk); });
+      if (list.length) by[r.k] = list;
+    });
+    return by;
+  }
+  function subjectHasQuiz() {
+    var kps = (QUIZ && QUIZ.kps) || {};
+    return Object.keys(kps).some(function (ref) { return ref.indexOf(SUBJECT + ":") === 0; });
+  }
+  // core.mastery 要的题目数组：index.json 的 items 是 {id: 摘要}，补上 id
+  function quizItems() {
+    if (QUIZ_ITEMS) return QUIZ_ITEMS;
+    var m = (QUIZ && QUIZ.items) || {};
+    QUIZ_ITEMS = Object.keys(m).map(function (id) { return Object.assign({ id: id }, m[id]); });
+    return QUIZ_ITEMS;
+  }
+  function loadCore() {
+    if (window.ABSLabQuizCore) return Promise.resolve(window.ABSLabQuizCore);
+    if (!coreLoading) {
+      coreLoading = new Promise(function (resolve, reject) {
+        var sc = document.createElement("script");
+        sc.src = ROOT + "shared/quiz/core.js";
+        sc.onload = function () { if (window.ABSLabQuizCore) resolve(window.ABSLabQuizCore); else { coreLoading = null; reject(new Error("core")); } };
+        sc.onerror = function () { coreLoading = null; reject(new Error("core")); };
+        document.head.appendChild(sc);
+      });
+    }
+    return coreLoading;
+  }
+  // 取当前令牌的测试记录。同一个令牌只取一次：auth.js 在页面打开后同步云端进度时也会发 abs-auth-changed，
+  // 令牌没变就不必再请求；登录、退出、换账号（令牌变了）才重取
+  function loadQuizRecords(force) {
+    var t = authToken();
+    if (!force && t === qrecFor) return Promise.resolve(false);
+    var my = ++qrecSeq;
+    qrecFor = t;
+    QREC = null; QREC_TOKEN = null;
+    if (!t || !/^https?:$/.test(location.protocol) || !subjectHasQuiz()) return Promise.resolve(true);
+    return Promise.all([
+      fetch(ROOT + "api/quiz", { headers: { Authorization: "Bearer " + t } }).then(function (r) { return r.ok ? r.json() : null; }),
+      loadCore()
+    ]).then(function (res) {
+      if (my !== qrecSeq) return false;
+      var j = res[0];
+      if (j && j.ok && j.items && typeof j.items === "object") { QREC = j.items; QREC_TOKEN = t; }
+      return true;
+    }).catch(function () { return my === qrecSeq; });
+  }
+  function manualLevel(key) {
+    try { var st = JSON.parse(localStorage.getItem(SUBJ[SUBJECT].prefix + ".status") || "{}") || {}; return +st[key] || 0; } catch (e) { return 0; }
+  }
+  function masteredName() {
+    try {
+      var names = JSON.parse(localStorage.getItem(SUBJ[SUBJECT].prefix + ".statusNames") || "null");
+      if (Array.isArray(names) && names.length === 4 && names[3]) return String(names[3]);
+    } catch (e) {}
+    return SUBJ[SUBJECT].names[3];
+  }
+  // 标签状态：游客（含本地账号、记录没取到）一律「理解测试 →」；登录后按掌握门槛。
+  // 「待验证」：学生自己把学习状态标成已掌握（3），测试却没达标——不改、不拦手动状态，只提醒去验证
+  function quizState(ref, key) {
+    var core = window.ABSLabQuizCore, t = authToken();
+    if (!t || !QREC || QREC_TOKEN !== t || !core) return { s: "guest", label: QLABEL.guest, m: null };
+    var m = core.mastery(ref, quizItems(), QREC) || { state: "none", dates: [] };
+    var s = m.state === "passed" ? "passed" : m.state === "partial" ? "partial" : "none";
+    if (s !== "passed" && manualLevel(key) === 3) s = "verify";
+    return { s: s, label: QLABEL[s], m: m };
+  }
+  function makeQuizChip(key, list, qs) {
+    var ref = SUBJECT + ":" + key;
+    var allSenior = list.every(function (q) { return q.level === "senior"; });
+    var a = document.createElement("a");
+    a.className = "lk-chip";
+    a.setAttribute("data-kind", "quiz");
+    a.setAttribute("data-lv", allSenior ? "senior" : "junior");
+    a.setAttribute("data-lk-quiz", ref);
+    a.setAttribute("data-qs", qs.s);
+    // 去题目所在页面，定位到这个知识点的第一道题；from 让那一页显示「← 回到 …」
+    a.href = ROOT + list[0].page + "?from=" + encodeURIComponent(ref) + "#qz-" + list[0].id;
+    a.textContent = qs.label;
+    a.setAttribute("aria-label", "理解测试（" + list.length + " 道题）" + (qs.s === "guest" ? "" : "：" + qs.label));
+    return a;
+  }
+  function quizStateText(qs) {
+    var core = window.ABSLabQuizCore;
+    var md = function (d) { return core && core.fmtMD ? core.fmtMD(d) : d; };
+    var dates = (qs.m && qs.m.dates) || [];
+    if (qs.s === "guest") return "登录后会记录每次作答、显示测试进度，并按计划安排重测。";
+    if (qs.s === "passed") return "测试达标 ✓：" + dates.slice(-2).map(md).join("、") + " 都做对了。";
+    if (qs.s === "verify") return "待验证：学习状态标的是「" + masteredName() + "」，但测试还没达标。做一轮测试，验证一下是不是真懂了。";
+    if (qs.s === "partial") {
+      return dates.length >= 2 ? "测试 1 / 2：达标以后又答错过，再做对一轮就能恢复。"
+        : "测试 1 / 2：" + md(dates[dates.length - 1]) + " 已经做对一轮，换一天再做对一次就达标。";
+    }
+    return "未测：还没有在同一天做对这个知识点的二段式题和迁移题。";
+  }
+  function quizPopHTML(chip) {
+    var ref = chip.getAttribute("data-lk-quiz") || "";
+    var r = parseRef(ref) || { s: SUBJECT, k: "" };
+    var list = (QUIZ_BY && QUIZ_BY[r.k]) || [];
+    var lv = chip.getAttribute("data-lv") === "senior" ? "senior" : "junior";
+    var nm = NAMES[ref] || {};
+    var href = chip.getAttribute("href");
+    var types = [], has = {};
+    list.forEach(function (q) { has[q.type] = 1; var t = QTYPE[q.type]; if (t && types.indexOf(t) === -1) types.push(t); });
+    var qs = quizState(ref, r.k);
+    var h = '<button type="button" class="lk-x" aria-label="关闭">×</button>';
+    h += '<div class="lk-ph"><span class="lk-lv" data-lv="' + lv + '">' + LV[lv] + "</span><span>" + esc(SUBJ[SUBJECT].name + " · " + (nm.n || r.k)) + "</span></div>";
+    h += '<div class="lk-pt">理解测试 · ' + list.length + " 道题</div>";
+    if (types.length) h += "<p>题型：" + esc(types.join("、")) + "</p>";
+    // 掌握门槛只认二段式题和迁移题（core.mastery）；缺一种的知识点要说清楚，免得学生以为做完就算达标
+    h += '<p class="lk-qd">' + (has.twotier && has.transfer
+      ? "每题先选答案和理由，再说有没有把握。在两个不同的日子都做对二段式题和迁移题，才算达标。"
+      : "每题先选答案和理由，再说有没有把握。这个知识点的题目还不全，暂时只能练习，判不了达标。") + "</p>";
+    h += '<p class="lk-pn lk-qs" data-qs="' + qs.s + '">' + esc(quizStateText(qs)) + "</p>";
+    h += '<div class="lk-pa"><a class="lk-go" href="' + esc(href) + '">去做测试 →</a><a class="lk-nt" href="' + esc(href) + '" target="_blank" rel="noopener">新标签打开</a></div>';
+    return h;
+  }
+
   /* ---------- 标签 ---------- */
   function makeChip(item, fromRef) {
     var a = document.createElement("a");
@@ -235,11 +391,18 @@
     if (!DATA) return;
     HAS_HS = !!document.getElementById("hsToggle");
     if (!MAP_BY) MAP_BY = mapItems();
-    Object.keys(MAP_BY).forEach(function (key) {
+    if (!QUIZ_BY) QUIZ_BY = quizBy();
+    // 有测试题、但没有任何关联的知识点也要有一行（放测试标签）
+    var keys = Object.keys(MAP_BY);
+    Object.keys(QUIZ_BY).forEach(function (k) { if (!MAP_BY[k]) keys.push(k); });
+    keys.forEach(function (key) {
       var el = findKp(SUBJECT, key); if (!el) return;
-      var items = MAP_BY[key].filter(function (it) { return it.level !== "senior" || HAS_HS; });
-      if (!items.length) return;
-      var sig = items.map(function (it) { return it.to; }).join("|") + (isDoneSig(items));
+      var items = (MAP_BY[key] || []).filter(function (it) { return it.level !== "senior" || HAS_HS; });
+      var quiz = QUIZ_BY[key] || null;
+      if (!items.length && !quiz) return;
+      var qs = quiz ? quizState(SUBJECT + ":" + key, key) : null;
+      // 签名带上测试标签的文字：登录、作答、改学习状态以后标签变了，这一行会重建；没有测试题的行签名与原来相同
+      var sig = items.map(function (it) { return it.to; }).join("|") + (isDoneSig(items)) + (quiz ? "#quiz:" + qs.label + ":" + quiz.length : "");
       var old = el.querySelector(':scope > .lk-row[data-lk-for]');
       if (old && old.getAttribute("data-sig") === sig) return;
       if (old) old.remove();
@@ -253,6 +416,12 @@
         if (it.level === "senior") c.classList.add("lk-hs-only"); else allHS = false;
         row.appendChild(c);
       });
+      if (quiz) {
+        var qc = makeQuizChip(key, quiz, qs);
+        // 全是高中题时跟高中实验标签一样，随「显示高中内容」开关显示
+        if (qc.getAttribute("data-lv") === "senior") qc.classList.add("lk-hs-only"); else allHS = false;
+        row.appendChild(qc);
+      }
       if (!row.children.length) return;
       if (allHS && !el.closest(".bridge")) row.classList.add("lk-hs-only");
       placeRow(el, row);
@@ -392,6 +561,7 @@
     return pop;
   }
   function popHTML(chip) {
+    if (chip.getAttribute("data-kind") === "quiz") return quizPopHTML(chip);
     var to = chip.getAttribute("data-lk-to");
     var note = chip.getAttribute("data-lk-note") || "";
     var lv = chip.getAttribute("data-lv");
@@ -494,11 +664,15 @@
   /* ---------- 启动 ---------- */
   function load() {
     var get = function (f) { return fetch(ROOT + "shared/" + f).then(function (r) { if (!r.ok) throw new Error(f); return r.json(); }); };
-    return Promise.all([get("links.json"), get("link-names.json").catch(function () { return { kps: {} }; })]).then(function (res) {
+    // 题库索引只有导图用；读不到（或格式不对）就当没有测试题
+    var quiz = MODE === "map" ? get("quiz/index.json").catch(function () { return null; }) : Promise.resolve(null);
+    return Promise.all([get("links.json"), get("link-names.json").catch(function () { return { kps: {} }; }), quiz]).then(function (res) {
       DATA = res[0] || {};
       TARGETS = DATA.targets || {};
       LABS = DATA.labs || {};
       NAMES = (res[1] && res[1].kps) || {};
+      QUIZ = res[2] && typeof res[2] === "object" && res[2].kps && typeof res[2].kps === "object" ? res[2] : null;
+      QUIZ_BY = null; QUIZ_ITEMS = null;
     });
   }
   function refresh() { if (MODE === "map") decorateMap(); else if (MODE === "lab") decorateLab(); else if (MODE === "home") fillLabSlots(); }
@@ -523,6 +697,12 @@
       window.addEventListener("abs-auth-changed", reloadMarks);
       window.addEventListener("storage", function (e) { if (e.key && /\.(status|statusNames)$|progress/.test(e.key)) reloadMarks(); });
       if (MODE === "lab") loadMistakes().then(function () { if (MISTAKES) { $$(".lk-lab").forEach(function (b) { b.remove(); }); refresh(); } });
+      if (MODE === "map" && QUIZ) {
+        // 测试标签先按游客显示，记录取到以后只重建标签文字变了的那几行（签名不同）
+        var quizMarks = function (force) { loadQuizRecords(force).then(function (changed) { if (changed) decorateMap(); }); };
+        quizMarks(false);
+        window.addEventListener("abs-auth-changed", function () { quizMarks(false); });
+      }
     }).catch(function () { /* 关联表读不到时，页面照常使用 */ });
   }
   window.ABSLabLinks = { refresh: refresh };
